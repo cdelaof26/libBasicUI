@@ -64,6 +64,8 @@ public class UIProperties {
         
         initUIAccentColors();
         initFonts();
+        
+        System.out.println("[INFO] UIProperties initialized!");
     }
     
     /**

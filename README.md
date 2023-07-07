@@ -86,5 +86,9 @@ $ java -Dfile.encoding=UTF-8 -jar libBasicUI.jar
 
 ### Changelog
 
+### v0.0.1f
+- Fixed unused imports
+- Fixed Java 8 compatibility
+
 ### v0.0.1
 - Initial project

@@ -12,7 +12,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.Arrays;
 import java.util.Base64;
 import java.util.Base64.Decoder;
 import java.util.HashMap;
@@ -35,6 +34,9 @@ public class LibUtilities {
         FONT_FAMILY, TITLE_FONT_WIDTH, SUBTITLE_FONT_WIDTH, STANDARD_FONT_WIDTH, UI_SCALE
     }
     
+    /**
+     * Initializes lib preferences
+     */
     public static void initLibUtils() {
         DEFAULT_PREFERENCES.put(Preferences.APPEARANCE.name(), "Light");
         DEFAULT_PREFERENCES.put(Preferences.USE_ACCENT_COLORS.name(), "true");
@@ -50,6 +52,9 @@ public class LibUtilities {
         preferences = DEFAULT_PREFERENCES;
         
         init = true;
+        
+        System.out.println("[INFO] libBasicUI v0.0.1f");
+        System.out.println("[INFO] LibUtilities initialized!");
     }
     
     public static boolean isInit() {
@@ -451,8 +456,8 @@ public class LibUtilities {
         if (!LIB_PREFERENCES_FILE.canRead())
             return false;
         
-        String data = readFile(LIB_PREFERENCES_FILE);
-        if (data.isBlank())
+        String data = readFile(LIB_PREFERENCES_FILE).replace("\n", "");
+        if (data.replace(" ", "").isEmpty())
             return false;
         
         data = data.replace("{", "").replace("}", "");
@@ -461,7 +466,7 @@ public class LibUtilities {
         
         preferences = new HashMap<>();
         for (String p : sdata) {
-            String [] dat = p.strip().split("=");
+            String [] dat = p.replaceAll("^ +", "").split("=");
             if (dat.length != 2)
                 continue;
             

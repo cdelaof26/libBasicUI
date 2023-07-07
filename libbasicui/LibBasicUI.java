@@ -1,24 +1,18 @@
 package libbasicui;
 
 import java.awt.Dimension;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
 import ui.CheckBox;
 import ui.ColorButton;
 import ui.ColorPicker;
-import ui.ImageButton;
 import ui.Label;
 import ui.ProgressBar;
-import ui.SelectionPanel;
 import ui.Slider;
 import ui.TextArea;
 import ui.TextField;
 import ui.enums.UIAlignment;
 import ui.UIProperties;
 import ui.Window;
-import ui.enums.ImageButtonArrangement;
 import ui.enums.LabelType;
-import ui.enums.SelectionPanelModes;
 import ui.enums.UIOrientation;
 import utils.LibUtilities;
 import utils.UIPreferences;
