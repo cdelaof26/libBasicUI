@@ -26,12 +26,17 @@ public class ProgressBar extends JComponent implements ComponentSetup {
     /**
      * Background color
      */
-    protected Color BGColor = UIProperties.APP_BG;
+    protected Color BGColor = UIProperties.APP_BGA;
     
     /**
      * Progress bar color
      */
     protected Color FGColor = UIProperties.APP_FG_COLOR;
+    
+    /**
+     * Border color
+     */
+    protected Color BColor = UIProperties.APP_FG;
     
     private final UIOrientation orientation;
     
@@ -164,13 +169,16 @@ public class ProgressBar extends JComponent implements ComponentSetup {
 
     @Override
     public void updateUITheme() {
-        BGColor = UIProperties.APP_BG;
+        BGColor = UIProperties.APP_BGA;
+        BColor = UIProperties.APP_FG;
         if (appTheme)
             FGColor = UIProperties.APP_FG;
     }
 
     @Override
     public void updateUIColors() {
+        BGColor = UIProperties.APP_BGA;
+        BColor = UIProperties.APP_FG;
         if (appColor)
             FGColor = UIProperties.APP_BG_COLOR;
     }
@@ -214,7 +222,7 @@ public class ProgressBar extends JComponent implements ComponentSetup {
         g2D.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
         
         if (paintBorder) {
-            g2D.setColor(UIProperties.APP_FG);
+            g2D.setColor(BColor);
             
             if (roundCorners)
                 g2D.drawRoundRect(1, 1, getWidth() - 2, height - 2, UIProperties.buttonRoundRadius, UIProperties.buttonRoundRadius);
@@ -222,7 +230,7 @@ public class ProgressBar extends JComponent implements ComponentSetup {
                 g2D.drawRect(1, 1, getWidth() - 2, height - 2);
         }
         
-        g2D.setColor(UIProperties.APP_BGA);
+        g2D.setColor(BGColor);
 
         if (roundCorners)
             g2D.fillRoundRect(2, 2, getWidth() - 3, height - 3, UIProperties.buttonRoundRadius, UIProperties.buttonRoundRadius);

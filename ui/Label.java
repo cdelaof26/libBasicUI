@@ -108,7 +108,7 @@ public class Label extends JLabel implements ComponentSetup {
     public void setPaintBorder(boolean paintBorder) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
-
+    
     /**
      * Changes font type
      * 

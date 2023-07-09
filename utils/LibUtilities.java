@@ -1,8 +1,13 @@
 package utils;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.FileDialog;
+import java.awt.Font;
 import java.awt.Image;
+import java.awt.font.FontRenderContext;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -53,7 +58,7 @@ public class LibUtilities {
         
         init = true;
         
-        System.out.println("[INFO] libBasicUI v0.0.1f");
+        System.out.println("[INFO] libBasicUI v0.0.2");
         System.out.println("[INFO] LibUtilities initialized!");
     }
     
@@ -64,6 +69,9 @@ public class LibUtilities {
     
     private static final Decoder decoder = Base64.getDecoder();
     private static final FileDialog fileDialog = new FileDialog((JFrame) null);
+    
+    private static final AffineTransform affinetransform = new AffineTransform();     
+    private static final FontRenderContext frc = new FontRenderContext(affinetransform, true, true);
     
     public static final String SYSTEM_NAME = System.getProperty("os.name");
     public static final String USER_HOME = System.getProperty("user.home");
@@ -226,6 +234,12 @@ public class LibUtilities {
      */
     public static InputStream base64StringToInputStream(String data) {
         return new ByteArrayInputStream(decoder.decode(data));
+    }
+    
+    public static Dimension getTextDimensions(String text, Font font) {
+        Rectangle2D r2D = font.getStringBounds(text, frc);
+        
+        return new Dimension((int) r2D.getWidth(), (int) r2D.getHeight());
     }
     
     /**

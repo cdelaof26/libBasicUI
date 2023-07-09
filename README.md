@@ -86,6 +86,16 @@ $ java -Dfile.encoding=UTF-8 -jar libBasicUI.jar
 
 ### Changelog
 
+### v0.0.2
+- Fixed exception raised when loading preferences containing a custom 
+  standard/subtitle font width
+- Fixed bug were `ColorButton` and `ImageButton` will use intensively the CPU
+- Added option to make elements in `ContextMenu` slim if `hideOverflow = false`
+- Added `MenuBar` and `Menu` 
+- Changed `ProgressBar` behavior when changing ui appearance
+  - Color update will be visible after using `updateUITheme()` or `updateUIColors()`
+- Added `getTextDimensions()` to `LibUtilities`
+
 ### v0.0.1f
 - Fixed unused imports
 - Fixed Java 8 compatibility

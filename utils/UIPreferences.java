@@ -311,9 +311,9 @@ public class UIPreferences extends Dialog {
         if (UIProperties.getTitleFontSize() != Integer.parseInt(LibUtilities.DEFAULT_PREFERENCES.get(LibUtilities.Preferences.TITLE_FONT_WIDTH.name())))
             titleFontSizeSelector.setValue(UIProperties.getTitleFontSize());
         if (UIProperties.getSubtitleFontSize()!= Integer.parseInt(LibUtilities.DEFAULT_PREFERENCES.get(LibUtilities.Preferences.SUBTITLE_FONT_WIDTH.name())))
-            titleFontSizeSelector.setValue(UIProperties.getSubtitleFontSize());
+            subtitleFontSizeSelector.setValue(UIProperties.getSubtitleFontSize());
         if (UIProperties.getStandardFontSize()!= Integer.parseInt(LibUtilities.DEFAULT_PREFERENCES.get(LibUtilities.Preferences.STANDARD_FONT_WIDTH.name())))
-            titleFontSizeSelector.setValue(UIProperties.getStandardFontSize());
+            fontSizeSelector.setValue(UIProperties.getStandardFontSize());
         if (UIProperties.getUiScale() < 1 || UIProperties.getUiScale() > 1)
             uiScale.setValue((int) (UIProperties.getUiScale() * 100));
         

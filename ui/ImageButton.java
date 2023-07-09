@@ -2,6 +2,8 @@ package ui;
 
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -19,7 +21,7 @@ public class ImageButton extends ColorButton {
     private final SpringLayout layout = new SpringLayout();
     
     private final Label textLabel;
-    private final Label imageLabel = new Label(LabelType.BODY);
+    private final Label imageLabel = new Label(LabelType.NONE);
     
     private BufferedImage lightThemedImage;
     private BufferedImage darkThemedImage;
@@ -31,6 +33,8 @@ public class ImageButton extends ColorButton {
     private ImageButtonArrangement arrangement;
     
     private boolean onlyActionIfImageIsClicked = false;
+    
+    private boolean paintAsHovering;
     
     /**
      * Creates a new ImageButton without image
@@ -82,7 +86,11 @@ public class ImageButton extends ColorButton {
         if (arrangement != ImageButtonArrangement.ONLY_IMAGE && arrangement != ImageButtonArrangement.ONLY_TINY_IMAGE)
             add(textLabel);
         
+        addMouseListener(new HoverListener(false));
+        imageLabel.addMouseListener(new HoverListener(true));
+        
         updateUISize();
+        updateUITheme();
     }
 
     @Override
@@ -198,14 +206,7 @@ public class ImageButton extends ColorButton {
             layout.putConstraint(SpringLayout.VERTICAL_CENTER, imageLabel, 0, SpringLayout.VERTICAL_CENTER, this);
         }
         
-        if (lightThemedImage != null)
-            if (darkThemedImage != null)
-                if (UIProperties.isLightThemeActive())
-                    imageLabel.setIcon(LibUtilities.scaleImage(lightThemedImage, (int) (imageWidth * UIProperties.uiScale), (int) (imageHeight * UIProperties.uiScale)));
-                else
-                    imageLabel.setIcon(LibUtilities.scaleImage(darkThemedImage, (int) (imageWidth * UIProperties.uiScale), (int) (imageHeight * UIProperties.uiScale)));
-            else
-                imageLabel.setIcon(LibUtilities.scaleImage(lightThemedImage, (int) (imageWidth * UIProperties.uiScale), (int) (imageHeight * UIProperties.uiScale)));
+        updateButton();
         
         if (textLabel != null)
             textLabel.updateUISize();
@@ -217,6 +218,12 @@ public class ImageButton extends ColorButton {
     public void updateUIFont() {
         if (textLabel != null)
             textLabel.updateUIFont();
+    }
+
+    @Override
+    public void updateUITheme() {
+        super.updateUITheme();
+        updateButton();
     }
     
     @Override
@@ -256,30 +263,37 @@ public class ImageButton extends ColorButton {
         return textLabel.getText();
     }
     
-
-    @Override
-    protected void paintComponent(Graphics g) {
-        if (hoverImage != null)
-            if (getModel().isRollover() || paintAsHovering)
-                imageLabel.setIcon(LibUtilities.scaleImage(hoverImage, (int) (imageWidth * UIProperties.uiScale), (int) (imageHeight * UIProperties.uiScale)));
-            else
-                if (darkThemedImage != null)
-                    if (UIProperties.isLightThemeActive())
-                        imageLabel.setIcon(LibUtilities.scaleImage(lightThemedImage, (int) (imageWidth * UIProperties.uiScale), (int) (imageHeight * UIProperties.uiScale)));
-                    else
-                        imageLabel.setIcon(LibUtilities.scaleImage(darkThemedImage, (int) (imageWidth * UIProperties.uiScale), (int) (imageHeight * UIProperties.uiScale)));
-                else
-                    imageLabel.setIcon(LibUtilities.scaleImage(lightThemedImage, (int) (imageWidth * UIProperties.uiScale), (int) (imageHeight * UIProperties.uiScale)));
-        
+    private void updateButton() {
         if (textLabel != null)
             if (getModel().isRollover() || paintAsHovering)
                 textLabel.setForeground(HFGColor);
             else
                 textLabel.setForeground(FGColor);
         
-        super.paintComponent(g);
+        if (hoverImage != null) 
+            if (getModel().isRollover() || paintAsHovering) {
+                imageLabel.setIcon(LibUtilities.scaleImage(hoverImage, (int) (imageWidth * UIProperties.uiScale), (int) (imageHeight * UIProperties.uiScale)));
+                return;
+            }
+        
+        if (lightThemedImage != null)
+            if (darkThemedImage != null)
+                if (UIProperties.isLightThemeActive())
+                    imageLabel.setIcon(LibUtilities.scaleImage(lightThemedImage, (int) (imageWidth * UIProperties.uiScale), (int) (imageHeight * UIProperties.uiScale)));
+                else
+                    imageLabel.setIcon(LibUtilities.scaleImage(darkThemedImage, (int) (imageWidth * UIProperties.uiScale), (int) (imageHeight * UIProperties.uiScale)));
+            else
+                imageLabel.setIcon(LibUtilities.scaleImage(lightThemedImage, (int) (imageWidth * UIProperties.uiScale), (int) (imageHeight * UIProperties.uiScale)));
     }
 
+    @Override
+    public void setPaintAsHovering(boolean paintAsHovering) {
+        this.paintAsHovering = paintAsHovering;
+        updateButton();
+    }
+
+    
+    
     /**
      * Set an image from a file, the image will be show if dark theme is active<br>
      * 
@@ -432,5 +446,29 @@ public class ImageButton extends ColorButton {
         }
         
         super.removeMouseListener(l);
+    }
+    
+    private class HoverListener extends MouseAdapter {
+        private final boolean paintAsHover;
+        
+        public HoverListener(boolean paintAsHover) {
+            this.paintAsHover = paintAsHover;
+        }
+        
+        @Override
+        public void mouseEntered(MouseEvent e) {
+            if (paintAsHover)
+                paintAsHovering = true;
+            
+            updateButton();
+        }
+
+        @Override
+        public void mouseExited(MouseEvent e) {
+            if (paintAsHover)
+                paintAsHovering = false;
+            
+            updateButton();
+        }
     }
 }

@@ -202,8 +202,7 @@ public class ComboBox extends ColorButton {
         ActionListener [] actionsCopy = actions;
         actions = new ActionListener[actions.length + 1];
         
-        for (int i = 0; i < actionsCopy.length; i++)
-            actions[i] = actionsCopy[i];
+        System.arraycopy(actionsCopy, 0, actions, 0, actionsCopy.length);
         
         actions[actionsCopy.length] = (Action) -> {
             setText(text);

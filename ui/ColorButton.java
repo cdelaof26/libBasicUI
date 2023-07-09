@@ -94,6 +94,8 @@ public class ColorButton extends JButton implements ComponentSetup {
         BGColor = UIProperties.APP_BGA;
         FGColor = UIProperties.APP_FG;
         
+        setForeground(FGColor);
+        
         repaint();
     }
 
@@ -106,6 +108,8 @@ public class ColorButton extends JButton implements ComponentSetup {
         
         BGColor = UIProperties.APP_BGA;
         FGColor = UIProperties.APP_FG;
+        
+        setForeground(FGColor);
         
         repaint();
     }
@@ -162,7 +166,7 @@ public class ColorButton extends JButton implements ComponentSetup {
         
         super.paintComponent(g);
     }
-
+    
     @Override
     public void setPreferredSize(Dimension preferredSize) {
         width = preferredSize.width;

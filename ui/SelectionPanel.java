@@ -373,8 +373,7 @@ public class SelectionPanel extends JScrollPane implements ComponentSetup {
     public void unselectOption() {
         if (lastIndexHighlighted != -1) {
             ImageButton button = (ImageButton) elements.get(lastIndexHighlighted);
-            button.paintAsHovering = false;
-            button.repaint();
+            button.setPaintAsHovering(false);
         }
         
         selectedOption = "";
@@ -383,8 +382,7 @@ public class SelectionPanel extends JScrollPane implements ComponentSetup {
     private void highlightOption(int index) {
         lastIndexHighlighted = index;
         ImageButton button = (ImageButton) elements.get(index);
-        button.paintAsHovering = true;
-        button.repaint();
+        button.setPaintAsHovering(true);
     }
 
     public String getSelectedOption() {

@@ -35,11 +35,11 @@ public enum ImageButtonArrangement {
      */
     UP_IMAGE, 
     /**
-     * Recommended image size: 25x25
+     * Recommended image size: 20x20
      */
     DOWN_IMAGE,
     /**
-     * Recommended image size: 30x30
+     * Recommended image size: 20x20
      */
     UP_XL_IMAGE, 
     /**

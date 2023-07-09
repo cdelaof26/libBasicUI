@@ -31,11 +31,13 @@ public class ContextMenu extends JPopupMenu implements ComponentSetup {
     };
     
     protected int width = 120, height = 66;
+    protected int padding = 0;
     
     protected boolean appTheme = true;
     protected boolean appColor = false;
     
     private final boolean useScrollPane;
+    private boolean slimElements = false;
     
     private String selection = "";
     private final LinkedList<ImageButton> elements = new LinkedList<>();
@@ -197,10 +199,21 @@ public class ContextMenu extends JPopupMenu implements ComponentSetup {
     public String getSelection() {
         return selection;
     }
+
+    /**
+     * Makes selectable elements slim<br>
+     * By default, elements are slim if <code>hideOverflow</code> was set to false
+     * 
+     * @param slimElements 
+     */
+    public void setSlimElements(boolean slimElements) {
+        this.slimElements = slimElements;
+        updateOptionsSize();
+    }
     
     private void updateOptionsSize() {
-        int elementHeight = useScrollPane ? 22 : 30;
-        int containerHeight = elementHeight * elements.size();
+        int elementHeight = (useScrollPane || slimElements) ? 22 : 30;
+        int containerHeight = elementHeight * elements.size() + padding;
         
         viewContainer.setPreferredSize(new Dimension((containerHeight <= height) ? width : width - 12, containerHeight));
         
@@ -229,6 +242,9 @@ public class ContextMenu extends JPopupMenu implements ComponentSetup {
      * @param actions actions performed by added option, can be null
      */
     public void addOption(String text, boolean addPadding, ActionListener ... actions) {
+        if (addPadding)
+            padding += 10;
+        
         ImageButton c = new ImageButton(text, false, ImageButtonArrangement.LEFT_TEXT_RIGHT_IMAGE);
         c.setRoundCorners(false);
         c.addActionListener((Action) -> {
@@ -263,6 +279,9 @@ public class ContextMenu extends JPopupMenu implements ComponentSetup {
      * @param actions actions performed by added option, can be null
      */
     public void addOption(String text, String lightImage, String darkImage, String hoverImage, boolean areImagesBundled, boolean addPadding, ActionListener ... actions) {
+        if (addPadding)
+            padding += 10;
+        
         ImageButton c = new ImageButton(text, false, ImageButtonArrangement.LEFT_TEXT_RIGHT_IMAGE);
         
         c.setLightThemedImage(lightImage, areImagesBundled, 22, 22);
@@ -301,6 +320,9 @@ public class ContextMenu extends JPopupMenu implements ComponentSetup {
      * @param actions actions performed by added option, can be null
      */
     public void addOption(String text, File lightImage, File darkImage, File hoverImage, boolean addPadding, ActionListener ... actions) {
+        if (addPadding)
+            padding += 10;
+        
         ImageButton c = new ImageButton(text, false, ImageButtonArrangement.LEFT_TEXT_RIGHT_IMAGE);
         
         c.setLightThemedImage(lightImage, 22, 22);
