@@ -46,6 +46,9 @@ public class TextField extends JTextField implements ComponentSetup {
         addFocusListener(new FocusAdapter() {
             @Override
             public void focusGained(FocusEvent e) {
+                if (!isEditable())
+                    return;
+                
                 if (getText().equals(placeholderText)) {
                     togglePlaceholderTextVisibility();
                     setText("");
@@ -54,6 +57,9 @@ public class TextField extends JTextField implements ComponentSetup {
 
             @Override
             public void focusLost(FocusEvent e) {
+                if (!isEditable())
+                    return;
+                
                 if (getText().isEmpty()) {
                     togglePlaceholderTextVisibility();
                 }

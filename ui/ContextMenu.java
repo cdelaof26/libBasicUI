@@ -75,7 +75,6 @@ public class ContextMenu extends JPopupMenu implements ComponentSetup {
             
             add(viewPanel);
         } else {
-            
             add(viewContainer);
         }
         
@@ -202,7 +201,7 @@ public class ContextMenu extends JPopupMenu implements ComponentSetup {
 
     /**
      * Makes selectable elements slim<br>
-     * By default, elements are slim if <code>hideOverflow</code> was set to false
+     * By default, elements are slim if <code>hideOverflow</code> was set to true
      * 
      * @param slimElements 
      */

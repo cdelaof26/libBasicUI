@@ -58,6 +58,7 @@ public class Menu extends ColorButton {
     @Override
     public void updateUISize() {
         if (initializationEnded) {
+            optionsSelector.updateUISize();
             shortcutLabel.updateUISize();
             
             layout.putConstraint(SpringLayout.EAST, shortcutLabel, -10, SpringLayout.EAST, this);

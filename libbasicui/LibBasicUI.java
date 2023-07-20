@@ -1,7 +1,7 @@
 package libbasicui;
 
 import java.awt.Dimension;
-import ui.CheckBox;
+import ui.CheckField;
 import ui.ColorButton;
 import ui.ColorPicker;
 import ui.Label;
@@ -41,8 +41,7 @@ public class LibBasicUI {
         private final ColorPicker picker = new ColorPicker();
         
         
-        private final CheckBox checkBox = new CheckBox(false);
-        private final Label checkBoxLabel = new Label(LabelType.BODY, "Indeterminated");
+        private final CheckField checkField = new CheckField("Indeterminated", false, false);
         private final ProgressBar progressBar = new ProgressBar(0, 100, false);
         private final Slider vslider = new Slider(UIOrientation.VERTICAL, 0, 100, progressBar);
         
@@ -59,11 +58,11 @@ public class LibBasicUI {
             
             setResizable(false);
             
-            checkBox.addActionListener((Action) -> {
-                progressBar.setIndeterminate(!checkBox.isChecked());
+            checkField.setPreferredSize(new Dimension(178, 22));
+            checkField.addActionListener((Action) -> {
+                progressBar.setIndeterminate(!checkField.isChecked());
             });
             
-            checkBoxLabel.ifClickedDoClick(checkBox);
             progressBar.setPreferredSize(new Dimension(178, 11));
             
             vslider.setPreferredSize(new Dimension(22, 40));
@@ -83,8 +82,7 @@ public class LibBasicUI {
             
             
             add(vslider, progressBar, UIAlignment.WEST, UIAlignment.EAST, 5, UIAlignment.SOUTH, UIAlignment.SOUTH, 0);
-            add(checkBoxLabel, checkBox, UIAlignment.WEST, UIAlignment.EAST, 10, UIAlignment.VERTICAL_CENTER, UIAlignment.VERTICAL_CENTER, 0);
-            add(checkBox, progressBar, vslider, UIAlignment.WEST, UIAlignment.WEST, 0, UIAlignment.NORTH, UIAlignment.NORTH, 0);
+            add(checkField, progressBar, vslider, UIAlignment.WEST, UIAlignment.WEST, 0, UIAlignment.NORTH, UIAlignment.NORTH, 0);
             add(progressBar, textArea, UIAlignment.WEST, UIAlignment.WEST, 0, UIAlignment.SOUTH, UIAlignment.NORTH, -10);
             
             

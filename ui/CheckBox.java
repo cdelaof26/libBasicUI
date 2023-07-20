@@ -76,7 +76,7 @@ public class CheckBox extends ColorButton {
     }
 
     /**
-     * Changes visual appearance of button
+     * Changes visual appearance of the checkbox
      * @param checked 
      */
     public void setChecked(boolean checked) {

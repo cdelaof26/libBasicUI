@@ -43,12 +43,12 @@ public class ProgressBar extends JComponent implements ComponentSetup {
     /**
      * Value when progress bar is empty
      */
-    private final int minimumValue;
+    private int minimumValue;
     
     /**
      * Value when progress bar is full
      */
-    private final int maximumValue;
+    private int maximumValue;
     
     /**
      * Progress bar position
@@ -173,6 +173,8 @@ public class ProgressBar extends JComponent implements ComponentSetup {
         BColor = UIProperties.APP_FG;
         if (appTheme)
             FGColor = UIProperties.APP_FG;
+        
+        repaint();
     }
 
     @Override
@@ -181,6 +183,8 @@ public class ProgressBar extends JComponent implements ComponentSetup {
         BColor = UIProperties.APP_FG;
         if (appColor)
             FGColor = UIProperties.APP_BG_COLOR;
+        
+        repaint();
     }
 
     @Override
@@ -478,6 +482,9 @@ public class ProgressBar extends JComponent implements ComponentSetup {
      * @param value the value
      */
     public void setValue(int value) {
+        if (value < minimumValue || value > maximumValue)
+            throw new IllegalArgumentException("Value is outside the range [" + minimumValue + ", " + maximumValue + "]");
+        
         // TODO: Fix bug with UIProperties.uiScale = 1.9f; when setting a new value
         
         if (orientation == UIOrientation.HORIZONTAL)
@@ -507,5 +514,53 @@ public class ProgressBar extends JComponent implements ComponentSetup {
             if (!indeterminatedUpdater.isRunning())
                 indeterminatedUpdater.start();
         }
+    }
+
+    public int getMinimumValue() {
+        return minimumValue;
+    }
+
+    /**
+     * Sets the minimum value for the progress bar
+     * 
+     * @param minimumValue
+     * @throws IllegalArgumentException if minimum value is greater than maximum value 
+     */
+    public void setMinimumValue(int minimumValue) throws IllegalArgumentException {
+        if (minimumValue > maximumValue)
+            throw new IllegalArgumentException("Minimum value cannot be greater than maximum value");
+        
+        this.minimumValue = minimumValue;
+    }
+
+    public int getMaximumValue() {
+        return maximumValue;
+    }
+
+    /**
+     * Sets the maximum value for the progress bar
+     * 
+     * @param maximumValue
+     * @throws IllegalArgumentException if minimum value is greater than maximum value 
+     */
+    public void setMaximumValue(int maximumValue) {
+        if (minimumValue > maximumValue)
+            throw new IllegalArgumentException("Minimum value cannot be greater than maximum value");
+        
+        this.maximumValue = maximumValue;
+    }
+    
+    /**
+     * Sets the minimum value to the progress bar
+     */
+    public void setMinimumValue() {
+        setValue(minimumValue);
+    }
+    
+    /**
+     * Sets the maximum value to the progress bar
+     */
+    public void setMaximumValue() {
+        setValue(maximumValue);
     }
 }

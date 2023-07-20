@@ -1,7 +1,6 @@
 package ui;
 
 import java.awt.Dimension;
-import java.awt.Graphics;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -35,6 +34,7 @@ public class ImageButton extends ColorButton {
     private boolean onlyActionIfImageIsClicked = false;
     
     private boolean paintAsHovering;
+    private boolean updatingColors = false;
     
     /**
      * Creates a new ImageButton without image
@@ -89,6 +89,10 @@ public class ImageButton extends ColorButton {
         addMouseListener(new HoverListener(false));
         imageLabel.addMouseListener(new HoverListener(true));
         
+        addActionListener((Action) -> {
+            updateButton();
+        });
+        
         updateUISize();
         updateUITheme();
     }
@@ -106,6 +110,10 @@ public class ImageButton extends ColorButton {
                 break;
                 case ONLY_TINY_IMAGE:
                     width = 30;
+                    height = width;
+                break;
+                case ONE_WORD_ICON_BUTTON:
+                    width = 50;
                     height = width;
                 break;
                 case LEFT_TEXT_RIGHT_IMAGE:
@@ -151,6 +159,16 @@ public class ImageButton extends ColorButton {
         
         
         
+        if (arrangement == ImageButtonArrangement.ONE_WORD_ICON_BUTTON) {
+            layout.putConstraint(SpringLayout.HORIZONTAL_CENTER, imageLabel, 0, SpringLayout.HORIZONTAL_CENTER, this);
+            layout.putConstraint(SpringLayout.VERTICAL_CENTER, imageLabel, (int) (-6 * UIProperties.uiScale), SpringLayout.VERTICAL_CENTER, this);
+            
+            layout.putConstraint(SpringLayout.HORIZONTAL_CENTER, textLabel, 0, SpringLayout.HORIZONTAL_CENTER, this);
+            layout.putConstraint(SpringLayout.SOUTH, textLabel, (int) (-3 * UIProperties.uiScale), SpringLayout.SOUTH, this);
+        }
+        
+        
+        
         if (arrangement == ImageButtonArrangement.LEFT_TEXT_RIGHT_IMAGE) {
             layout.putConstraint(SpringLayout.EAST, imageLabel, (int) (-10 * UIProperties.uiScale), SpringLayout.EAST, this);
             layout.putConstraint(SpringLayout.VERTICAL_CENTER, imageLabel, 0, SpringLayout.VERTICAL_CENTER, this);
@@ -171,7 +189,7 @@ public class ImageButton extends ColorButton {
         
         if (arrangement == ImageButtonArrangement.UP_IMAGE) {
             layout.putConstraint(SpringLayout.HORIZONTAL_CENTER, imageLabel, 0, SpringLayout.HORIZONTAL_CENTER, this);
-            layout.putConstraint(SpringLayout.VERTICAL_CENTER, imageLabel, -8, SpringLayout.VERTICAL_CENTER, this);
+            layout.putConstraint(SpringLayout.VERTICAL_CENTER, imageLabel, (int) (-8 * UIProperties.uiScale), SpringLayout.VERTICAL_CENTER, this);
             
             layout.putConstraint(SpringLayout.HORIZONTAL_CENTER, textLabel, 0, SpringLayout.HORIZONTAL_CENTER, this);
             layout.putConstraint(SpringLayout.NORTH, textLabel, 0, SpringLayout.SOUTH, imageLabel);
@@ -219,15 +237,26 @@ public class ImageButton extends ColorButton {
         if (textLabel != null)
             textLabel.updateUIFont();
     }
-
+    
     @Override
     public void updateUITheme() {
+        updatingColors = true;
+        
         super.updateUITheme();
         updateButton();
     }
     
     @Override
+    public void updateUIColors() {
+        updatingColors = true;
+        
+        super.updateUIColors();
+        updateButton();
+    }
+    
+    @Override
     public void setText(String text) {
+        System.out.println("set " + text);
         textLabel.setText(text);
     }
 
@@ -264,6 +293,29 @@ public class ImageButton extends ColorButton {
     }
     
     private void updateButton() {
+        // TODO
+        // Fix colors when theme is changed if update is through a mouse listener
+        
+        if (updatingColors) {
+            if (textLabel != null)
+                textLabel.setForeground(FGColor);
+            
+            if (lightThemedImage != null)
+                if (darkThemedImage != null)
+                    if (UIProperties.isLightThemeActive())
+                        imageLabel.setIcon(LibUtilities.scaleImage(lightThemedImage, (int) (imageWidth * UIProperties.uiScale), (int) (imageHeight * UIProperties.uiScale)));
+                    else
+                        imageLabel.setIcon(LibUtilities.scaleImage(darkThemedImage, (int) (imageWidth * UIProperties.uiScale), (int) (imageHeight * UIProperties.uiScale)));
+                else
+                    imageLabel.setIcon(LibUtilities.scaleImage(lightThemedImage, (int) (imageWidth * UIProperties.uiScale), (int) (imageHeight * UIProperties.uiScale)));
+                
+            
+            repaint();
+            updatingColors = false;
+            
+            return;
+        }
+        
         if (textLabel != null)
             if (getModel().isRollover() || paintAsHovering)
                 textLabel.setForeground(HFGColor);
@@ -457,6 +509,9 @@ public class ImageButton extends ColorButton {
         
         @Override
         public void mouseEntered(MouseEvent e) {
+            if (updatingColors)
+                return;
+            
             if (paintAsHover)
                 paintAsHovering = true;
             
@@ -465,6 +520,9 @@ public class ImageButton extends ColorButton {
 
         @Override
         public void mouseExited(MouseEvent e) {
+            if (updatingColors)
+                return;
+            
             if (paintAsHover)
                 paintAsHovering = false;
             

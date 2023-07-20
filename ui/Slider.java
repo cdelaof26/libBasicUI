@@ -69,13 +69,13 @@ public class Slider extends JComponent implements ComponentSetup {
      * 
      * @param minimumValue
      * @param maximumValue
-     * @param componentToUpdate optional components to update when slider moves
+     * @param componentsToUpdate optional components to update when slider moves
      */
-    public Slider(int minimumValue, int maximumValue, JComponent ... componentToUpdate) throws IllegalArgumentException {
+    public Slider(int minimumValue, int maximumValue, JComponent ... componentsToUpdate) throws IllegalArgumentException {
         this.orientation = UIOrientation.HORIZONTAL;
         this.minimumValue = minimumValue;
         this.maximumValue = maximumValue;
-        this.componentsToUpdate = componentToUpdate;
+        this.componentsToUpdate = componentsToUpdate;
         
         initUI();
     }
@@ -86,13 +86,13 @@ public class Slider extends JComponent implements ComponentSetup {
      * @param orientation component orientation
      * @param minimumValue
      * @param maximumValue
-     * @param componentToUpdate optional components to update when slider moves
+     * @param componentsToUpdate optional components to update when slider moves
      */
-    public Slider(UIOrientation orientation, int minimumValue, int maximumValue, JComponent ... componentToUpdate) throws IllegalArgumentException {
+    public Slider(UIOrientation orientation, int minimumValue, int maximumValue, JComponent ... componentsToUpdate) throws IllegalArgumentException {
         this.orientation = orientation;
         this.minimumValue = minimumValue;
         this.maximumValue = maximumValue;
-        this.componentsToUpdate = componentToUpdate;
+        this.componentsToUpdate = componentsToUpdate;
         
         initUI();
     }
@@ -281,6 +281,8 @@ public class Slider extends JComponent implements ComponentSetup {
                     ((ProgressBar) c).setValue(value);
                 else if (c instanceof Slider)
                     ((Slider) c).setValue(value, false);
+                else if (c instanceof NumberSelector)
+                    ((NumberSelector) c).setValue(value);
                 else
                     throw new UnsupportedOperationException("Unsuported JComponent");
 
@@ -288,7 +290,8 @@ public class Slider extends JComponent implements ComponentSetup {
     }
 
     /**
-     * Set a value for this slider
+     * Set a value for this slider, this won't update <code>componentsToUpdate</code>
+     * 
      * @param value the value
      * @param focus set if slider should be focused if value changes
      * @throws IllegalArgumentException if value is outside given range
@@ -309,6 +312,7 @@ public class Slider extends JComponent implements ComponentSetup {
         
         // TODO: Fix visual inconsistences with vertical slider
         //       Slider(0, 100).setValue(50) doesn't look at the exact middle
+        //       Fix component not updating componentsToUpdate
         
         moveCircle(coord, focus, false);
     }

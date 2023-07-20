@@ -21,8 +21,11 @@ import java.util.Base64;
 import java.util.Base64.Decoder;
 import java.util.HashMap;
 import javax.imageio.ImageIO;
+import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
+import javax.swing.KeyStroke;
 import ui.UIProperties;
 import ui.Window;
 
@@ -58,7 +61,7 @@ public class LibUtilities {
         
         init = true;
         
-        System.out.println("[INFO] libBasicUI v0.0.2");
+        System.out.println("[INFO] libBasicUI v0.0.3");
         System.out.println("[INFO] LibUtilities initialized!");
     }
     
@@ -68,7 +71,7 @@ public class LibUtilities {
     
     
     private static final Decoder decoder = Base64.getDecoder();
-    private static final FileDialog fileDialog = new FileDialog((JFrame) null);
+    private static final FileDialog fileDialog = new FileDialog((JFrame) null, "Select a file", FileDialog.LOAD);
     
     private static final AffineTransform affinetransform = new AffineTransform();     
     private static final FontRenderContext frc = new FontRenderContext(affinetransform, true, true);
@@ -76,7 +79,7 @@ public class LibUtilities {
     public static final String SYSTEM_NAME = System.getProperty("os.name");
     public static final String USER_HOME = System.getProperty("user.home");
     public static final boolean IS_UNIX_LIKE = !SYSTEM_NAME.startsWith("Windows");
-    public static final String SYSTEM_ANCHOR = !IS_UNIX_LIKE ? "\\" : "/";
+    public static final String SYSTEM_ANCHOR = System.getProperty("file.separator");
     
     private static final File WIN_PATH = joinPath(USER_HOME, "AppData", "Local", "libBasicUI");
     private static final File UNIX_PATH = joinPath(USER_HOME, ".libBasicUI");
@@ -242,6 +245,33 @@ public class LibUtilities {
         return new Dimension((int) r2D.getWidth(), (int) r2D.getHeight());
     }
     
+    
+    /**
+     * Adds a keybinding to the c component
+     * @param c
+     * @param name
+     * @param keySequense
+     * @param action 
+     */
+    public static void addKeyBindingTo(JComponent c, String name, String keySequense, AbstractAction action) { 
+        c.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(keySequense), name);
+        c.getActionMap().put(name, action);
+    }
+    
+    /**
+     * Sets alpha value to a <code>c</code> color
+     * 
+     * @param c
+     * @param alpha 
+     * @return the <code>c</code> with alpha channel or null if c is null
+     */
+    public static Color setAlphaToColor(Color c, int alpha) {
+        if (c == null)
+            return null;
+        
+        return new Color(c.getRed(), c.getGreen(), c.getBlue(), alpha);
+    }
+    
     /**
      * Displays a FileDialog to pick a file from user
      * 
@@ -256,7 +286,7 @@ public class LibUtilities {
         if (data == null)
             return null;
         
-        return new File(data);
+        return joinPath(fileDialog.getDirectory(), data);
     }
     
     /**

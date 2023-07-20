@@ -1,7 +1,6 @@
 package ui;
 
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -72,10 +71,18 @@ public class ColorPicker extends Panel {
     private final TextField hexColor = new TextField("Hex #");
     
     /**
-     * Creates a new color picker
+     * Components to update if color changes
      */
-    public ColorPicker() {
+    protected JComponent [] componentsToUpdate;
+    
+    /**
+     * Creates a new color picker
+     * @param componentsToUpdate optional components to update when color changes
+     */
+    public ColorPicker(JComponent ... componentsToUpdate) {
         super(200, 178);
+        
+        this.componentsToUpdate = componentsToUpdate;
         
         initColorPicker();
         initUI();
@@ -136,15 +143,10 @@ public class ColorPicker extends Panel {
     
     @Override
     public void updateUISize() {
-        if (width != -1 && height != -1)
-            setPreferredSize(new Dimension(width, height));
-        
-        for (Component c : getComponents())
-            if (c instanceof ComponentSetup)
-                ((ComponentSetup) c).updateUISize();
-        
         if (colorPreview != null)
             colorPreview.setPreferredSize(new Dimension());
+        
+        super.updateUISize();
     }
 
     @Override
@@ -203,6 +205,9 @@ public class ColorPicker extends Panel {
     }
     
     private void parseColorRGB() {
+        if (redValueField == null || greenValueField == null || blueValueField == null)
+            return;
+        
         String redFieldText = redValueField.getText().replace(",", "");
         String greenFieldText = greenValueField.getText().replace(",", "");
         String blueFieldText = blueValueField.getText().replace(",", "");
@@ -268,6 +273,10 @@ public class ColorPicker extends Panel {
         blueColorSlider.setValue(components[2], false);
         
         selectedColor = new Color(components[0], components[1], components[2]);
+        if (componentsToUpdate != null)
+            for (JComponent c : componentsToUpdate)
+                c.setBackground(selectedColor);
+        
         colorPreview.repaint();
     }
 
@@ -398,5 +407,9 @@ public class ColorPicker extends Panel {
         hexColor.removeKeyListener(k);
         
         return selectedColor;
+    }
+
+    public void setComponentsToUpdate(JComponent ... componentsToUpdate) {
+        this.componentsToUpdate = componentsToUpdate;
     }
 }

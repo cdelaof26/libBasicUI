@@ -86,6 +86,20 @@ $ java -Dfile.encoding=UTF-8 -jar libBasicUI.jar
 
 ### Changelog
 
+### v0.0.3
+- Implemented `CheckField`, an easier way to add a checkbox with a label
+- Added `componentsToUpdate` to `ColorPicker`
+- Added `ONE_WORD_ICON_BUTTON` button scheme to ImageButton among other minor fixes
+- Fixed `Menu` items not setting the right foreground color
+- Implemented `enabled` property for `NumberSelector`
+- Minimum and maximum values are not longer final in `ProgressBar` class
+- `Slider` now is capable of modifying `NumberSelector` value
+- `TextField` would not longer react to clicks if hover is visible and it's clicked
+- New methods added to LibUtilities 
+  - `addKeyBindingTo()`
+  - `setAlphaToColor()`
+- Added a reset button to `UIPreferences` panel
+
 ### v0.0.2
 - Fixed exception raised when loading preferences containing a custom 
   standard/subtitle font width

@@ -95,7 +95,6 @@ public class ComboBox extends ColorButton {
     @Override
     public void updateUISize() {
         if (initializationEnded) {
-//            optionsSelector.setPreferredSize(new Dimension(width, optionsSelector.getPreferredSize().height));
             optionsSelector.setWidth(width);
             optionsSelector.updateUISize();
             
@@ -157,7 +156,6 @@ public class ComboBox extends ColorButton {
         super.setPreferredSize(preferredSize);
         
         if (initializationEnded) {
-//            optionsSelector.setPreferredSize(new Dimension(width, optionsSelector.getPreferredSize().height));
             optionsSelector.setWidth(width);
             optionsSelector.updateUISize();
         }
@@ -252,5 +250,9 @@ public class ComboBox extends ColorButton {
      */
     public void addOption(String text, File lightImage, File darkImage, File hoverImage, boolean addPadding, ActionListener ... actions) {
         optionsSelector.addOption(text, lightImage, darkImage, hoverImage, addPadding, addAction(text, actions));
+    }
+    
+    public void setSlimElements(boolean slimElements) {
+        optionsSelector.setSlimElements(slimElements);
     }
 }

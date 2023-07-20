@@ -2,8 +2,9 @@ package utils;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import javax.swing.JButton;
 import javax.swing.JLabel;
-import ui.CheckBox;
+import ui.CheckField;
 import ui.ColorButton;
 import ui.ColorPicker;
 import ui.ComboBox;
@@ -29,8 +30,7 @@ public class UIPreferences extends Dialog {
     private final ColorPicker colorPicker = new ColorPicker();
     
     private final ComboBox themeOptions = new ComboBox("Appearance", UIProperties.isLightThemeActive() ? "Light" : "Dark", false);
-    private final CheckBox useAccentColorsCheckButton = new CheckBox(true);
-    private final Label useAccentColorsLabel = new Label(LabelType.BODY, "Use accent colors");
+    private final CheckField useAccentColorsCheckButton = new CheckField("Use accent colors", false, true);
     private final ColorButton selectorAccentColor1 = new ColorButton("Select primary color");
     private final ColorButton selectorAccentColor2 = new ColorButton("Select secondary color");
     private final ColorButton selectorAccentColor3 = new ColorButton("Select foreground color");
@@ -51,6 +51,8 @@ public class UIPreferences extends Dialog {
     private final JLabel uiScaleUpdater;
     private final NumberSelector uiScale;
     
+    
+    private final JButton resetButton = new JButton("Reset preferences");
     
     private final Window mainWindow;
     
@@ -82,6 +84,7 @@ public class UIPreferences extends Dialog {
             LibUtilities.savePreferences();
         });
         
+        useAccentColorsCheckButton.setPreferredSize(new Dimension(210, 22));
         useAccentColorsCheckButton.addActionListener((Action) -> {
             UIProperties.setUseAccentColors(!useAccentColorsCheckButton.isChecked());
             mainWindow.updateUIColors();
@@ -91,7 +94,6 @@ public class UIPreferences extends Dialog {
             
             LibUtilities.savePreferences();
         });
-        useAccentColorsLabel.ifClickedDoClick(useAccentColorsCheckButton);
         
         selectorAccentColor1.setPreferredSize(new Dimension(210, 22));
         selectorAccentColor1.addActionListener((Action) -> {
@@ -109,7 +111,7 @@ public class UIPreferences extends Dialog {
             mainWindow.updateUITheme();
             updateUIColors();
             updateUITheme();
-
+            
             LibUtilities.savePreferences();
         });
         
@@ -129,7 +131,7 @@ public class UIPreferences extends Dialog {
             mainWindow.updateUITheme();
             updateUIColors();
             updateUITheme();
-
+            
             LibUtilities.savePreferences();
         });
         
@@ -149,7 +151,7 @@ public class UIPreferences extends Dialog {
             mainWindow.updateUITheme();
             updateUIColors();
             updateUITheme();
-
+            
             LibUtilities.savePreferences();
         });
         
@@ -171,7 +173,7 @@ public class UIPreferences extends Dialog {
                 mainWindow.updateUITheme();
                 updateUIColors();
                 updateUITheme();
-
+                
                 LibUtilities.savePreferences();
             });
         }
@@ -251,12 +253,23 @@ public class UIPreferences extends Dialog {
         uiScale = new NumberSelector("UI scale", "  100%", 100, 50, 200, 10, uiScaleUpdater);
         uiScale.setPreferredSize_(new Dimension(430, 22));
         
+
+        resetButton.setContentAreaFilled(false);
+        resetButton.setBorder(null);
+        resetButton.setFocusPainted(false);
+        resetButton.setRolloverEnabled(true);
+        resetButton.addActionListener((Action) -> {
+            LibUtilities.loadDefaultPreferences();
+            updatePreferences();
+            LibUtilities.savePreferences();
+        });
+        
+        
         
         add(title, UIAlignment.WEST, UIAlignment.WEST, 10, UIAlignment.NORTH, UIAlignment.NORTH, 10);
         add(colorsSubtitle, title, UIAlignment.WEST, UIAlignment.WEST, 0, UIAlignment.NORTH, UIAlignment.SOUTH, 5);
         add(themeOptions, colorsSubtitle, UIAlignment.WEST, UIAlignment.WEST, 0, UIAlignment.NORTH, UIAlignment.SOUTH, 10);
         add(useAccentColorsCheckButton, themeOptions, UIAlignment.WEST, UIAlignment.EAST, 10, UIAlignment.VERTICAL_CENTER, UIAlignment.VERTICAL_CENTER, 0);
-        add(useAccentColorsLabel, useAccentColorsCheckButton, UIAlignment.WEST, UIAlignment.EAST, 5, UIAlignment.VERTICAL_CENTER, UIAlignment.VERTICAL_CENTER, 0);
         add(selectorAccentColor1, themeOptions, UIAlignment.WEST, UIAlignment.WEST, 0, UIAlignment.NORTH, UIAlignment.SOUTH, 10);
         add(selectorAccentColor2, selectorAccentColor1, UIAlignment.WEST, UIAlignment.EAST, 10, UIAlignment.VERTICAL_CENTER, UIAlignment.VERTICAL_CENTER, 0);
         add(selectorAccentColor3, selectorAccentColor1, UIAlignment.WEST, UIAlignment.WEST, 0, UIAlignment.NORTH, UIAlignment.SOUTH, 10);
@@ -270,6 +283,8 @@ public class UIPreferences extends Dialog {
         
         add(uiSubtitle, subtitleFontSizeSelector, UIAlignment.WEST, UIAlignment.WEST, 0, UIAlignment.NORTH, UIAlignment.SOUTH, 10);
         add(uiScale, uiSubtitle, UIAlignment.WEST, UIAlignment.WEST, 0, UIAlignment.NORTH, UIAlignment.SOUTH, 10);
+        
+        add(resetButton, UIAlignment.EAST, UIAlignment.EAST, -10, UIAlignment.NORTH, UIAlignment.NORTH, 10);
     }
 
     @Override
@@ -290,8 +305,12 @@ public class UIPreferences extends Dialog {
     
     @Override
     public void updateUITheme() {
-        if (colorPicker != null)
+        if (colorPicker != null) {
             colorPicker.updateUITheme();
+            
+            resetButton.setForeground(UIProperties.APP_FG);
+            resetButton.setBackground(UIProperties.APP_BG);
+        }
         
         super.updateUITheme();
     }

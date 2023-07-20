@@ -82,12 +82,10 @@ public class NumberSelector extends Panel {
     private int value;
     
     private final String regex;
-    
-    private boolean initializationEnded = false;
+
     
     public NumberSelector(String text, String placeholderText, int defaultValue, int minimumValue, int maximumValue, int increaseStep, JComponent ... componentsToUpdate) throws IllegalArgumentException {
         super(200, 22);
-        initializationEnded = true;
         
         textLabel = new Label(LabelType.BODY, text);
         numberField = new TextField(placeholderText);
@@ -106,7 +104,6 @@ public class NumberSelector extends Panel {
     
     public NumberSelector(String text, int defaultValue, int minimumValue, int maximumValue, int increaseStep, JComponent ... componentsToUpdate) throws IllegalArgumentException {
         super(122, 22);
-        initializationEnded = true;
         
         textLabel = new Label(LabelType.BODY, text);
         numberField = new TextField();
@@ -130,6 +127,9 @@ public class NumberSelector extends Panel {
             throw new IllegalArgumentException("Value is outside the range [" + minimumValue + ", " + maximumValue + "]");
         
         increaseButton.addActionListener((Action) -> {
+            if (!numberField.isEditable())
+                return;
+            
             if (increaseStep > 0 && value < maximumValue || increaseStep < 0 && value > minimumValue)
                 value += increaseStep;
             
@@ -137,6 +137,9 @@ public class NumberSelector extends Panel {
             updateValue(true);
         });
         decreaseButton.addActionListener((Action) -> {
+            if (!numberField.isEditable())
+                return;
+            
             if (increaseStep > 0 && value > minimumValue || increaseStep < 0 && value < maximumValue)
                 value -= increaseStep;
             
@@ -212,7 +215,7 @@ public class NumberSelector extends Panel {
             numberField.setText("" + maximumValue, true);
             pvalue = maximumValue;
         }
-
+        
         if (pvalue >= minimumValue && pvalue <= maximumValue) {
             value = pvalue;
 
@@ -233,6 +236,11 @@ public class NumberSelector extends Panel {
         }
     }
 
+    /**
+     * Set a value for this NumberSelector
+     * 
+     * @param value 
+     */
     public void setValue(int value) {
         if (value < minimumValue || value > maximumValue)
             throw new IllegalArgumentException("Value is outside the range [" + minimumValue + ", " + maximumValue + "]");
@@ -240,9 +248,19 @@ public class NumberSelector extends Panel {
         this.value = value;
         
         numberField.setText("" +  this.value, true);
+        updateValue(true);
     }
 
     public float getValue() {
         return value;
+    }
+    
+    /**
+     * Makes editable the numberField
+     *
+     * @param b the editable state
+     */
+    public void setEditable(boolean b) {
+        numberField.setEditable(b);
     }
 }

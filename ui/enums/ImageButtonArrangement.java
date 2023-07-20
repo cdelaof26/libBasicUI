@@ -15,6 +15,10 @@ public enum ImageButtonArrangement {
      */
     ONLY_IMAGE, 
     /**
+     * Recommended image size: 20x20
+     */
+    ONE_WORD_ICON_BUTTON,
+    /**
      * Recommended image size: 15x15
      */
     CENTER_TEXT_LEFT_IMAGE, 
