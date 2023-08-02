@@ -20,6 +20,8 @@ public class ColorButton extends JButton implements ComponentSetup {
     protected boolean roundCorners = true;
     protected boolean paintBorder = false;
     
+    protected boolean paint = true;
+    
     /**
      * Paint check if true or mouse is over the component
      */
@@ -146,23 +148,25 @@ public class ColorButton extends JButton implements ComponentSetup {
 
     @Override
     protected void paintComponent(Graphics g) {
-        Graphics2D g2D = (Graphics2D) g;
-        
-        g2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        g2D.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
-        g2D.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-        
-        Color c;
-        
-        if (getModel().isRollover() || paintAsHovering) {
-            c = HBGColor;
-            setForeground(HFGColor);
-        } else {
-            c = BGColor;
-            setForeground(FGColor);
-        }
+        if (paint) {
+            Graphics2D g2D = (Graphics2D) g;
 
-        paintCustomBorder(g2D, c);
+            g2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g2D.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
+            g2D.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+
+            Color c;
+
+            if (getModel().isRollover() || paintAsHovering) {
+                c = HBGColor;
+                setForeground(HFGColor);
+            } else {
+                c = BGColor;
+                setForeground(FGColor);
+            }
+
+            paintCustomBorder(g2D, c);
+        }
         
         super.paintComponent(g);
     }
@@ -210,5 +214,9 @@ public class ColorButton extends JButton implements ComponentSetup {
     public void setPaintAsHovering(boolean paintAsHovering) {
         this.paintAsHovering = paintAsHovering;
         repaint();
+    }
+
+    public void setPaint(boolean paint) {
+        this.paint = paint;
     }
 }

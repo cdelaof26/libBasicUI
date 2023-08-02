@@ -7,6 +7,7 @@ import java.awt.RenderingHints;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import javax.swing.JTextField;
+import ui.enums.LabelType;
 import ui.enums.TextAlignment;
 
 /**
@@ -22,8 +23,12 @@ public class TextField extends JTextField implements ComponentSetup {
     protected boolean roundCorners = true;
     protected boolean paintBorder = false;
     
+    protected boolean visibleBackground = true;
+    
     public boolean placeholderVisible;
     private String placeholderText = "";
+    
+    private LabelType fontType = LabelType.BODY;
     
     
     public TextField(String placeholderText) {
@@ -84,17 +89,43 @@ public class TextField extends JTextField implements ComponentSetup {
 
     @Override
     public void updateUIFont() {
-        setFont(UIProperties.APP_FONT);
+        switch (fontType) {
+            case TITLE:
+                setFont(UIProperties.APP_TITLE_FONT);
+            break;
+            case BOLD_TITLE:
+                setFont(UIProperties.APP_BOLD_TITLE_FONT);
+            break;
+            case SUBTITLE:
+                setFont(UIProperties.APP_SUBTITLE_FONT);
+            break;
+            case BODY:
+                setFont(UIProperties.APP_FONT);
+            break;
+            case BOLD_BODY:
+                setFont(UIProperties.APP_BOLD_FONT);
+            break;
+            case WARNING_LABEL:
+                setFont(UIProperties.APP_BOLD_FONT);
+            break;
+        }
     }
 
     @Override
     public void updateUITheme() {
         if (!getText().equals(placeholderText))
-            setForeground(UIProperties.APP_FG);
+            if (fontType == LabelType.WARNING_LABEL)
+                setForeground(UIProperties.APP_FGW);
+            else
+                setForeground(UIProperties.APP_FG);
         else
             setBackground(UIProperties.DIM_TEXT_COLOR);
         
-        setBackground(UIProperties.APP_BGA);
+        if (visibleBackground)
+            setBackground(UIProperties.APP_BGA);
+        else
+            setBackground(null);
+        
         setCaretColor(UIProperties.APP_FG);
         if (appTheme) {
             setSelectedTextColor(UIProperties.APP_FG);
@@ -149,7 +180,7 @@ public class TextField extends JTextField implements ComponentSetup {
         g2D.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
         
         if (paintBorder) {
-            g2D.setColor(UIProperties.APP_FG);
+            g2D.setColor(getForeground());
             
             if (roundCorners)
                 g2D.drawRoundRect(1, 1, getWidth() - 2, getHeight() - 2, UIProperties.buttonRoundRadius, UIProperties.buttonRoundRadius);
@@ -157,12 +188,19 @@ public class TextField extends JTextField implements ComponentSetup {
                 g2D.drawRect(1, 1, getWidth() - 2, getHeight() - 2);
         }
         
-        g2D.setColor(UIProperties.APP_BGA);
+        g2D.setColor(getBackground());
 
-        if (roundCorners)
-            g2D.fillRoundRect(2, 2, getWidth() - 3, getHeight() - 3, UIProperties.buttonRoundRadius, UIProperties.buttonRoundRadius);
-        else
-            g2D.fillRect(2, 2, getWidth() - 3, getHeight() - 3);
+        if (paintBorder) {
+            if (roundCorners)
+                g2D.fillRoundRect(2, 2, getWidth() - 3, getHeight() - 3, UIProperties.buttonRoundRadius, UIProperties.buttonRoundRadius);
+            else
+                g2D.fillRect(2, 2, getWidth() - 3, getHeight() - 3);
+        } else {
+            if (roundCorners)
+                g2D.fillRoundRect(0, 0, getWidth(), getHeight(), UIProperties.buttonRoundRadius, UIProperties.buttonRoundRadius);
+            else
+                g2D.fillRect(0, 0, getWidth(), getHeight());
+        }
         
         super.paintComponent(g);
     }
@@ -177,7 +215,29 @@ public class TextField extends JTextField implements ComponentSetup {
         
         super.setPreferredSize(preferredSize);
     }
+    
+    /**
+     * Changes font type
+     * 
+     * @param fontType 
+     */
+    public void setFontType(LabelType fontType) {
+        this.fontType = fontType;
+        updateUIFont();
+        updateUITheme();
+    }
 
+    public void setVisibleBackground(boolean visibleBackground) {
+        this.visibleBackground = visibleBackground;
+        updateUITheme();
+    }
+
+    /**
+     * Sets the text for this component
+     * 
+     * @param t
+     * @param updateColor 
+     */
     public void setText(String t, boolean updateColor) {
         if (updateColor)
             togglePlaceholderTextVisibility();

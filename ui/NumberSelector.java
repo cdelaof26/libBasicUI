@@ -7,8 +7,11 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
+import javax.swing.Timer;
 import javax.swing.text.JTextComponent;
 import ui.enums.LabelType;
 import ui.enums.UIAlignment;
@@ -81,9 +84,37 @@ public class NumberSelector extends Panel {
     private final int increaseStep;
     private int value;
     
+    public boolean enableValueModifier = true;
+    
+    private int modifiedTimes = 0;
+    private boolean pressed = false;
+    private boolean increaseValue;
+    private final Timer slowValueModificator = new Timer(400, (Action) -> {
+        modValue();
+    });
+    private final Timer normalValueModificator = new Timer(200, (Action) -> {
+        modValue();
+    });
+    private final Timer fastValueModificator = new Timer(50, (Action) -> {
+        modValue();
+    });
+    
+    
     private final String regex;
 
-    
+    /**
+     * Creates a new NumberSelector with a placeholder value
+     * 
+     * @param text
+     * @param placeholderText
+     * @param defaultValue
+     * @param minimumValue
+     * @param maximumValue
+     * @param increaseStep
+     * @param componentsToUpdate optional components to update when the value changes
+     * @throws IllegalArgumentException throw if minimumValue is greater than maximumValue, 
+     * defaultValue is less than minimumValue or defaultValue is greater than maximumValue
+     */
     public NumberSelector(String text, String placeholderText, int defaultValue, int minimumValue, int maximumValue, int increaseStep, JComponent ... componentsToUpdate) throws IllegalArgumentException {
         super(200, 22);
         
@@ -102,6 +133,18 @@ public class NumberSelector extends Panel {
         initNumberSelector();
     }
     
+    /**
+     * Creates a new NumberSelector without a placeholder value
+     * 
+     * @param text
+     * @param defaultValue
+     * @param minimumValue
+     * @param maximumValue
+     * @param increaseStep
+     * @param componentsToUpdate optional components to update when the value changes
+     * @throws IllegalArgumentException throw if minimumValue is greater than maximumValue, 
+     * defaultValue is less than minimumValue or defaultValue is greater than maximumValue
+     */
     public NumberSelector(String text, int defaultValue, int minimumValue, int maximumValue, int increaseStep, JComponent ... componentsToUpdate) throws IllegalArgumentException {
         super(122, 22);
         
@@ -126,25 +169,49 @@ public class NumberSelector extends Panel {
         if (value < minimumValue || value > maximumValue)
             throw new IllegalArgumentException("Value is outside the range [" + minimumValue + ", " + maximumValue + "]");
         
-        increaseButton.addActionListener((Action) -> {
-            if (!numberField.isEditable())
-                return;
+        increaseButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                pressed = true;
+                increaseValue = true;
+                
+                if (enableValueModifier)
+                    modValue();
+                else
+                    modifyValue();
+            }
             
-            if (increaseStep > 0 && value < maximumValue || increaseStep < 0 && value > minimumValue)
-                value += increaseStep;
-            
-            numberField.setText("" + value, true);
-            updateValue(true);
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                pressed = false;
+                modifiedTimes = 0;
+                
+                slowValueModificator.stop();
+                normalValueModificator.stop();
+                fastValueModificator.stop();
+            }
         });
-        decreaseButton.addActionListener((Action) -> {
-            if (!numberField.isEditable())
-                return;
-            
-            if (increaseStep > 0 && value > minimumValue || increaseStep < 0 && value < maximumValue)
-                value -= increaseStep;
-            
-            numberField.setText("" + value, true);
-            updateValue(true);
+        decreaseButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                pressed = true;
+                increaseValue = false;
+                
+                if (enableValueModifier)
+                    modValue();
+                else
+                    modifyValue();
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                pressed = false;
+                modifiedTimes = 0;
+                
+                slowValueModificator.stop();
+                normalValueModificator.stop();
+                fastValueModificator.stop();
+            }
         });
         
         numberField.addKeyListener(new KeyAdapter() {
@@ -165,6 +232,58 @@ public class NumberSelector extends Panel {
         numberField.setPreferredSize(new Dimension(width - (2 * height + textLabel.getPreferredSize().width + 10), height));
         increaseButton.setPreferredSize(new Dimension(height, height));
         decreaseButton.setPreferredSize(new Dimension(height, height));
+    }
+    
+    private void modifyValue() {
+        if (!numberField.isEditable())
+            return;
+        
+        if (increaseValue) {
+            if (increaseStep > 0 && value < maximumValue || increaseStep < 0 && value > minimumValue)
+                value += increaseStep;
+            else {
+                slowValueModificator.stop();
+                normalValueModificator.stop();
+                fastValueModificator.stop();
+            }
+        } else {
+            if (increaseStep > 0 && value > minimumValue || increaseStep < 0 && value < maximumValue)
+                value -= increaseStep;
+            else {
+                slowValueModificator.stop();
+                normalValueModificator.stop();
+                fastValueModificator.stop();
+            }
+        }
+
+        numberField.setText("" + value, true);
+        updateValue(true);
+        
+        modifiedTimes++;
+    }
+    
+    private void modValue() {
+        if (!pressed) {
+            slowValueModificator.stop();
+            normalValueModificator.stop();
+            fastValueModificator.stop();
+            return;
+        }
+        
+        if (modifiedTimes < 5 && !slowValueModificator.isRunning())
+            slowValueModificator.start();
+        
+        if (modifiedTimes > 5 && modifiedTimes < 20 && !normalValueModificator.isRunning()) {
+            slowValueModificator.stop();
+            normalValueModificator.start();
+        }
+        
+        if (modifiedTimes > 20 && !fastValueModificator.isRunning()) {
+            normalValueModificator.stop();
+            fastValueModificator.start();
+        }
+        
+        modifyValue();
     }
     
     /**

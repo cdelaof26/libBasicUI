@@ -5,10 +5,12 @@ import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.Point;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.LinkedList;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
+import javax.swing.SpringLayout;
 import javax.swing.border.EmptyBorder;
 import ui.enums.ImageButtonArrangement;
 import ui.enums.UIAlignment;
@@ -20,15 +22,7 @@ import ui.enums.UIAlignment;
  */
 public class ContextMenu extends JPopupMenu implements ComponentSetup {
     protected final Panel viewContainer = new Panel();
-    protected final JScrollPane viewPanel = new JScrollPane() {
-//        @Override
-//        public void setPreferredSize(Dimension preferredSize) {
-//            preferredSize.width = (int) (preferredSize.width * UIProperties.uiScale);
-//            preferredSize.height = (int) (preferredSize.height * UIProperties.uiScale);
-//
-//            super.setPreferredSize(preferredSize);
-//        }
-    };
+    protected final JScrollPane viewPanel = new JScrollPane();
     
     protected int width = 120, height = 66;
     protected int padding = 0;
@@ -40,7 +34,8 @@ public class ContextMenu extends JPopupMenu implements ComponentSetup {
     private boolean slimElements = false;
     
     private String selection = "";
-    private final LinkedList<ImageButton> elements = new LinkedList<>();
+    private LinkedList<ImageButton> elements = new LinkedList<>();
+    private ImageButtonArrangement elementsArrange = ImageButtonArrangement.LEFT_TEXT_RIGHT_IMAGE;
     
     private final Component container;
     
@@ -92,8 +87,8 @@ public class ContextMenu extends JPopupMenu implements ComponentSetup {
             viewPanel.getVerticalScrollBar().setUI(new ColorScrollBarUI());
             viewPanel.getHorizontalScrollBar().setUI(new ColorScrollBarUI());
             
-            viewPanel.getVerticalScrollBar().setUnitIncrement((int) (22 * UIProperties.uiScale));
-            viewPanel.getHorizontalScrollBar().setUnitIncrement((int) (22 * UIProperties.uiScale));
+            viewPanel.getVerticalScrollBar().setUnitIncrement((int) (15 * UIProperties.uiScale));
+            viewPanel.getHorizontalScrollBar().setUnitIncrement((int) (15 * UIProperties.uiScale));
         }
         
         updateOptionsSize();
@@ -209,9 +204,20 @@ public class ContextMenu extends JPopupMenu implements ComponentSetup {
         this.slimElements = slimElements;
         updateOptionsSize();
     }
+
+    /**
+     * Changes ImageButton arrange, to be effective it must be settled before 
+     * adding options
+     * 
+     * @param elementsArrange 
+     * @see ImageButtonArrangement
+     */
+    public void setElementsArrange(ImageButtonArrangement elementsArrange) {
+        this.elementsArrange = elementsArrange;
+    }
     
     private void updateOptionsSize() {
-        int elementHeight = (useScrollPane || slimElements) ? 22 : 30;
+        int elementHeight = (useScrollPane || slimElements) ? 15 : 30;
         int containerHeight = elementHeight * elements.size() + padding;
         
         viewContainer.setPreferredSize(new Dimension((containerHeight <= height) ? width : width - 12, containerHeight));
@@ -232,25 +238,7 @@ public class ContextMenu extends JPopupMenu implements ComponentSetup {
         viewContainer.repaint();
     }
     
-    /**
-     * Adds a new option
-     * 
-     * @param text
-     * @param addPadding if true, a padding will be added between the new option 
-     * and the last (if any)
-     * @param actions actions performed by added option, can be null
-     */
-    public void addOption(String text, boolean addPadding, ActionListener ... actions) {
-        if (addPadding)
-            padding += 10;
-        
-        ImageButton c = new ImageButton(text, false, ImageButtonArrangement.LEFT_TEXT_RIGHT_IMAGE);
-        c.setRoundCorners(false);
-        c.addActionListener((Action) -> {
-            selection = text;
-            hideMenu();
-        });
-        
+    private void addOptionToViewContainer(ImageButton c, boolean addPadding, ActionListener ... actions) {
         if (actions != null)
             for (ActionListener l : actions)
                 c.addActionListener(l);
@@ -263,6 +251,28 @@ public class ContextMenu extends JPopupMenu implements ComponentSetup {
         elements.add(c);
         
         updateOptionsSize();
+    }
+    
+    /**
+     * Adds a new option
+     * 
+     * @param text
+     * @param addPadding if true, a padding will be added between the new option 
+     * and the last (if any)
+     * @param actions actions performed by added option, can be null
+     */
+    public void addOption(String text, boolean addPadding, ActionListener ... actions) {
+        if (addPadding)
+            padding += 10;
+        
+        ImageButton c = new ImageButton(text, false, elementsArrange);
+        c.setRoundCorners(false);
+        c.addActionListener((Action) -> {
+            selection = text;
+            hideMenu();
+        });
+        
+        addOptionToViewContainer(c, addPadding, actions);
     }
     
     /**
@@ -281,10 +291,10 @@ public class ContextMenu extends JPopupMenu implements ComponentSetup {
         if (addPadding)
             padding += 10;
         
-        ImageButton c = new ImageButton(text, false, ImageButtonArrangement.LEFT_TEXT_RIGHT_IMAGE);
+        ImageButton c = new ImageButton(text, false, elementsArrange);
         
-        c.setLightThemedImage(lightImage, areImagesBundled, 22, 22);
-        c.setDarkThemedImage(darkImage, areImagesBundled, 22, 22);
+        c.setLightThemedImage(lightImage, areImagesBundled, 15, 15);
+        c.setDarkThemedImage(darkImage, areImagesBundled, 15, 15);
         c.setHoverImage(hoverImage, areImagesBundled);
         
         c.setRoundCorners(false);
@@ -293,18 +303,37 @@ public class ContextMenu extends JPopupMenu implements ComponentSetup {
             hideMenu();
         });
         
-        if (actions != null)
-            for (ActionListener l : actions)
-                c.addActionListener(l);
+        addOptionToViewContainer(c, addPadding, actions);
+    }
+    
+    /**
+     * Adds a new option with BufferedImages
+     * 
+     * @param text
+     * @param lightImage image path or base64 string settled when light theme is active
+     * @param darkImage image path or base64 string settled when dark theme is active, can be null
+     * @param hoverImage image path or base64 string settled when mouse is over the option, can be null
+     * @param addPadding if true, a padding will be added between the new option 
+     * and the last (if any)
+     * @param actions actions performed by added option, can be null
+     */
+    public void addOption(String text, BufferedImage lightImage, BufferedImage darkImage, BufferedImage hoverImage, boolean addPadding, ActionListener ... actions) {
+        if (addPadding)
+            padding += 10;
         
-        if (elements.isEmpty())
-            viewContainer.add(c, viewContainer, viewContainer, UIAlignment.WEST, UIAlignment.WEST, 0, UIAlignment.NORTH, UIAlignment.NORTH, addPadding ? 10 : 0);
-        else
-            viewContainer.add(c, viewContainer, elements.getLast(), UIAlignment.WEST, UIAlignment.WEST, 0, UIAlignment.NORTH, UIAlignment.SOUTH, addPadding ? 10 : 0);
+        ImageButton c = new ImageButton(text, false, elementsArrange);
         
-        elements.add(c);
+        c.setLightThemedImage(lightImage, 15, 15);
+        c.setDarkThemedImage(darkImage, 15, 15);
+        c.setHoverImage(hoverImage);
         
-        updateOptionsSize();
+        c.setRoundCorners(false);
+        c.addActionListener((Action) -> {
+            selection = text;
+            hideMenu();
+        });
+        
+        addOptionToViewContainer(c, addPadding, actions);
     }
     
     /**
@@ -322,10 +351,10 @@ public class ContextMenu extends JPopupMenu implements ComponentSetup {
         if (addPadding)
             padding += 10;
         
-        ImageButton c = new ImageButton(text, false, ImageButtonArrangement.LEFT_TEXT_RIGHT_IMAGE);
+        ImageButton c = new ImageButton(text, false, elementsArrange);
         
-        c.setLightThemedImage(lightImage, 22, 22);
-        c.setDarkThemedImage(darkImage, 22, 22);
+        c.setLightThemedImage(lightImage, 15, 15);
+        c.setDarkThemedImage(darkImage, 15, 15);
         c.setHoverImage(hoverImage);
         
         c.setRoundCorners(false);
@@ -334,17 +363,29 @@ public class ContextMenu extends JPopupMenu implements ComponentSetup {
             hideMenu();
         });
         
-        if (actions != null)
-            for (ActionListener l : actions)
-                c.addActionListener(l);
+        addOptionToViewContainer(c, addPadding, actions);
+    }
+    
+    public void removeAllOptions() {
+        for (ImageButton b : elements)
+            viewContainer.remove(b);
         
-        if (elements.isEmpty())
-            viewContainer.add(c, viewContainer, viewContainer, UIAlignment.WEST, UIAlignment.WEST, 0, UIAlignment.NORTH, UIAlignment.NORTH, addPadding ? 10 : 0);
-        else
-            viewContainer.add(c, viewContainer, elements.getLast(), UIAlignment.WEST, UIAlignment.WEST, 0, UIAlignment.NORTH, UIAlignment.SOUTH, addPadding ? 10 : 0);
+        elements = new LinkedList<>();
         
-        elements.add(c);
+        viewContainer.revalidate();
+        viewContainer.repaint();
+    }
+    
+    public void removeOption(int index) {
+        ImageButton option = elements.remove(index);
         
+        if (elements.size() > index)
+            if (index == 0)
+                viewContainer.layout.putConstraint(SpringLayout.NORTH, elements.get(index), 0, SpringLayout.NORTH, viewContainer);
+            else
+                viewContainer.layout.putConstraint(SpringLayout.NORTH, elements.get(index), 0, SpringLayout.SOUTH, elements.get(index - 1));
+        
+        viewContainer.remove(option);
         updateOptionsSize();
     }
 }

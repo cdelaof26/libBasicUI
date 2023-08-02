@@ -14,15 +14,15 @@ import javax.swing.JLabel;
  * @author cristopher
  */
 public class Label extends JLabel implements ComponentSetup {
-    private LabelType labelType;
+    private LabelType fontType;
     
     /**
      * Creates a new Label without text
      * 
-     * @param labelType 
+     * @param fontType 
      */
-    public Label(LabelType labelType) {
-        this.labelType = labelType;
+    public Label(LabelType fontType) {
+        this.fontType = fontType;
         
         initUI();
     }
@@ -30,13 +30,13 @@ public class Label extends JLabel implements ComponentSetup {
     /**
      * Creates a new Label with text
      * 
-     * @param labelType
+     * @param fontType
      * @param text 
      */
-    public Label(LabelType labelType, String text) {
+    public Label(LabelType fontType, String text) {
         super(text);
         
-        this.labelType = labelType;
+        this.fontType = fontType;
         
         initUI();
     }
@@ -56,7 +56,7 @@ public class Label extends JLabel implements ComponentSetup {
 
     @Override
     public void updateUIFont() {
-        switch (labelType) {
+        switch (fontType) {
             case TITLE:
                 setFont(UIProperties.APP_TITLE_FONT);
             break;
@@ -80,7 +80,7 @@ public class Label extends JLabel implements ComponentSetup {
 
     @Override
     public void updateUITheme() {
-        if (labelType == LabelType.WARNING_LABEL)
+        if (fontType == LabelType.WARNING_LABEL)
             setForeground(UIProperties.APP_FGW);
         else
             setForeground(UIProperties.APP_FG);
@@ -112,10 +112,10 @@ public class Label extends JLabel implements ComponentSetup {
     /**
      * Changes font type
      * 
-     * @param labelType 
+     * @param fontType 
      */
-    public void setLabelType(LabelType labelType) {
-        this.labelType = labelType;
+    public void setLabelType(LabelType fontType) {
+        this.fontType = fontType;
         updateUIFont();
     }
 

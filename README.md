@@ -86,6 +86,30 @@ $ java -Dfile.encoding=UTF-8 -jar libBasicUI.jar
 
 ### Changelog
 
+### v0.0.4
+- Added `paint` attribute to `ColorButton`, setting `paint` to false will disable 
+  the hover effect, making the button look like a `Label`
+- Added `setElementsArrange()`, `removeOption()` and `removeAllOptions()` methods to 
+  `ContextMenu`
+- Added `FileChooser`, a basic file chooser using custom painting!
+- `ImageButton`:
+  - Added `RIGHT_TEXT_RIGHT_IMAGE` and `LEFT_TEXT_LEFT_IMAGE` distributions 
+  - Now it's possible to change the `arrangement`
+  - Added methods to change image using `BufferedImage`
+  - Added method `setImageDimension()`
+- Implemented auto increase/decrease mechanism to `NumberSelector` [**WIP**]
+  - When up or down buttons are pressed for 400 ms, the value will go up or down.
+    Pressing it for more time will accelerate the value change
+  - Auto increase/decrease behavior can be disabled by setting `enableValueModifier` 
+    to false
+- `ProgressBar` changes its UI faster
+- Added `visibleBackground` and `fontType` attributes to `TextField`
+  - `visibleBackground` sets the background to `null` if false, making
+    it look transparent as if it were a `Label`
+  - `fontType` allows the `TextField` to have a different fonts
+- Moved `joinPath()`, `readFile()` and `writeFile()` methods from `LibUtilities` to 
+  `FileUtilities`
+
 ### v0.0.3
 - Implemented `CheckField`, an easier way to add a checkbox with a label
 - Added `componentsToUpdate` to `ColorPicker`

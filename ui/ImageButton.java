@@ -65,7 +65,7 @@ public class ImageButton extends ColorButton {
      */
     public ImageButton(String text, boolean useBoldFont, ImageButtonArrangement arrangement) throws IllegalArgumentException {
         if (arrangement == ImageButtonArrangement.ONLY_IMAGE || arrangement == ImageButtonArrangement.ONLY_TINY_IMAGE)
-            throw new IllegalArgumentException("ONLY_IMAGE and ONLY_TINY_IMAGE doesn't support text");
+            throw new IllegalArgumentException("ONLY_IMAGE and ONLY_TINY_IMAGE don't support text");
         
         this.arrangement = arrangement;
         this.textLabel = new Label(useBoldFont ? LabelType.BOLD_BODY : LabelType.BODY, text) {
@@ -116,6 +116,8 @@ public class ImageButton extends ColorButton {
                     width = 50;
                     height = width;
                 break;
+                case LEFT_TEXT_LEFT_IMAGE:
+                case RIGHT_TEXT_RIGHT_IMAGE:
                 case LEFT_TEXT_RIGHT_IMAGE:
                 case RIGHT_TEXT_LEFT_IMAGE:
                 case CENTER_TEXT_RIGHT_IMAGE:
@@ -137,6 +139,10 @@ public class ImageButton extends ColorButton {
                     throw new UnsupportedOperationException("Unsupported arrangement");
             }
 
+            layout.removeLayoutComponent(imageLabel);
+            if (textLabel != null)
+                layout.removeLayoutComponent(textLabel);
+            
             setPreferredSize(new Dimension(width, height));
             oldArrangement = arrangement;
         }
@@ -182,6 +188,22 @@ public class ImageButton extends ColorButton {
             layout.putConstraint(SpringLayout.VERTICAL_CENTER, imageLabel, 0, SpringLayout.VERTICAL_CENTER, this);
             
             layout.putConstraint(SpringLayout.EAST, textLabel, (int) (-10 * UIProperties.uiScale), SpringLayout.EAST, this);
+            layout.putConstraint(SpringLayout.VERTICAL_CENTER, textLabel, 0, SpringLayout.VERTICAL_CENTER, this);
+        }
+        
+        if (arrangement == ImageButtonArrangement.LEFT_TEXT_LEFT_IMAGE) {
+            layout.putConstraint(SpringLayout.WEST, imageLabel, (int) (10 * UIProperties.uiScale), SpringLayout.WEST, this);
+            layout.putConstraint(SpringLayout.VERTICAL_CENTER, imageLabel, 0, SpringLayout.VERTICAL_CENTER, this);
+            
+            layout.putConstraint(SpringLayout.WEST, textLabel, (int) (10 * UIProperties.uiScale), SpringLayout.EAST, imageLabel);
+            layout.putConstraint(SpringLayout.VERTICAL_CENTER, textLabel, 0, SpringLayout.VERTICAL_CENTER, this);
+        }
+        
+        if (arrangement == ImageButtonArrangement.RIGHT_TEXT_RIGHT_IMAGE) {
+            layout.putConstraint(SpringLayout.EAST, imageLabel, (int) (-10 * UIProperties.uiScale), SpringLayout.EAST, this);
+            layout.putConstraint(SpringLayout.VERTICAL_CENTER, imageLabel, 0, SpringLayout.VERTICAL_CENTER, this);
+            
+            layout.putConstraint(SpringLayout.EAST, textLabel, (int) (-10 * UIProperties.uiScale), SpringLayout.WEST, imageLabel);
             layout.putConstraint(SpringLayout.VERTICAL_CENTER, textLabel, 0, SpringLayout.VERTICAL_CENTER, this);
         }
         
@@ -256,7 +278,6 @@ public class ImageButton extends ColorButton {
     
     @Override
     public void setText(String text) {
-        System.out.println("set " + text);
         textLabel.setText(text);
     }
 
@@ -293,6 +314,22 @@ public class ImageButton extends ColorButton {
     }
     
     private void updateButton() {
+        if (!paint) {
+            if (textLabel != null)
+                textLabel.setForeground(FGColor);
+            
+            if (lightThemedImage != null)
+                if (darkThemedImage != null)
+                    if (UIProperties.isLightThemeActive())
+                        imageLabel.setIcon(LibUtilities.scaleImage(lightThemedImage, (int) (imageWidth * UIProperties.uiScale), (int) (imageHeight * UIProperties.uiScale)));
+                    else
+                        imageLabel.setIcon(LibUtilities.scaleImage(darkThemedImage, (int) (imageWidth * UIProperties.uiScale), (int) (imageHeight * UIProperties.uiScale)));
+                else
+                    imageLabel.setIcon(LibUtilities.scaleImage(lightThemedImage, (int) (imageWidth * UIProperties.uiScale), (int) (imageHeight * UIProperties.uiScale)));
+            
+            return;
+        }
+        
         // TODO
         // Fix colors when theme is changed if update is through a mouse listener
         
@@ -341,10 +378,14 @@ public class ImageButton extends ColorButton {
     @Override
     public void setPaintAsHovering(boolean paintAsHovering) {
         this.paintAsHovering = paintAsHovering;
+        super.setPaintAsHovering(paintAsHovering);
         updateButton();
     }
 
-    
+    public void setArrangement(ImageButtonArrangement arrangement) {
+        this.arrangement = arrangement;
+        updateUISize();
+    }
     
     /**
      * Set an image from a file, the image will be show if dark theme is active<br>
@@ -370,8 +411,8 @@ public class ImageButton extends ColorButton {
     }
     
     /**
-     * Set an image from a base64 String, the image will be show if dark theme
-     * is active
+     * Set an image from a base64 String or a package path, the image will be 
+     * show if dark theme is active
      * 
      * @param imageData image path or base64 codified data
      * @param bundledImage set true if <code>imageData</code> is a package path
@@ -384,6 +425,27 @@ public class ImageButton extends ColorButton {
         else
             darkThemedImage = LibUtilities.loadBase64StringAsImage(imageData);
         
+        if (darkThemedImage == null)
+            return;
+        
+        imageWidth = (width < 1) ? darkThemedImage.getWidth() : width;
+        imageHeight = (height < 1) ? darkThemedImage.getHeight() : height;
+        
+        width = (int) (imageWidth * UIProperties.uiScale);
+        height = (int) (imageHeight * UIProperties.uiScale);
+        
+        imageLabel.setIcon(LibUtilities.scaleImage(darkThemedImage, width, height));
+    }
+    
+    /**
+     * Set an image from a BufferedImage
+     * 
+     * @param image
+     * @param width use -1 to render the image with its original width
+     * @param height use -1 to render the image with its original height
+     */
+    public void setDarkThemedImage(BufferedImage image, int width, int height) {
+        darkThemedImage = image;
         if (darkThemedImage == null)
             return;
         
@@ -420,8 +482,8 @@ public class ImageButton extends ColorButton {
     }
     
     /**
-     * Set an image from a base64 String, the image will be show if light theme
-     * is active
+     * Set an image from a base64 String or a package path, the image will be 
+     * show if light theme is active
      * 
      * @param imageData image path or base64 codified data
      * @param bundledImage set true if <code>imageData</code> is a package path
@@ -434,6 +496,27 @@ public class ImageButton extends ColorButton {
         else
             lightThemedImage = LibUtilities.loadBase64StringAsImage(imageData);
         
+        if (lightThemedImage == null)
+            return;
+        
+        imageWidth = (width < 1) ? lightThemedImage.getWidth() : width;
+        imageHeight = (height < 1) ? lightThemedImage.getHeight() : height;
+        
+        width = (int) (imageWidth * UIProperties.uiScale);
+        height = (int) (imageHeight * UIProperties.uiScale);
+        
+        imageLabel.setIcon(LibUtilities.scaleImage(lightThemedImage, width, height));
+    }
+    
+    /**
+     * Set an image from a BufferedImage
+     * 
+     * @param image
+     * @param width use -1 to render the image with its original width
+     * @param height use -1 to render the image with its original height
+     */
+    public void setLightThemedImage(BufferedImage image, int width, int height) {
+        lightThemedImage = image;
         if (lightThemedImage == null)
             return;
         
@@ -468,7 +551,26 @@ public class ImageButton extends ColorButton {
         else
             hoverImage = LibUtilities.loadBase64StringAsImage(imageData);
     }
+    
+    /**
+     * Set an image from a BufferedImage
+     * 
+     * @param image
+     */
+    public void setHoverImage(BufferedImage image) {
+        hoverImage = image;
+    }
 
+    public void setImageDimension(int width, int height) {
+        if (width < 0 || height < 0)
+            return;
+        
+        imageWidth = width;
+        imageHeight = height;
+        
+        updateButton();
+    }
+    
     /**
      * If set true, this button only will be triggered if user clicks on the image<br>
      * Any ActionListener added before changing this won't be affected, <br>

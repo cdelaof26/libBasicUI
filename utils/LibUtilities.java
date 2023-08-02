@@ -5,15 +5,13 @@ import java.awt.Dimension;
 import java.awt.FileDialog;
 import java.awt.Font;
 import java.awt.Image;
+import java.awt.Toolkit;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -37,6 +35,9 @@ import ui.Window;
 public class LibUtilities {
     private static boolean init = false;
     
+    /**
+     * Available preferences for libBasicUI
+     */
     public enum Preferences {
         APPEARANCE, USE_ACCENT_COLORS, PRIMARY_COLOR, SECONDARY_COLOR, FOREGROUND_COLOR, 
         FONT_FAMILY, TITLE_FONT_WIDTH, SUBTITLE_FONT_WIDTH, STANDARD_FONT_WIDTH, UI_SCALE
@@ -61,7 +62,7 @@ public class LibUtilities {
         
         init = true;
         
-        System.out.println("[INFO] libBasicUI v0.0.3");
+        System.out.println("[INFO] libBasicUI v0.0.4");
         System.out.println("[INFO] LibUtilities initialized!");
     }
     
@@ -76,14 +77,28 @@ public class LibUtilities {
     private static final AffineTransform affinetransform = new AffineTransform();     
     private static final FontRenderContext frc = new FontRenderContext(affinetransform, true, true);
     
+    public static final int MOD_KEY = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
+    
     public static final String SYSTEM_NAME = System.getProperty("os.name");
     public static final String USER_HOME = System.getProperty("user.home");
     public static final boolean IS_UNIX_LIKE = !SYSTEM_NAME.startsWith("Windows");
-    public static final String SYSTEM_ANCHOR = System.getProperty("file.separator");
     
-    private static final File WIN_PATH = joinPath(USER_HOME, "AppData", "Local", "libBasicUI");
-    private static final File UNIX_PATH = joinPath(USER_HOME, ".libBasicUI");
     
+    private static final File WIN_PATH = FileUtilities.joinPath(USER_HOME, "AppData", "Local", "libBasicUI");
+    private static final File UNIX_PATH = FileUtilities.joinPath(USER_HOME, ".libBasicUI");
+    
+    /**
+     * File where libBasicUI will store its preferences, it can be found in:<br>
+     * - Windows:<br>
+     * <blockquote>C:\Users\USER_NAME\AppData\Local\libBasicUI</blockquote><br>
+     * 
+     * - macOS:<br>
+     * <blockquote>/Users/USER_NAME/.libBasicUI</blockquote><br>
+     * 
+     * - Linux:<br>
+     * <blockquote>/home/USER_NAME/.libBasicUI</blockquote>
+     * @see Preferences
+     */
     public static final File LIB_PREFERENCES_FILE = !IS_UNIX_LIKE ? WIN_PATH : UNIX_PATH;
     
     public static final HashMap<String, String> DEFAULT_PREFERENCES = new HashMap<>();
@@ -109,34 +124,6 @@ public class LibUtilities {
      */
     public static String getFontName() {
         return fontName;
-    }
-    
-    /**
-     * Joins a string path
-     * 
-     * @param path the base
-     * @param paths the strings to concatenate
-     * @return a file within a pathname composed by <code>path</code> and <code>paths</code>
-     */
-    public static File joinPath(String path, String ... paths) {
-        if (path.endsWith(SYSTEM_ANCHOR))
-            path = path.substring(0, path.length());
-        
-        for (String p : paths)
-            path += SYSTEM_ANCHOR + p;
-        
-        return new File(path);
-    }
-    
-    /**
-     * Joins a file path
-     * 
-     * @param f the base
-     * @param paths the strings to concatenate
-     * @return a file within a pathname composed by <code>f</code> and <code>paths</code>
-     */
-    public static File joinPath(File f, String ... paths) {
-        return joinPath(f.getAbsolutePath(), paths);
     }
     
     /**
@@ -239,6 +226,14 @@ public class LibUtilities {
         return new ByteArrayInputStream(decoder.decode(data));
     }
     
+    /**
+     * Calculates the size of a string given a font
+     * 
+     * @param text
+     * @param font
+     * @return a new dimension
+     * @see FontRenderContext
+     */
     public static Dimension getTextDimensions(String text, Font font) {
         Rectangle2D r2D = font.getStringBounds(text, frc);
         
@@ -247,7 +242,8 @@ public class LibUtilities {
     
     
     /**
-     * Adds a keybinding to the c component
+     * Adds a keybinding to the c component, by default key bindings added with
+     * this method will be invoked WHEN_IN_FOCUSED_WINDOW
      * @param c
      * @param name
      * @param keySequense
@@ -255,6 +251,47 @@ public class LibUtilities {
      */
     public static void addKeyBindingTo(JComponent c, String name, String keySequense, AbstractAction action) { 
         c.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(keySequense), name);
+        c.getActionMap().put(name, action);
+    }
+    
+    /**
+     * Adds a keybinding to the c component
+     * @param c
+     * @param name
+     * @param keySequense
+     * @param onlyWhenFocused if true, JComponent.WHEN_FOCUSED is settled 
+     * otherwise WHEN_IN_FOCUSED_WINDOW
+     * @param action 
+     */
+    public static void addKeyBindingTo(JComponent c, String name, String keySequense, boolean onlyWhenFocused, AbstractAction action) { 
+        c.getInputMap(onlyWhenFocused ? JComponent.WHEN_FOCUSED : JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(keySequense), name);
+        c.getActionMap().put(name, action);
+    }
+    
+    /**
+     * Adds a keybinding to the c component, by default key bindings added with
+     * this method will be invoked WHEN_IN_FOCUSED_WINDOW
+     * @param c
+     * @param name
+     * @param keySequense
+     * @param action 
+     */
+    public static void addKeyBindingTo(JComponent c, String name, KeyStroke keySequense, AbstractAction action) { 
+        c.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(keySequense, name);
+        c.getActionMap().put(name, action);
+    }
+    
+    /**
+     * Adds a keybinding to the c component
+     * @param c
+     * @param name
+     * @param keySequense
+     * @param onlyWhenFocused if true, JComponent.WHEN_FOCUSED is settled 
+     * otherwise WHEN_IN_FOCUSED_WINDOW
+     * @param action 
+     */
+    public static void addKeyBindingTo(JComponent c, String name, KeyStroke keySequense, boolean onlyWhenFocused, AbstractAction action) { 
+        c.getInputMap(onlyWhenFocused ? JComponent.WHEN_FOCUSED : JComponent.WHEN_IN_FOCUSED_WINDOW).put(keySequense, name);
         c.getActionMap().put(name, action);
     }
     
@@ -273,12 +310,50 @@ public class LibUtilities {
     }
     
     /**
+     * Joins a string path
+     * 
+     * @param path the base
+     * @param paths the strings to concatenate
+     * @return a file within a pathname composed by <code>path</code> and <code>paths</code>
+     * @deprecated please use <code>FileUtils.joinPath()<code> instead
+     * @see FileUtilities#joinPath(java.lang.String, java.lang.String[])
+     */
+    @Deprecated
+    public static File joinPath(String path, String ... paths) {
+        return FileUtilities.joinPath(path, paths);
+    }
+    
+    /**
+     * Joins a file path
+     * 
+     * @param f the base
+     * @param paths the strings to concatenate
+     * @return a file within a pathname composed by <code>f</code> and <code>paths</code>
+     * @deprecated please use <code>FileUtils.joinPath()<code> instead
+     * @see FileUtilities#joinPath(java.io.File, java.lang.String[])
+     */
+    @Deprecated
+    public static File joinPath(File f, String ... paths) {
+        return FileUtilities.joinPath(f.getAbsolutePath(), paths);
+    }
+    
+    /**
      * Displays a FileDialog to pick a file from user
      * 
+     * @param path the path where the file dialog will be located, set to null 
+     * to use the last location
+     * @param selectDirectory
      * @see FileDialog
      * @return <code>File</code> or null
+     * @deprecated please use <code>FileChooser</code> instead
      */
-    public static File getFile() {
+    @Deprecated
+    public static File getFile(File path, boolean selectDirectory) {
+        fileDialog.setFile(selectDirectory ? "*." : null);
+        
+        if (path != null)
+            fileDialog.setDirectory(path.getAbsolutePath());
+        
         fileDialog.setTitle("Select a file");
         fileDialog.setMultipleMode(false);
         fileDialog.setVisible(true);
@@ -286,16 +361,24 @@ public class LibUtilities {
         if (data == null)
             return null;
         
-        return joinPath(fileDialog.getDirectory(), data);
+        return FileUtilities.joinPath(fileDialog.getDirectory(), data);
     }
     
     /**
      * Displays a FileDialog to pick files from user
      * 
+     * @param path the path where the file dialog will be located, set to null 
+     * to use the last location
      * @see FileDialog
      * @return <code>File</code> array or null
+     * @deprecated please use <code>FileChooser</code> instead
+     * @see ui.filebrowser.FileChooser
      */
-    public static File [] getFiles() {
+    @Deprecated
+    public static File [] getFiles(File path) {
+        if (path != null)
+            fileDialog.setDirectory(path.getAbsolutePath());
+        
         fileDialog.setTitle("Select file(s)");
         fileDialog.setMultipleMode(true);
         fileDialog.setVisible(true);
@@ -308,23 +391,12 @@ public class LibUtilities {
      * 
      * @param file file path
      * @return an string of file contents
+     * @deprecated please use <code>FileUtils.readFile()</code> instead
+     * @see FileUtilities#readFile
      */
+    @Deprecated
     public static String readFile(File file) {
-        if (!file.exists() || !file.canRead())
-            return "";
-        
-        String data = "";
-
-        try (BufferedReader bufferedReader = new BufferedReader(new FileReader(file))) {
-            while (bufferedReader.ready())
-                data += bufferedReader.readLine() + "\n";
-            
-            return data;
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
-        
-        return "";
+        return FileUtilities.readFile(file);
     }
     
     /**
@@ -333,17 +405,12 @@ public class LibUtilities {
      * @param file file path
      * @param data string to write
      * @return true if success otherwise false
+     * @deprecated please use <code>FileUtils.writeFile()</code> instead
+     * @see FileUtilities#writeFile
      */
+    @Deprecated
     public static boolean writeFile(File file, String data) {
-        try (FileWriter fileWriter = new FileWriter(file)) {
-            fileWriter.write(data);
-            
-            return true;
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
-        
-        return false;
+        return FileUtilities.writeFile(file, data);
     }
     
     /**
@@ -463,6 +530,12 @@ public class LibUtilities {
         );
     }
     
+    /**
+     * This will save all UI preferences inside a file
+     * @return true if success
+     * @see Preferences
+     * @see LIB_PREFERENCES_FILE
+     */
     public static boolean savePreferences() {
         if (!LIB_PREFERENCES_FILE.exists())
             try {
@@ -477,9 +550,13 @@ public class LibUtilities {
         
         compilePreferences();
         
-        return writeFile(LIB_PREFERENCES_FILE, preferences.toString());
+        return FileUtilities.writeFile(LIB_PREFERENCES_FILE, preferences.toString());
     }
     
+    /**
+     * This will restore to default all UI preferences
+     * @see Preferences
+     */
     public static void loadDefaultPreferences() {
         DEFAULT_PREFERENCES.forEach(
             (key, value) -> setPreference(key, value)
@@ -488,6 +565,14 @@ public class LibUtilities {
         preferences = DEFAULT_PREFERENCES;
     }
     
+    /**
+     * Loads library preferences such as fonts, colors and selected size
+     * 
+     * @param preferencesWindow preferences window is needed to update the main 
+     * window and any other component, it can be null
+     * @return true if preferences were loaded and settled
+     * @see Preferences
+     */
     public static boolean loadPreferences(UIPreferences preferencesWindow) {
         if (!LIB_PREFERENCES_FILE.exists()) {
             loadDefaultPreferences();
@@ -500,7 +585,7 @@ public class LibUtilities {
         if (!LIB_PREFERENCES_FILE.canRead())
             return false;
         
-        String data = readFile(LIB_PREFERENCES_FILE).replace("\n", "");
+        String data = FileUtilities.readFile(LIB_PREFERENCES_FILE).replace("\n", "");
         if (data.replace(" ", "").isEmpty())
             return false;
         

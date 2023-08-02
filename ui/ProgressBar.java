@@ -63,17 +63,19 @@ public class ProgressBar extends JComponent implements ComponentSetup {
     private int indeterminatedPosition = 2;
     private int barWidth = 40;
     private int currentBarLength = 0;
+    private int wait = 0;
+    private int waitLimit = 20;
     private boolean barWidthAccomplished = false;
     private final boolean [] animationRunning = {true, false};
     private boolean animationStarting = true;
     private boolean indeterminatedEnded = true;
     private boolean indeterminate = false;
     
-    private Timer progressUpdater = new Timer(5, (Action) -> {
+    private Timer progressUpdater = new Timer(3, (Action) -> {
         repaint();
     });
     
-    private Timer indeterminatedUpdater = new Timer(7, (Action) -> {
+    private Timer indeterminatedUpdater = new Timer(4, (Action) -> {
         repaint();
     });
     
@@ -116,7 +118,9 @@ public class ProgressBar extends JComponent implements ComponentSetup {
     @Override
     public final void initUI() {
         if (minimumValue > maximumValue)
-            throw new IllegalArgumentException("Minimum value cannot be greather than maximum value");
+            throw new IllegalArgumentException("Minimum value cannot be greater than maximum value");
+        if (maximumValue <= 0)
+            throw new IllegalArgumentException("Maximum value must be greater than zero");
         
         if (orientation == UIOrientation.VERTICAL) {
             width = 11;
@@ -149,11 +153,15 @@ public class ProgressBar extends JComponent implements ComponentSetup {
         progressUpdater.stop();
         indeterminatedUpdater.stop();
         
-        progressUpdater = new Timer(UIProperties.uiScale <= 1f ? (int) (7 - (UIProperties.uiScale * 2)) : (int) (7 - (UIProperties.uiScale * 3)), (Action) -> {
+        waitLimit = UIProperties.uiScale <= 1f ? 20 : UIProperties.uiScale <= 1.3f ? (int) (20 * UIProperties.uiScale * 2) : (int) (20 * UIProperties.uiScale * 3);
+        
+        int progressUpdaterSpeed = UIProperties.uiScale <= 1f ? (int) (5 - (UIProperties.uiScale * 2)) : (int) (7 - (UIProperties.uiScale * 3));
+        progressUpdater = new Timer(progressUpdaterSpeed, (Action) -> {
             repaint();
         });
     
-        indeterminatedUpdater = new Timer(UIProperties.uiScale <= 1f ? (int) (9 - (UIProperties.uiScale * 2)) : (int) (9 - (UIProperties.uiScale * 3)), (Action) -> {
+        int indeterminatedUpdaterSpeed = UIProperties.uiScale <= 1f ? (int) (6 - (UIProperties.uiScale * 2)) : (int) (8 - (UIProperties.uiScale * 3));
+        indeterminatedUpdater = new Timer(indeterminatedUpdaterSpeed, (Action) -> {
             repaint();
         });
         
@@ -314,8 +322,15 @@ public class ProgressBar extends JComponent implements ComponentSetup {
             if (currentBarLength < barWidth && !barWidthAccomplished) {
                 animationStarting = false;
                 
+                if (wait < waitLimit) {
+                    wait++;
+                    return;
+                }
+                
                 currentBarLength++;
             } else if (indeterminatedPosition + barWidth < width - 3) {
+                wait = 0;
+                
                 barWidthAccomplished = true;
                 indeterminatedPosition++;
                 
@@ -339,9 +354,16 @@ public class ProgressBar extends JComponent implements ComponentSetup {
         
         if (animationRunning[1])
             if (currentBarLength < barWidth && !barWidthAccomplished) {
+                if (wait < waitLimit) {
+                    wait++;
+                    return;
+                }
+                
                 indeterminatedPosition--;
                 currentBarLength++;
             } else if (indeterminatedPosition > 2) {
+                wait = 0;
+                
                 barWidthAccomplished = true;
                 indeterminatedPosition--;
                 
@@ -398,9 +420,16 @@ public class ProgressBar extends JComponent implements ComponentSetup {
             if (currentBarLength < barWidth && !barWidthAccomplished) {
                 animationStarting = false;
                 
+                if (wait < waitLimit) {
+                    wait++;
+                    return;
+                }
+                
                 currentBarLength++;
                 indeterminatedPosition--;
             } else if (indeterminatedPosition > 2) {
+                wait = 0;
+                
                 barWidthAccomplished = true;
                 indeterminatedPosition--;
                 
@@ -423,8 +452,15 @@ public class ProgressBar extends JComponent implements ComponentSetup {
         
         if (animationRunning[1])
             if (currentBarLength < barWidth && !barWidthAccomplished) {
+                if (wait < waitLimit) {
+                    wait++;
+                    return;
+                }
+                
                 currentBarLength++;
             } else if (indeterminatedPosition + barWidth < height - 2) {
+                wait = 0;
+                
                 barWidthAccomplished = true;
                 indeterminatedPosition++;
                 
@@ -546,6 +582,8 @@ public class ProgressBar extends JComponent implements ComponentSetup {
     public void setMaximumValue(int maximumValue) {
         if (minimumValue > maximumValue)
             throw new IllegalArgumentException("Minimum value cannot be greater than maximum value");
+        if (maximumValue <= 0)
+            throw new IllegalArgumentException("Maximum value must be greater than zero");
         
         this.maximumValue = maximumValue;
     }

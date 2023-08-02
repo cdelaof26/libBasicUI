@@ -35,6 +35,16 @@ public enum ImageButtonArrangement {
      */
     LEFT_TEXT_RIGHT_IMAGE, 
     /**
+     * Recommended image size: 15x15<br>
+     * Image is at right, text is at image's left
+     */
+    RIGHT_TEXT_RIGHT_IMAGE, 
+    /**
+     * Recommended image size: 15x15<br>
+     * Image is at left, text is at image's right
+     */
+    LEFT_TEXT_LEFT_IMAGE, 
+    /**
      * Recommended image size: 25x25
      */
     UP_IMAGE, 
