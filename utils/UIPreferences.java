@@ -58,7 +58,7 @@ public class UIPreferences extends Dialog {
     
     
     public UIPreferences(Window mainWindow) {
-        super(450, 365);
+        super(450, 335);
         
         this.mainWindow = mainWindow;
         

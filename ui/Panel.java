@@ -26,7 +26,7 @@ public class Panel extends JPanel implements ComponentSetup {
     
     
     /**
-     * Creates a new JPanel given a width and height
+     * Creates a new Panel given a width and height
      * 
      * @param width
      * @param height 
@@ -39,12 +39,12 @@ public class Panel extends JPanel implements ComponentSetup {
     }
 
     /**
-     * Creates a new JPanel without specifying its dimensions
+     * Creates a new Panel without specifying its dimensions
      */
     public Panel() {
         initUI();
     }
-
+    
     @Override
     public final void initUI() {
         setLayout(layout);

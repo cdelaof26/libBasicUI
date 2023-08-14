@@ -1,7 +1,7 @@
 package ui.enums;
 
 /**
- * Alignment for UI elements see {@link SpringLayout}
+ * Alignment for UI elements see {@link javax.swing.SpringLayout}
  * 
  * @author cristopher
  */

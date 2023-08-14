@@ -18,6 +18,7 @@ import java.net.URL;
 import java.util.Base64;
 import java.util.Base64.Decoder;
 import java.util.HashMap;
+import java.util.LinkedList;
 import javax.imageio.ImageIO;
 import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
@@ -33,20 +34,27 @@ import ui.Window;
  * @author cristopher
  */
 public class LibUtilities {
-    private static boolean init = false;
-    
     /**
      * Available preferences for libBasicUI
      */
-    public enum Preferences {
+    public static enum Preferences {
         APPEARANCE, USE_ACCENT_COLORS, PRIMARY_COLOR, SECONDARY_COLOR, FOREGROUND_COLOR, 
         FONT_FAMILY, TITLE_FONT_WIDTH, SUBTITLE_FONT_WIDTH, STANDARD_FONT_WIDTH, UI_SCALE
     }
     
+    public static final String OS_ARCH = System.getProperty("os.arch");
+    public static final String SYSTEM_NAME = System.getProperty("os.name");
+    public static final String USER_HOME = System.getProperty("user.home");
+    public static final boolean IS_UNIX_LIKE = !SYSTEM_NAME.startsWith("Windows");
+    public static final boolean IS_MACOS = SYSTEM_NAME.startsWith("Mac");
+    
+    public static final HashMap<String, String> DEFAULT_PREFERENCES = new HashMap<>();
+    protected static String fontName = !IS_UNIX_LIKE ? "Segoe UI" : IS_MACOS ? "Helvetica Neue" : "";
+    
     /**
      * Initializes lib preferences
      */
-    public static void initLibUtils() {
+    static {
         DEFAULT_PREFERENCES.put(Preferences.APPEARANCE.name(), "Light");
         DEFAULT_PREFERENCES.put(Preferences.USE_ACCENT_COLORS.name(), "true");
         DEFAULT_PREFERENCES.put(Preferences.PRIMARY_COLOR.name(), "62-141-216");
@@ -60,14 +68,8 @@ public class LibUtilities {
         
         preferences = DEFAULT_PREFERENCES;
         
-        init = true;
-        
-        System.out.println("[INFO] libBasicUI v0.0.4");
+        System.out.println("[INFO] libBasicUI v0.0.5");
         System.out.println("[INFO] LibUtilities initialized!");
-    }
-    
-    public static boolean isInit() {
-        return init;
     }
     
     
@@ -78,11 +80,6 @@ public class LibUtilities {
     private static final FontRenderContext frc = new FontRenderContext(affinetransform, true, true);
     
     public static final int MOD_KEY = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
-    
-    public static final String SYSTEM_NAME = System.getProperty("os.name");
-    public static final String USER_HOME = System.getProperty("user.home");
-    public static final boolean IS_UNIX_LIKE = !SYSTEM_NAME.startsWith("Windows");
-    
     
     private static final File WIN_PATH = FileUtilities.joinPath(USER_HOME, "AppData", "Local", "libBasicUI");
     private static final File UNIX_PATH = FileUtilities.joinPath(USER_HOME, ".libBasicUI");
@@ -101,11 +98,14 @@ public class LibUtilities {
      */
     public static final File LIB_PREFERENCES_FILE = !IS_UNIX_LIKE ? WIN_PATH : UNIX_PATH;
     
-    public static final HashMap<String, String> DEFAULT_PREFERENCES = new HashMap<>();
     protected static HashMap<String, String> preferences = new HashMap<>();
     
     
-    protected static String fontName = !IS_UNIX_LIKE ? "Segoe UI" : SYSTEM_NAME.startsWith("Mac") ? "Helvetica Neue" : "";
+    /**
+     * This is the replacement string. It's used to replace strings inside other,
+     * mainly used by {@link utils.LibUtilities#compressStringHashMap(java.lang.String)}
+     */
+    public static final String REPLACEMENT_STR = "DATA_RPL";
     
     
     /**
@@ -315,7 +315,7 @@ public class LibUtilities {
      * @param path the base
      * @param paths the strings to concatenate
      * @return a file within a pathname composed by <code>path</code> and <code>paths</code>
-     * @deprecated please use <code>FileUtils.joinPath()<code> instead
+     * @deprecated please use <code>FileUtils.joinPath()</code> instead
      * @see FileUtilities#joinPath(java.lang.String, java.lang.String[])
      */
     @Deprecated
@@ -329,7 +329,7 @@ public class LibUtilities {
      * @param f the base
      * @param paths the strings to concatenate
      * @return a file within a pathname composed by <code>f</code> and <code>paths</code>
-     * @deprecated please use <code>FileUtils.joinPath()<code> instead
+     * @deprecated please use <code>FileUtils.joinPath()</code> instead
      * @see FileUtilities#joinPath(java.io.File, java.lang.String[])
      */
     @Deprecated
@@ -346,6 +346,7 @@ public class LibUtilities {
      * @see FileDialog
      * @return <code>File</code> or null
      * @deprecated please use <code>FileChooser</code> instead
+     * @see ui.FileChooser
      */
     @Deprecated
     public static File getFile(File path, boolean selectDirectory) {
@@ -372,7 +373,7 @@ public class LibUtilities {
      * @see FileDialog
      * @return <code>File</code> array or null
      * @deprecated please use <code>FileChooser</code> instead
-     * @see ui.filebrowser.FileChooser
+     * @see ui.FileChooser
      */
     @Deprecated
     public static File [] getFiles(File path) {
@@ -424,16 +425,213 @@ public class LibUtilities {
         return "" + c.getRed() + "-" + c.getGreen() + "-" + c.getBlue();
     }
     
-    private static void setPreference(String key, String value) throws IllegalArgumentException {
-        Preferences keyParse = Preferences.valueOf(key);
-        
+    /**
+     * Extracts the components of a string color without alpha<br>
+     * The format is the string must have is red-green-blue
+     * 
+     * @param value the string to extract info
+     * @return a int[3] array or null if value is not a formatted color
+     * @see LibUtilities#colorToString(java.awt.Color) 
+     */
+    public static int [] getColorData(String value) {
         boolean isColor = value.matches("[\\d]{1,3}-[\\d]{1,3}-[\\d]{1,3}");
-        int [] colorData = new int[3];
+        int [] colorData = null;
         if (isColor) {
+            colorData = new int[3];
+            
             String [] colorUData = value.split("-");
             for (int i = 0; i < 3; i++)
                 colorData[i] = Integer.parseInt(colorUData[i]);
         }
+        
+        return colorData;
+    }
+    
+    /**
+     * Replaces the last coincidence inside an string
+     * 
+     * @param s the string to replace in
+     * @param regex the regular expression
+     * @param replacement the replacement
+     * @return the string with the replacement
+     */
+    public static String replaceLast(String s, String regex, String replacement) {
+        return s.replaceFirst("(?s)" + regex + "(?!.*?" + regex + ")", replacement);
+    }
+
+    /**
+     * Extracts and splits data from a string.<br><br>
+     * For example:<br>
+     * <pre>
+     *      dataID            = "DATA_RLP0"
+     *      replacedStringIDs = ["DATA_RLP0", "DATA_RPL1"]
+     *      replacedStrings   = ["PROPERTY2_2_1=9.9, PROPERTY2_2_2=true", "PROPERTY2_1=100, PROPERTY2_2=DATA_RPL0"]
+     * </pre>
+     * 
+     * This method will return <code>["PROPERTY2_2_1=9.9", "PROPERTY2_2_2=true"]</code> and 
+     * will remove <code>DATA_RLP0</code> from <code>replacedStringIDs</code> and
+     * <code>"PROPERTY2_2_1=9.9, PROPERTY2_2_2=true"</code> from <code>replacedStrings</code><br>
+     * 
+     * @param dataID the identifier to get, for example DATA_RPL0
+     * @param replacedStringIDs the list with the identifiers
+     * @param replacedStrings the list with the replacements
+     * @return an array containing all properties found or null if <code>dataID</code>
+     * is not in <code>replacedStringIDs</code>
+     * @see utils.LibUtilities#REPLACEMENT_STR
+     * @see utils.LibUtilities#compressStringHashMap(java.lang.String) 
+     * @see utils.LibUtilities#parseProperties(java.lang.String) 
+     */    
+    public static String [] splitData(String dataID, LinkedList<String> replacedStringIDs, LinkedList<String> replacedStrings) {
+//        System.out.println("splitData looking for " + lineFormID);
+        
+        int dataIndex = replacedStringIDs.indexOf(dataID);
+        if (dataIndex == -1)
+            return null;
+        
+        String data = replacedStrings.get(dataIndex);
+        
+        replacedStringIDs.remove(dataIndex);
+        replacedStrings.remove(dataIndex);
+        
+        
+        return data.replace("{", "").replace("}", "").split(", ");
+    }
+    
+    /**
+     * "Compresses" a string containing multiple hash maps to make it more manageable<br><br>
+     * For example we have the string <code>s</code>:<br>
+     * <pre>s={PROPERTY0=Hello, PROPERTY1=GRAY, PROPERTY2={PROPERTY2_1=100, PROPERTY2_2={PROPERTY2_2_1=9.9, PROPERTY2_2_2=true}}}</pre><br>
+     * This method will return an array containing three elements<br>
+     * <ul>
+     * <li><code>String s</code> - the string with the replacements
+     * <li><code>LinkedList-String- replacedStringIDs</code> - a list with the 
+     * identifiers of the replacements
+     * <li><code>LinkedList-String- replacedStrings</code> - a list with the 
+     * replacements
+     * </ul><br>
+     * 
+     * The result will be something like<br>
+     * <pre>
+     *      array[0] = "{PROPERTY0=Hello, PROPERTY1=GRAY, PROPERTY2=DATA_RPL1}"
+     *      array[1] = ["DATA_RLP0", "DATA_RPL1"]
+     *      array[2] = ["PROPERTY2_2_1=9.9, PROPERTY2_2_2=true", "PROPERTY2_1=100, PROPERTY2_2=DATA_RPL0"]
+     * </pre>
+     * 
+     * @param s the HashMap string to "compress"
+     * @return an array containing the processed string, a LinkedList containing
+     * the identifiers of each string replaced and another LinkedList containing
+     * the replacements. Both list have the same size
+     * @see utils.LibUtilities#REPLACEMENT_STR
+     * @see utils.LibUtilities#parseProperties(java.lang.String) 
+     */
+    public static Object [] compressStringHashMap(String s) {
+        LinkedList<Integer> bracketOpeningIndexes = new LinkedList<>();
+        LinkedList<Integer> bracketClosingIndexes = new LinkedList<>();
+
+        for (int i = s.length() - 1; i > -1; i--)
+            if (s.charAt(i) == '{')
+                bracketOpeningIndexes.add(i);
+            
+        for (int i = 0; i < s.length(); i++)
+            if (s.charAt(i) == '}')
+                bracketClosingIndexes.add(i + 1);
+        
+        if (bracketOpeningIndexes.size() != bracketClosingIndexes.size())
+            return null;
+        
+        
+        LinkedList<String> replacedStringIDs = new LinkedList<>();
+        LinkedList<String> replacedStrings = new LinkedList<>();
+
+        int i = 0;
+        while (bracketOpeningIndexes.size() > 1) {
+//            System.out.println("\ni = " + i);
+//            System.out.println("opening indexes " + Arrays.toString(bracketOpeningIndexes.toArray(new Integer[bracketOpeningIndexes.size()])));
+//            System.out.println("closing indexes " + Arrays.toString(bracketClosingIndexes.toArray(new Integer[bracketClosingIndexes.size()])));
+        
+            int first = bracketOpeningIndexes.removeFirst();
+            int closingBigger = first;
+            int modifyIndex = -1;
+            
+            for (int j = 0; j < bracketClosingIndexes.size(); j++) {
+                int index = bracketClosingIndexes.get(j);
+                if (first < index) {
+                    bracketClosingIndexes.remove(j);
+                    modifyIndex = j;
+                    closingBigger = index;
+                    break;
+                }
+            }
+            
+//            System.out.println("first = " + first);
+//            System.out.println("closingBigger = " + closingBigger);
+//            System.out.println("modifyIndex = " + modifyIndex);
+            
+            String id = REPLACEMENT_STR + i;
+            String originalString = s.substring(first, closingBigger);
+//            System.out.println("replacement " + id);
+//            System.out.println("subs " + originalString);
+            
+            replacedStringIDs.add(id);
+            replacedStrings.add(originalString);
+            
+            s = replaceLast(s, originalString.replace("{", "\\{").replace("}", "\\}"), id);
+            int len = originalString.length() - id.length();
+            
+            for (int j = modifyIndex; j < bracketClosingIndexes.size(); j++)
+                bracketClosingIndexes.set(j, bracketClosingIndexes.get(j) - len);
+
+            i++;
+            
+//            System.out.println("result  " +s);
+//            System.out.println("slen " + s.length());
+//            System.out.println("");
+        }
+        
+        return new Object[]{s, replacedStringIDs, replacedStrings};
+    }
+    
+    /**
+     * Creates a simple HashMap from a string<br><br>
+     * To parse more complex HashMaps follow the next steps:<br>
+     * <ol>
+     * <li> "Compress" the string with {@link utils.LibUtilities#compressStringHashMap(java.lang.String)}
+     * <li> Convert the string given by the last step using this method
+     * <li> Create the objects, if you find a property with {@link utils.LibUtilities#REPLACEMENT_STR}, 
+     * decompress it by using {@link utils.LibUtilities#splitData(java.lang.String, java.util.LinkedList, java.util.LinkedList)} 
+     * and parse it, repeat this step until all properties are loaded
+     * </ol>
+     * 
+     * @param data the string to process, this method is meant for simple HashMaps, 
+     * it's likely that it won't work if the data contains another HashMap
+     * @return the data as HashMap
+     */
+    public static HashMap<String, String> parseProperties(String data) {
+        if (data.contains("{"))
+            data = data.replace("{", "").replace("}", "");
+        
+        String [] splitedData = data.split(", ");
+        HashMap<String, String> parsedData = new HashMap<>();
+        
+        for (String s : splitedData) {
+            String [] ssplit = s.split("=");
+            parsedData.put(ssplit[0], ssplit[1]);
+        }
+        
+        return parsedData;
+    }
+    
+    private static void setPreference(String key, String value) throws IllegalArgumentException {
+        Preferences keyParse;
+        
+        try {
+            keyParse = Preferences.valueOf(key);
+        } catch (IllegalArgumentException ex) {
+            ex.printStackTrace();
+            return;
+        }
+        
+        int [] colorData = getColorData(value);
         
         boolean isInteger = value.matches("[\\d]+");
         boolean isAPositiveNumber = value.matches("[\\d]+.[\\d]+");
@@ -448,21 +646,21 @@ public class LibUtilities {
             break;
             
             case PRIMARY_COLOR:
-                if (!isColor)
+                if (colorData == null)
                     throw new IllegalArgumentException("Data '" + value + "' is not a color");
                 UIProperties.OLD_APP_BG_COLOR = new Color(colorData[0], colorData[1], colorData[2]);
                 UIProperties.APP_BG_COLOR = UIProperties.OLD_APP_BG_COLOR;
             break;
             
             case SECONDARY_COLOR:
-                if (!isColor)
+                if (colorData == null)
                     throw new IllegalArgumentException("Data '" + value + "' is not a color");
                 UIProperties.OLD_APP_BGA_COLOR = new Color(colorData[0], colorData[1], colorData[2]);
                 UIProperties.APP_BGA_COLOR = UIProperties.OLD_APP_BGA_COLOR;
             break;
             
             case FOREGROUND_COLOR:
-                if (!isColor)
+                if (colorData == null)
                     throw new IllegalArgumentException("Data '" + value + "' is not a color");
                 UIProperties.OLD_APP_FG_COLOR = new Color(colorData[0], colorData[1], colorData[2]);
                 UIProperties.APP_FG_COLOR = UIProperties.OLD_APP_FG_COLOR;
@@ -515,19 +713,6 @@ public class LibUtilities {
         preferences.put(Preferences.SUBTITLE_FONT_WIDTH.name(), "" + UIProperties.getSubtitleFontSize());
         preferences.put(Preferences.STANDARD_FONT_WIDTH.name(), "" + UIProperties.getStandardFontSize());
         preferences.put(Preferences.UI_SCALE.name(), "" + UIProperties.getUiScale());
-    }
-    
-    private static void parsePreferences() throws IllegalArgumentException {
-        DEFAULT_PREFERENCES.forEach(
-            (key, value) -> {
-                if (!preferences.containsKey(key))
-                    preferences.put(key, value);
-            }
-        );
-        
-        preferences.forEach(
-            (key, value) -> setPreference(key, value)
-        );
     }
     
     /**
@@ -589,21 +774,12 @@ public class LibUtilities {
         if (data.replace(" ", "").isEmpty())
             return false;
         
-        data = data.replace("{", "").replace("}", "");
-        
-        String [] sdata = data.split(",");
-        
-        preferences = new HashMap<>();
-        for (String p : sdata) {
-            String [] dat = p.replaceAll("^ +", "").split("=");
-            if (dat.length != 2)
-                continue;
-            
-            preferences.put(dat[0], dat[1]);
-        }
+        preferences = parseProperties(data);
         
         try {
-            parsePreferences();
+            preferences.forEach(
+                (key, value) -> setPreference(key, value)
+            );
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
             

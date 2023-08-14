@@ -303,7 +303,7 @@ public class FileChooser extends Dialog {
      * @param alwaysAcceptDirectories if true, it will create a new <code>FilenameFilter</code>,
      * this new filter will always allow directories to pass and will only 
      * discriminate files using the given filter
-     * @param filter 
+     * @param filter the filename filter
      */
     public void setFilenameFilter(boolean alwaysAcceptDirectories, FilenameFilter filter) {
         if (alwaysAcceptDirectories) {
@@ -327,8 +327,8 @@ public class FileChooser extends Dialog {
      * 
      * @param directory the location to show, set to null to start where it was left
      * @return a file or null if user canceled
-     * @see FileChooser#setAllowedFileNames(java.lang.String...) 
-     * @see FileChooser#setFilenameFilter(java.io.FilenameFilter)
+     * @see ui.FileChooser#setAllowedFileNames(boolean, java.lang.String...) 
+     * @see ui.FileChooser#setFilenameFilter(boolean, java.io.FilenameFilter) 
      */
     public File getFile(File directory) {
         if (directory != null)
@@ -349,8 +349,8 @@ public class FileChooser extends Dialog {
      * use <code>setAllowedFileNames()</code> and <code>setFilenameFilter()</code> to add filters
      * 
      * @return a file or null if user canceled
-     * @see FileChooser#setAllowedFileNames(java.lang.String...) 
-     * @see FileChooser#setFilenameFilter(java.io.FilenameFilter)
+     * @see ui.FileChooser#setAllowedFileNames(boolean, java.lang.String...) 
+     * @see ui.FileChooser#setFilenameFilter(boolean, java.io.FilenameFilter) 
      */
     public File getFile() {
         return getFile(null);
@@ -362,8 +362,8 @@ public class FileChooser extends Dialog {
      * 
      * @param directory the location to show, set to null to start where it was left
      * @return a directory or null if user canceled
-     * @see FileChooser#setAllowedFileNames(java.lang.String...) 
-     * @see FileChooser#setFilenameFilter(java.io.FilenameFilter)
+     * @see ui.FileChooser#setAllowedFileNames(boolean, java.lang.String...) 
+     * @see ui.FileChooser#setFilenameFilter(boolean, java.io.FilenameFilter) 
      */
     public File getDirectory(File directory) {
         if (directory != null)
@@ -384,8 +384,8 @@ public class FileChooser extends Dialog {
      * use <code>setAllowedFileNames()</code> and <code>setFilenameFilter()</code> to add filters
      * 
      * @return a directory or null if user canceled
-     * @see FileChooser#setAllowedFileNames(java.lang.String...) 
-     * @see FileChooser#setFilenameFilter(java.io.FilenameFilter)
+     * @see ui.FileChooser#setAllowedFileNames(boolean, java.lang.String...) 
+     * @see ui.FileChooser#setFilenameFilter(boolean, java.io.FilenameFilter) 
      */
     public File getDirectory() {
         return getDirectory(null);

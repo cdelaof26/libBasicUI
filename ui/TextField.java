@@ -6,6 +6,8 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import javax.swing.JTextField;
 import ui.enums.LabelType;
 import ui.enums.TextAlignment;
@@ -29,14 +31,49 @@ public class TextField extends JTextField implements ComponentSetup {
     private String placeholderText = "";
     
     private LabelType fontType = LabelType.BODY;
+    private final boolean editableOnCLick;
     
     
+    /**
+     * Creates a new TextField with a placeholder text
+     * 
+     * @param placeholderText 
+     */
     public TextField(String placeholderText) {
         this.placeholderText = placeholderText;
+        this.editableOnCLick = false;
         initUI();
     }
     
+    /**
+     * Creates a new TextField
+     */
     public TextField() {
+        this.editableOnCLick = false;
+        initUI();
+    }
+    
+    /**
+     * Creates a new TextField with a placeholder text
+     * 
+     * @param placeholderText 
+     * @param editableOnCLick if true, the TextField will be editable/focusable
+     * once the user clicks on it
+     */
+    public TextField(String placeholderText, boolean editableOnCLick) {
+        this.placeholderText = placeholderText;
+        this.editableOnCLick = editableOnCLick;
+        initUI();
+    }
+    
+    /**
+     * Creates a new TextField
+     * @param editableOnCLick if true, the TextField will be editable/focusable
+     * once the user clicks on it
+     */
+    public TextField(boolean editableOnCLick) {
+        this.editableOnCLick = editableOnCLick;
+        
         initUI();
     }
     
@@ -45,6 +82,17 @@ public class TextField extends JTextField implements ComponentSetup {
     public final void initUI() {
         setBorder(null);
         setOpaque(false);
+        
+        if (editableOnCLick) {
+            setFocusable(false);
+            addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    setFocusable(true);
+                    requestFocus();
+                }
+            });
+        }
         
         placeholderVisible = !placeholderText.equals("");
         
@@ -214,6 +262,11 @@ public class TextField extends JTextField implements ComponentSetup {
         preferredSize.height = (int) (preferredSize.height * UIProperties.uiScale);
         
         super.setPreferredSize(preferredSize);
+    }
+
+    @Override
+    public void setEnabled(boolean enabled) {
+        super.setEditable(enabled);
     }
     
     /**

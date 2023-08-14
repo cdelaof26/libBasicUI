@@ -1,7 +1,7 @@
 package ui.enums;
 
 /**
- * Operation modes for {@link SelectionPanel}
+ * Operation modes for {@link ui.SelectionPanel}
  * 
  * @author cristopher
  */

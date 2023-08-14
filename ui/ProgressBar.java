@@ -577,7 +577,8 @@ public class ProgressBar extends JComponent implements ComponentSetup {
      * Sets the maximum value for the progress bar
      * 
      * @param maximumValue
-     * @throws IllegalArgumentException if minimum value is greater than maximum value 
+     * @throws IllegalArgumentException if minimum value is greater than maximum 
+     * value or maximum value is negative or zero [ TODO: allow zero and negative ]
      */
     public void setMaximumValue(int maximumValue) {
         if (minimumValue > maximumValue)

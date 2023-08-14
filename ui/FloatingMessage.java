@@ -39,6 +39,11 @@ public class FloatingMessage extends Dialog {
         add(messageBody, container, titleLabel, UIAlignment.HORIZONTAL_CENTER, UIAlignment.HORIZONTAL_CENTER, 0, UIAlignment.NORTH, UIAlignment.SOUTH, (int) (10 * UIProperties.uiScale));
         add(agreeButton, UIAlignment.HORIZONTAL_CENTER, UIAlignment.HORIZONTAL_CENTER, 0, UIAlignment.SOUTH, UIAlignment.SOUTH, (int) (-10 * UIProperties.uiScale));
         
+        updateUISize();
+        updateUIFont();
+        updateUITheme();
+        updateUIColors();
+        
         showWindow();
     }
     

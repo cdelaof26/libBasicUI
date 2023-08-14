@@ -75,13 +75,13 @@ public class Window extends JFrame implements ComponentSetup {
         
         if (!LibUtilities.IS_UNIX_LIKE) {
             // Windows fix
-            width += 10; height += 10;
+            width += 10;
         }
         
         width = (int) (width * UIProperties.uiScale);
         height = (int) (height * UIProperties.uiScale);
         
-        super.setSize(width, height);
+        super.setSize(width, height + (isUndecorated() ? 0 : UIProperties.TITLE_BAR_HEIGHT));
         
         setLocationRelativeTo(null);
     }
@@ -90,6 +90,7 @@ public class Window extends JFrame implements ComponentSetup {
      * Make window visible
      */
     public void showWindow() {
+        updateUISize();
         setVisible(true);
     }
     
@@ -108,11 +109,11 @@ public class Window extends JFrame implements ComponentSetup {
     public void toggleVisibility() {
         setVisible(!isVisible());
     }
-
+    
     /**
      * Set a new window width
      * 
-     * @param width 
+     * @param width the new width
      */
     public void setWidth(int width) {
         this.width = width;
@@ -122,7 +123,7 @@ public class Window extends JFrame implements ComponentSetup {
     /**
      * Set a new window height
      * 
-     * @param height 
+     * @param height the new height
      */
     public void setHeight(int height) {
         this.height = height;

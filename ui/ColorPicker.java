@@ -355,7 +355,7 @@ public class ColorPicker extends Panel {
      * @return a <code>Color</code> or null
      */
     public Color pickColor() {
-        Dialog d = new Dialog(width, height + 94);
+        Dialog d = new Dialog(width, height + 64);
         d.setResizable(false);
         d.setAlwaysOnTop(true);
         d.addWindowListener(new WindowAdapter() {

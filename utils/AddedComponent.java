@@ -9,7 +9,7 @@ import ui.enums.UIAlignment;
  * This class is meant to update distance between components once placed when
  * UI is rescaled
  * 
- * @see Panel
+ * @see ui.Panel
  * @author cristopher
  */
 public class AddedComponent {

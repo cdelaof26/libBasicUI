@@ -18,7 +18,8 @@ public class Dialog extends JDialog implements ComponentSetup {
     
     
     /**
-     * Create a new program window (JDialog)
+     * Create a new program window (JDialog)<br>
+     * The default behavior for this window is {@link javax.swing.WindowConstants#HIDE_ON_CLOSE}
      * 
      * @param width
      * @param height
@@ -66,7 +67,7 @@ public class Dialog extends JDialog implements ComponentSetup {
     public void updateUIColors() {
         container.updateUIColors();
     }
-
+    
     @Override
     public void setSize(int width, int height) {
         this.width = width;
@@ -74,13 +75,13 @@ public class Dialog extends JDialog implements ComponentSetup {
         
         if (!LibUtilities.IS_UNIX_LIKE) {
             // Windows fix
-            width += 10; height += 10;
+            width += 10;
         }
         
         width = (int) (width * UIProperties.uiScale);
         height = (int) (height * UIProperties.uiScale);
         
-        super.setSize(width, height);
+        super.setSize(width, height + (isUndecorated() ? 0 : UIProperties.TITLE_BAR_HEIGHT));
         
         setLocationRelativeTo(null);
     }
@@ -89,6 +90,7 @@ public class Dialog extends JDialog implements ComponentSetup {
      * Make window visible
      */
     public void showWindow() {
+        updateUISize();
         setVisible(true);
     }
     

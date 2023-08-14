@@ -183,10 +183,10 @@ public class ColorButton extends JButton implements ComponentSetup {
     }
     
     /**
-     * Draws rounded rectangle
+     * Draws the button background and border
      * 
-     * @param g2D 
-     * @param fillColor 
+     * @param g2D
+     * @param fillColor
      */
     protected void paintCustomBorder(Graphics2D g2D, Color fillColor) {
         if (paintBorder) {

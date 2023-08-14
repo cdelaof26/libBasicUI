@@ -40,14 +40,17 @@ public class NumberSelector extends Panel {
             else
                 g2D.setColor(FGColor);
             
-            int halfWidth = (int) ((width * UIProperties.uiScale) / 2);
-            int halfHeight = (int) ((height * UIProperties.uiScale) / 2);
+            int swidth = getPreferredSize().width;
+            int sheight = getPreferredSize().height;
+            
+            int halfWidth = swidth / 2;
+            int halfHeight = sheight / 2;
             
             int padding = (int) (7 * UIProperties.uiScale);
             
-            g2D.setStroke(new BasicStroke(2));
-            g2D.drawLine(padding, halfHeight, (int) ((width * UIProperties.uiScale) - padding), halfHeight);
-            g2D.drawLine(halfWidth, padding, halfWidth, (int) ((height * UIProperties.uiScale) - padding));
+            g2D.setStroke(new BasicStroke(2 * UIProperties.uiScale));
+            g2D.drawLine(padding, halfHeight, swidth - padding, halfHeight);
+            g2D.drawLine(halfWidth, padding, halfWidth, sheight - padding);
             
         }
     };
@@ -67,11 +70,14 @@ public class NumberSelector extends Panel {
             else
                 g2D.setColor(FGColor);
             
-            int halfHeight = (int) ((height * UIProperties.uiScale) / 2);
+            int swidth = getPreferredSize().width;
+            int sheight = getPreferredSize().height;
+            
+            int halfHeight = sheight / 2;
             int padding = (int) (7 * UIProperties.uiScale);
             
             g2D.setStroke(new BasicStroke(2 * UIProperties.uiScale));
-            g2D.drawLine(padding, halfHeight, (int) ((width * UIProperties.uiScale) - padding), halfHeight);
+            g2D.drawLine(padding, halfHeight, swidth - padding, halfHeight);
             
         }
     };
@@ -79,8 +85,8 @@ public class NumberSelector extends Panel {
     protected JComponent [] componentsToUpdate;
     
     private final int defaultValue;
-    private final int maximumValue;
-    private final int minimumValue;
+    private int maximumValue;
+    private int minimumValue;
     private final int increaseStep;
     private int value;
     
@@ -229,7 +235,7 @@ public class NumberSelector extends Panel {
         add(decreaseButton, numberField, this, UIAlignment.WEST, UIAlignment.EAST, 0, UIAlignment.VERTICAL_CENTER, UIAlignment.VERTICAL_CENTER, 0);
         add(increaseButton, decreaseButton, this, UIAlignment.WEST, UIAlignment.EAST, 0, UIAlignment.VERTICAL_CENTER, UIAlignment.VERTICAL_CENTER, 0);
         
-        numberField.setPreferredSize(new Dimension(width - (2 * height + textLabel.getPreferredSize().width + 10), height));
+        numberField.setPreferredSize(new Dimension((int) (width - (2 * height + (textLabel.getPreferredSize().width / UIProperties.uiScale) + 10)), height));
         increaseButton.setPreferredSize(new Dimension(height, height));
         decreaseButton.setPreferredSize(new Dimension(height, height));
     }
@@ -307,10 +313,18 @@ public class NumberSelector extends Panel {
      */
     public void setPreferredSize_(Dimension preferredSize) {
         super.setPreferredSize(preferredSize);
+        super.updateUISize();
         
-        numberField.setPreferredSize(new Dimension(width - (2 * height + textLabel.getPreferredSize().width + 10), height));
-        increaseButton.setPreferredSize(new Dimension(height, height));
-        decreaseButton.setPreferredSize(new Dimension(height, height));
+        if (numberField != null) {
+            numberField.setPreferredSize(new Dimension((int) (width - (2 * height + (textLabel.getPreferredSize().width / UIProperties.uiScale) + 10)), height));
+            increaseButton.setPreferredSize(new Dimension(height, height));
+            decreaseButton.setPreferredSize(new Dimension(height, height));
+        }
+    }
+    
+    @Override
+    public void updateUISize() {
+        setPreferredSize_(new Dimension(width, height));
     }
     
     private void updateValue(boolean skipVerification) {
@@ -374,6 +388,54 @@ public class NumberSelector extends Panel {
         return value;
     }
     
+    public int getMinimumValue() {
+        return minimumValue;
+    }
+
+    /**
+     * Sets the minimum value for the number selector
+     * 
+     * @param minimumValue
+     * @throws IllegalArgumentException if minimum value is greater than maximum value 
+     */
+    public void setMinimumValue(int minimumValue) throws IllegalArgumentException {
+        if (minimumValue > maximumValue)
+            throw new IllegalArgumentException("Minimum value cannot be greater than maximum value");
+        
+        this.minimumValue = minimumValue;
+    }
+
+    public int getMaximumValue() {
+        return maximumValue;
+    }
+    
+    /**
+     * Sets the maximum value for the number selector
+     * 
+     * @param maximumValue
+     * @throws IllegalArgumentException if minimum value is greater than maximum value 
+     */
+    public void setMaximumValue(int maximumValue) {
+        if (minimumValue > maximumValue)
+            throw new IllegalArgumentException("Minimum value cannot be greater than maximum value");
+        
+        this.maximumValue = maximumValue;
+    }
+    
+    /**
+     * Sets the minimum value to the number selector
+     */
+    public void setMinimumValue() {
+        setValue(minimumValue);
+    }
+    
+    /**
+     * Sets the maximum value to the number selector
+     */
+    public void setMaximumValue() {
+        setValue(maximumValue);
+    }
+    
     /**
      * Makes editable the numberField
      *
@@ -381,5 +443,10 @@ public class NumberSelector extends Panel {
      */
     public void setEditable(boolean b) {
         numberField.setEditable(b);
+    }
+
+    @Override
+    public void setEnabled(boolean enabled) {
+        setEditable(enabled);
     }
 }

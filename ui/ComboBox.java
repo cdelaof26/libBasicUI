@@ -170,7 +170,7 @@ public class ComboBox extends ColorButton {
      * Use getText_() instead as this will return button's text instead of 
      * internal JLabel which holds actual text settled by setText() method
      * 
-     * @return
+     * @return the button's text
      * @deprecated
      */
     @Override
@@ -215,7 +215,7 @@ public class ComboBox extends ColorButton {
      * @param text
      * @param addPadding if true, a padding will be added between the new option 
      * and the last (if any)
-     * @param actions actions performed by added option, can be null
+     * @param actions actions performed by added option, can be null or empty
      */
     public void addOption(String text, boolean addPadding, ActionListener ... actions) {
         optionsSelector.addOption(text, addPadding, addAction(text, actions));

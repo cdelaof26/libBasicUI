@@ -32,30 +32,31 @@ public interface ComponentSetup {
     public void updateUIColors();
     
     /**
-     * Updates component color to {@link UIProperties.APP_BG}
+     * Updates component color to {@link ui.UIProperties#APP_BG}
      * 
-     * @param useAppTheme if true, {@link useAppColor} becomes false
+     * @param useAppTheme if true, <code>useAppColor</code> becomes false
      */
     public void setUseAppTheme(boolean useAppTheme);
 
     /**
-     * Updates component color to {@link UIProperties.APP_BG_COLOR}
+     * Updates component color to {@link ui.UIProperties#APP_BG_COLOR}
      * 
-     * @param useAppColor if true, {@link useAppTheme} becomes false
+     * @param useAppColor if true, <code>useAppTheme</code> becomes false
      */
     public void setUseAppColor(boolean useAppColor);
 
     /**
      * Specifies if component should have rounded corners
      * 
-     * @param roundCorners 
+     * @param roundCorners if true, the component will be painted with rounded 
+     * corners
      */
     public void setRoundCorners(boolean roundCorners);
 
     /**
      * Specifies if component should have a border
      * 
-     * @param paintBorder 
+     * @param paintBorder if true, the component will be painted with a border
      */
     public void setPaintBorder(boolean paintBorder);
 }

@@ -25,7 +25,7 @@ public class Menu extends ColorButton {
     /**
      * Creates a new Menu
      * 
-     * @param text
+     * @param text the menu's text
      */
     public Menu(String text) {
         super(text);

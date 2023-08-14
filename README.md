@@ -86,6 +86,28 @@ $ java -Dfile.encoding=UTF-8 -jar libBasicUI.jar
 
 ### Changelog
 
+### v0.0.5
+- Removed `LibUtilities.initLibUtils();` and `UIProperties.initUIProperties();`, 
+  initialization is now automatically done when the class is loaded
+- Fixed `Window` and `Dialog` height for different platforms
+  - **TODO**: Scale font size
+- Minimum and maximum values are no longer final in `NumberSelector` class
+- Added `editableOnCLick` attribute to `TextField`, setting it to true 
+  disables autofocus until the user clicks it
+- Setting a `TextField` enabled has the same effect as setting editable
+- Added several methods to `FileUtilities`
+  - `writeFile()` writes binary files
+  - `downloadFile()` downloads files
+  - `listFilesInZip()` creates a array with the files inside a zip archive
+  - `extractSingleZippedFile()` retrieves a file inside a zip archive without password
+  - `extractAllZippedFiles()` retrieves all files inside a zip archive without password
+- Added to `LibUtilities`:
+  - `OS_ARCH` and `IS_MACOS` properties
+  - `replaceLast()` method to replace the last coincidence using regex
+  - `splitData()`, `compressStringHashMap()` and `parseProperties()` to facilitate the
+    process of reading HashMaps
+- Improved and fixed JavaDoc references
+
 ### v0.0.4
 - Added `paint` attribute to `ColorButton`, setting `paint` to false will disable 
   the hover effect, making the button look like a `Label`
@@ -116,7 +138,7 @@ $ java -Dfile.encoding=UTF-8 -jar libBasicUI.jar
 - Added `ONE_WORD_ICON_BUTTON` button scheme to ImageButton among other minor fixes
 - Fixed `Menu` items not setting the right foreground color
 - Implemented `enabled` property for `NumberSelector`
-- Minimum and maximum values are not longer final in `ProgressBar` class
+- Minimum and maximum values are no longer final in `ProgressBar` class
 - `Slider` now is capable of modifying `NumberSelector` value
 - `TextField` would not longer react to clicks if hover is visible and it's clicked
 - New methods added to LibUtilities 

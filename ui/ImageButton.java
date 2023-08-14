@@ -39,9 +39,17 @@ public class ImageButton extends ColorButton {
     /**
      * Creates a new ImageButton without image
      * 
-     * @see setImageFile()
-     * @param arrangement 
+     * @param arrangement the way to arrange the icon and text label
      * @throws IllegalArgumentException if arrangement is not ONLY_IMAGE or ONLY_TINY_IMAGE
+     * @see ui.ImageButton#setLightThemedImage(java.awt.image.BufferedImage, int, int) 
+     * @see ui.ImageButton#setLightThemedImage(java.io.File, int, int)
+     * @see ui.ImageButton#setLightThemedImage(java.lang.String, boolean, int, int) 
+     * @see ui.ImageButton#setDarkThemedImage(java.awt.image.BufferedImage, int, int) 
+     * @see ui.ImageButton#setDarkThemedImage(java.io.File, int, int)
+     * @see ui.ImageButton#setDarkThemedImage(java.lang.String, boolean, int, int) 
+     * @see ui.ImageButton#setHoverImage(java.awt.image.BufferedImage) 
+     * @see ui.ImageButton#setHoverImage(java.io.File) 
+     * @see ui.ImageButton#setHoverImage(java.lang.String, boolean)
      */
     public ImageButton(ImageButtonArrangement arrangement) throws IllegalArgumentException {
         if (arrangement != ImageButtonArrangement.ONLY_IMAGE && arrangement != ImageButtonArrangement.ONLY_TINY_IMAGE)
@@ -56,12 +64,21 @@ public class ImageButton extends ColorButton {
     /**
      * Creates a new ImageButton with text and no image
      * 
-     * @see setImageFile()
      * @param text
-     * @param useBoldFont
-     * @param arrangement
+     * @param useBoldFont if true, the text will be {@link ui.enums.LabelType#BOLD_BODY}, 
+     * otherwise {@link ui.enums.LabelType#BODY}
+     * @param arrangement the way to arrange the icon and text label
      * @throws IllegalArgumentException if ONLY_IMAGE or ONLY_TINY_IMAGE is used 
      * as arrangement
+     * @see ui.ImageButton#setLightThemedImage(java.awt.image.BufferedImage, int, int) 
+     * @see ui.ImageButton#setLightThemedImage(java.io.File, int, int)
+     * @see ui.ImageButton#setLightThemedImage(java.lang.String, boolean, int, int) 
+     * @see ui.ImageButton#setDarkThemedImage(java.awt.image.BufferedImage, int, int) 
+     * @see ui.ImageButton#setDarkThemedImage(java.io.File, int, int)
+     * @see ui.ImageButton#setDarkThemedImage(java.lang.String, boolean, int, int) 
+     * @see ui.ImageButton#setHoverImage(java.awt.image.BufferedImage) 
+     * @see ui.ImageButton#setHoverImage(java.io.File) 
+     * @see ui.ImageButton#setHoverImage(java.lang.String, boolean)
      */
     public ImageButton(String text, boolean useBoldFont, ImageButtonArrangement arrangement) throws IllegalArgumentException {
         if (arrangement == ImageButtonArrangement.ONLY_IMAGE || arrangement == ImageButtonArrangement.ONLY_TINY_IMAGE)
@@ -294,7 +311,7 @@ public class ImageButton extends ColorButton {
      * Use getText_() instead as this will return button's text instead of 
      * internal JLabel which holds actual text settled by setText() method
      * 
-     * @return
+     * @return an string containing the button's text
      * @deprecated
      */
     @Override
@@ -388,11 +405,11 @@ public class ImageButton extends ColorButton {
     }
     
     /**
-     * Set an image from a file, the image will be show if dark theme is active<br>
+     * Sets an image from a file, the image will be show if dark theme is active<br>
      * 
      * Note that this method only supports .png, .jpeg and .jpg file types
      * 
-     * @param imageFile
+     * @param imageFile 
      * @param width use -1 to render the image with its original width
      * @param height use -1 to render the image with its original height
      */
@@ -411,7 +428,7 @@ public class ImageButton extends ColorButton {
     }
     
     /**
-     * Set an image from a base64 String or a package path, the image will be 
+     * Sets an image from a base64 String or a package path, the image will be 
      * show if dark theme is active
      * 
      * @param imageData image path or base64 codified data
@@ -438,7 +455,8 @@ public class ImageButton extends ColorButton {
     }
     
     /**
-     * Set an image from a BufferedImage
+     * Sets an image from a BufferedImage, the image will be show if dark theme 
+     * is active
      * 
      * @param image
      * @param width use -1 to render the image with its original width
@@ -459,7 +477,7 @@ public class ImageButton extends ColorButton {
     }
     
     /**
-     * Set an image from a file, the image will be show if light theme is active<br>
+     * Sets an image from a file, the image will be show if light theme is active<br>
      * 
      * Note that this method only supports .png, .jpeg and .jpg file types
      * 
@@ -482,7 +500,7 @@ public class ImageButton extends ColorButton {
     }
     
     /**
-     * Set an image from a base64 String or a package path, the image will be 
+     * Sets an image from a base64 String or a package path, the image will be 
      * show if light theme is active
      * 
      * @param imageData image path or base64 codified data
@@ -509,7 +527,8 @@ public class ImageButton extends ColorButton {
     }
     
     /**
-     * Set an image from a BufferedImage
+     * Sets an image from a BufferedImage, the image will be show if light theme 
+     * is active
      * 
      * @param image
      * @param width use -1 to render the image with its original width
@@ -530,7 +549,7 @@ public class ImageButton extends ColorButton {
     }
     
     /**
-     * Set an hover image from a file<br>
+     * Sets the hover image from a file<br>
      * Note that this method only supports .png, .jpeg and .jpg file types
      * 
      * @param imageFile
@@ -540,7 +559,7 @@ public class ImageButton extends ColorButton {
     }
     
     /**
-     * Set an hover image
+     * Sets the hover image
      * 
      * @param imageData image path or base64 codified data
      * @param bundledImage set true if <code>imageData</code> is a package path
@@ -553,7 +572,7 @@ public class ImageButton extends ColorButton {
     }
     
     /**
-     * Set an image from a BufferedImage
+     * Sets the hover image from a BufferedImage
      * 
      * @param image
      */

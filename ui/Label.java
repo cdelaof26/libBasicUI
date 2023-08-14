@@ -19,7 +19,8 @@ public class Label extends JLabel implements ComponentSetup {
     /**
      * Creates a new Label without text
      * 
-     * @param fontType 
+     * @param fontType the font to be used
+     * @see ui.enums.LabelType
      */
     public Label(LabelType fontType) {
         this.fontType = fontType;
@@ -30,8 +31,9 @@ public class Label extends JLabel implements ComponentSetup {
     /**
      * Creates a new Label with text
      * 
-     * @param fontType
+     * @param fontType the font to be used
      * @param text 
+     * @see ui.enums.LabelType
      */
     public Label(LabelType fontType, String text) {
         super(text);
@@ -112,7 +114,8 @@ public class Label extends JLabel implements ComponentSetup {
     /**
      * Changes font type
      * 
-     * @param fontType 
+     * @param fontType the font to be used
+     * @see ui.enums.LabelType
      */
     public void setLabelType(LabelType fontType) {
         this.fontType = fontType;
@@ -120,9 +123,10 @@ public class Label extends JLabel implements ComponentSetup {
     }
 
     /**
-     * Set text alignment
+     * Sets the text alignment
      * 
-     * @param textAlignment
+     * @param textAlignment the position of the text
+     * @see ui.enums.TextAlignment
      */
     public void setTextAlignment(TextAlignment textAlignment) {
         setHorizontalAlignment(UIProperties.TextAlignmentToInt(textAlignment));

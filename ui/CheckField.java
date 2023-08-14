@@ -17,14 +17,15 @@ public class CheckField extends Panel {
      * Creates a new CheckField
      * 
      * @param text
-     * @param bold
+     * @param useBoldFont if true, the text will be {@link ui.enums.LabelType#BOLD_BODY}, 
+     * otherwise {@link ui.enums.LabelType#BODY}
      * @param checked if it should be checked when created
      */
-    public CheckField(String text, boolean bold, boolean checked) {
+    public CheckField(String text, boolean useBoldFont, boolean checked) {
         super(120, 22);
         
         checkBox = new CheckBox(checked);
-        textLabel = new Label(bold ? LabelType.BOLD_BODY : LabelType.BODY, text);
+        textLabel = new Label(useBoldFont ? LabelType.BOLD_BODY : LabelType.BODY, text);
         
         initCheckField();
     }

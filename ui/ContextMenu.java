@@ -198,7 +198,8 @@ public class ContextMenu extends JPopupMenu implements ComponentSetup {
      * Makes selectable elements slim<br>
      * By default, elements are slim if <code>hideOverflow</code> was set to true
      * 
-     * @param slimElements 
+     * @param slimElements if true, the added options will be <code>width=15</code>,
+     * otherwise <code>width=30</code>
      */
     public void setSlimElements(boolean slimElements) {
         this.slimElements = slimElements;
@@ -209,7 +210,7 @@ public class ContextMenu extends JPopupMenu implements ComponentSetup {
      * Changes ImageButton arrange, to be effective it must be settled before 
      * adding options
      * 
-     * @param elementsArrange 
+     * @param elementsArrange the arrangement for the options
      * @see ImageButtonArrangement
      */
     public void setElementsArrange(ImageButtonArrangement elementsArrange) {

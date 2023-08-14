@@ -10,7 +10,6 @@ import ui.Slider;
 import ui.TextArea;
 import ui.TextField;
 import ui.enums.UIAlignment;
-import ui.UIProperties;
 import ui.Window;
 import ui.enums.LabelType;
 import ui.enums.UIOrientation;
@@ -24,9 +23,6 @@ import utils.UIPreferences;
  */
 public class LibBasicUI {
     public static void main(String[] args) {
-        LibUtilities.initLibUtils();
-        UIProperties.initUIProperties();
-        
         Demo demo = new Demo();
         LibUtilities.loadPreferences(demo.uiPreferences);
         demo.showWindow();
@@ -54,7 +50,7 @@ public class LibBasicUI {
         
         
         public Demo() {
-            super(430, 420, true);
+            super(430, 390, true);
             
             setResizable(false);
             

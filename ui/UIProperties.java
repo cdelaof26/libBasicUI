@@ -7,6 +7,8 @@ import java.awt.Font;
 import java.awt.GraphicsEnvironment;
 import java.awt.event.KeyEvent;
 import javax.swing.InputMap;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 import javax.swing.SpringLayout;
 import javax.swing.SwingConstants;
@@ -33,20 +35,29 @@ public class UIProperties {
         return properties;
     }
     
+    public final static int TITLE_BAR_HEIGHT;
+    
     /**
      * Initializes UI look and feel
-     * 
-     * @throws IllegalStateException if LibUtilities has been not initialized
      */
-    public static void initUIProperties() throws IllegalStateException {
-        if (!LibUtilities.isInit())
-            throw new IllegalStateException("LibUtilities has been not initialized!");
-        
+    static {
         try {
             UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex) {
             System.exit(1);
         }
+        
+        JFrame f = new JFrame();
+        f.setSize(100, 100);
+
+        JPanel p = new JPanel();
+        f.add(p);
+        f.setVisible(true);
+
+        TITLE_BAR_HEIGHT = f.getHeight() - p.getSize().height;
+
+        f.setVisible(false);
+        f.dispose();
         
         if (LibUtilities.SYSTEM_NAME.startsWith("Mac")) {
             InputMap inputMap = (InputMap) UIManager.get("TextField.focusInputMap");
@@ -74,9 +85,6 @@ public class UIProperties {
      * @throws IllegalStateException if LibUtilities has been not initialized
      */
     public static void initFonts() {
-        if (!LibUtilities.isInit())
-            throw new IllegalStateException("LibUtilities has been not initialized!");
-        
         APP_FONT = new Font(LibUtilities.getFontName(), Font.PLAIN, (int) (standardFontSize * uiScale));
         APP_MONOSPACED_FONT = new Font(Font.MONOSPACED, Font.PLAIN, (int) (standardFontSize * uiScale));
         APP_BOLD_FONT = new Font(LibUtilities.getFontName(), Font.BOLD, (int) (standardFontSize * uiScale));
@@ -91,9 +99,6 @@ public class UIProperties {
      * @throws IllegalStateException if LibUtilities has been not initialized
      */
     public static void initUIAccentColors() {
-        if (!LibUtilities.isInit())
-            throw new IllegalStateException("LibUtilities has been not initialized!");
-        
         if (!accentColors) {
             OLD_APP_BG_COLOR = APP_BG_COLOR;
             OLD_APP_BGA_COLOR = APP_BGA_COLOR;
