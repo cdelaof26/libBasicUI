@@ -318,6 +318,9 @@ public class FileViewer extends JScrollPane implements ComponentSetup {
     }
     
     public void endSelection() {
+        if (selection == null)
+            return;
+        
         if (selection.isFile() && mode == FileChooserModal.SINGLE_FILE) {
             container.hideWindow();
             return;

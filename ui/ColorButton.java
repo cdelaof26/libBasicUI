@@ -157,7 +157,7 @@ public class ColorButton extends JButton implements ComponentSetup {
 
             Color c;
 
-            if (getModel().isRollover() || paintAsHovering) {
+            if ((getModel().isRollover() || paintAsHovering) && isEnabled()) {
                 c = HBGColor;
                 setForeground(HFGColor);
             } else {

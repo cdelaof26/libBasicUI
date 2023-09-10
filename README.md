@@ -86,6 +86,18 @@ $ java -Dfile.encoding=UTF-8 -jar libBasicUI.jar
 
 ### Changelog
 
+### v0.0.6
+- `ColorButton` won't highlight if disabled
+- Added `removeAllOptions()` and `removeOption()` methods to `ComboBox`
+- `FileViewer` will refresh files when selecting a file or directory
+- Added 'F-named' arrangements to `ImageButtonArrangement` allowing custom sizes
+  for different layouts
+- Fixed issue where newly added options to `SelectionPanel` won't update until
+  mouse is over
+- Added `calculateFitDimension()` to LibUtilities
+- Created `FFmpegUtilities` class with many utilities for FFmpeg
+
+
 ### v0.0.5
 - Removed `LibUtilities.initLibUtils();` and `UIProperties.initUIProperties();`, 
   initialization is now automatically done when the class is loaded

@@ -335,6 +335,7 @@ public class FileChooser extends Dialog {
             setDirectory(directory);
         
         fileSelector.setMode(FileChooserModal.SINGLE_FILE);
+        fileSelector.listFiles();
         chooseButton.setText("Choose file");
         
         super.showWindow();
@@ -370,6 +371,7 @@ public class FileChooser extends Dialog {
             setDirectory(directory);
         
         fileSelector.setMode(FileChooserModal.SINGLE_DIRECTORY);
+        fileSelector.listFiles();
         chooseButton.setText("Choose directory");
         
         super.showWindow();

@@ -216,6 +216,30 @@ public class LibUtilities {
     }
     
     /**
+     * Creates a dimension bigger or smaller based of <code>d</code> 
+     * to fit it in <code>containerDimension</code> while preserving the aspect 
+     * ratio
+     * 
+     * @param d the dimension to fit in <code>containerDimension</code>
+     * @param containerDimension the container dimension
+     * @return a new dimension based of <code>d</code>
+     */
+    public static Dimension calculateFitDimension(Dimension d, Dimension containerDimension) {
+        double ratio = (double) d.height / (double) d.width;
+        int width = containerDimension.width;
+        int height = (int) (width * ratio);
+        
+        if (width <= containerDimension.width && height <= containerDimension.height)
+            return new Dimension(width, height);
+        
+        ratio = (double) d.width / (double) d.height;
+        height = containerDimension.height;
+        width = (int) (height * ratio);
+        
+        return new Dimension(width, height);
+    }
+    
+    /**
      * Converts a base64 string into an InputStream
      * 
      * @param data base64 string
@@ -475,8 +499,9 @@ public class LibUtilities {
      * @param dataID the identifier to get, for example DATA_RPL0
      * @param replacedStringIDs the list with the identifiers
      * @param replacedStrings the list with the replacements
-     * @return an array containing all properties found or null if <code>dataID</code>
-     * is not in <code>replacedStringIDs</code>
+     * @return an array containing all properties found, null if <code>dataID</code>
+     * is not in <code>replacedStringIDs</code> or <code>new String[0]</code> 
+     * if no data is found
      * @see utils.LibUtilities#REPLACEMENT_STR
      * @see utils.LibUtilities#compressStringHashMap(java.lang.String) 
      * @see utils.LibUtilities#parseProperties(java.lang.String) 
@@ -488,13 +513,15 @@ public class LibUtilities {
         if (dataIndex == -1)
             return null;
         
-        String data = replacedStrings.get(dataIndex);
+        String data = replacedStrings.get(dataIndex).replace("{", "").replace("}", "");
         
         replacedStringIDs.remove(dataIndex);
         replacedStrings.remove(dataIndex);
         
+        if (data.isEmpty())
+            return new String[0];
         
-        return data.replace("{", "").replace("}", "").split(", ");
+        return data.split(", ");
     }
     
     /**
@@ -610,11 +637,14 @@ public class LibUtilities {
         if (data.contains("{"))
             data = data.replace("{", "").replace("}", "");
         
-        String [] splitedData = data.split(", ");
+        String [] splitedData = data.replace("\n", "").split(", ");
         HashMap<String, String> parsedData = new HashMap<>();
         
         for (String s : splitedData) {
             String [] ssplit = s.split("=");
+            if (ssplit.length != 2)
+                continue;
+            
             parsedData.put(ssplit[0], ssplit[1]);
         }
         

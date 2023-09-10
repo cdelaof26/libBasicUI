@@ -165,6 +165,11 @@ public class UIProperties {
     public static Color OLD_APP_BGA_COLOR;
     public static Color OLD_APP_FG_COLOR;
     
+    /**
+     * This value indicates how big the UI should be, the minimum value is 0.5f
+     * and the maximum 2.0f, use {@link ui.UIProperties#setUIScale(float)} to
+     * change its value
+     */
     protected static float uiScale = 1;
     
     
@@ -282,10 +287,13 @@ public class UIProperties {
     /**
      * Changes UI scale.<br>
      * 
-     * After changing scale, you should call {@link Window}.updateUISize() and 
-     * {@link Window}.updateUIFont() to apply changes
+     * After changing scale, you should call {@link Window#updateUISize()} and 
+     * {@link Window#updateUIFont()} to apply changes<br>
+     * Note that Window.updateUISize() and Window.updateUIFont won't change
+     * the size/font of UI elements that weren't added to them, such as Dialog 
+     * windows and ContextMenues
      * 
-     * @param uiScale value between 0.5 and 2, default is 1.0
+     * @param uiScale value between 0.5 and 2.0, default is 1.0
      * @throws IllegalArgumentException if uiScale outside the range [0.5, 2.0]
      */
     public static void setUIScale(float uiScale) throws IllegalArgumentException {

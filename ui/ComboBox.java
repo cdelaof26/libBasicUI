@@ -7,6 +7,7 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.util.NoSuchElementException;
 import javax.swing.SpringLayout;
 import ui.enums.LabelType;
 
@@ -252,6 +253,29 @@ public class ComboBox extends ColorButton {
         optionsSelector.addOption(text, lightImage, darkImage, hoverImage, addPadding, addAction(text, actions));
     }
     
+    /**
+     * Removes all options added to the ComboBox
+     */
+    public void removeAllOptions() {
+        optionsSelector.removeAllOptions();
+    }
+    
+    /**
+     * Removes the a option given a index
+     * @param index the index of the element to remove
+     * @throws NoSuchElementException 
+     */
+    public void removeOption(int index) throws NoSuchElementException {
+        optionsSelector.removeOption(index);
+    }
+    
+    /**
+     * Makes selectable elements slim<br>
+     * By default, elements are slim if <code>hideOverflow</code> was set to true
+     * 
+     * @param slimElements if true, the added options will be <code>width=15</code>,
+     * otherwise <code>width=30</code>
+     */
     public void setSlimElements(boolean slimElements) {
         optionsSelector.setSlimElements(slimElements);
     }

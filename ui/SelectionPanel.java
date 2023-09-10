@@ -488,6 +488,10 @@ public class SelectionPanel extends JScrollPane implements ComponentSetup {
             viewContainer.add(c, viewContainer, elements.getLast(), UIAlignment.WEST, UIAlignment.WEST, 0, UIAlignment.NORTH, UIAlignment.SOUTH, 0);
         
         elements.add(c);
+        ((ComponentSetup) c).updateUISize();
+        ((ComponentSetup) c).updateUIFont();
+        ((ComponentSetup) c).updateUITheme();
+        ((ComponentSetup) c).updateUIColors();
         
         updateOptionsSize();
     }
@@ -550,6 +554,10 @@ public class SelectionPanel extends JScrollPane implements ComponentSetup {
             viewContainer.add(c, viewContainer, elements.getLast(), UIAlignment.WEST, UIAlignment.WEST, 0, UIAlignment.NORTH, UIAlignment.SOUTH, 0);
         
         elements.add(c);
+        ((ComponentSetup) c).updateUISize();
+        ((ComponentSetup) c).updateUIFont();
+        ((ComponentSetup) c).updateUITheme();
+        ((ComponentSetup) c).updateUIColors();
         
         updateOptionsSize();
     }

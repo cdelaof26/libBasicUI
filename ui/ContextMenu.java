@@ -8,6 +8,7 @@ import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.LinkedList;
+import java.util.NoSuchElementException;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.SpringLayout;
@@ -367,6 +368,9 @@ public class ContextMenu extends JPopupMenu implements ComponentSetup {
         addOptionToViewContainer(c, addPadding, actions);
     }
     
+    /**
+     * Removes all options added to the ContextMenu
+     */
     public void removeAllOptions() {
         for (ImageButton b : elements)
             viewContainer.remove(b);
@@ -377,7 +381,12 @@ public class ContextMenu extends JPopupMenu implements ComponentSetup {
         viewContainer.repaint();
     }
     
-    public void removeOption(int index) {
+    /**
+     * Removes the a option given a index
+     * @param index the index of the element to remove
+     * @throws NoSuchElementException 
+     */
+    public void removeOption(int index) throws NoSuchElementException {
         ImageButton option = elements.remove(index);
         
         if (elements.size() > index)

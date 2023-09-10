@@ -1,6 +1,7 @@
 package ui;
 
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -152,8 +153,6 @@ public class ImageButton extends ColorButton {
                     width = 120;
                     height = 80;
                 break;
-                default:
-                    throw new UnsupportedOperationException("Unsupported arrangement");
             }
 
             layout.removeLayoutComponent(imageLabel);
@@ -164,23 +163,10 @@ public class ImageButton extends ColorButton {
             oldArrangement = arrangement;
         }
         
-        if (arrangement == ImageButtonArrangement.CENTER_TEXT_RIGHT_IMAGE) {
-            layout.putConstraint(SpringLayout.EAST, imageLabel, (int) (-10 * UIProperties.uiScale), SpringLayout.EAST, this);
+        if (arrangement == ImageButtonArrangement.ONLY_IMAGE || arrangement == ImageButtonArrangement.ONLY_TINY_IMAGE) {
+            layout.putConstraint(SpringLayout.HORIZONTAL_CENTER, imageLabel, 0, SpringLayout.HORIZONTAL_CENTER, this);
             layout.putConstraint(SpringLayout.VERTICAL_CENTER, imageLabel, 0, SpringLayout.VERTICAL_CENTER, this);
-            
-            layout.putConstraint(SpringLayout.HORIZONTAL_CENTER, textLabel, 0, SpringLayout.HORIZONTAL_CENTER, this);
-            layout.putConstraint(SpringLayout.VERTICAL_CENTER, textLabel, 0, SpringLayout.VERTICAL_CENTER, this);
         }
-        
-        if (arrangement == ImageButtonArrangement.CENTER_TEXT_LEFT_IMAGE) {
-            layout.putConstraint(SpringLayout.WEST, imageLabel, (int) (10 * UIProperties.uiScale), SpringLayout.WEST, this);
-            layout.putConstraint(SpringLayout.VERTICAL_CENTER, imageLabel, 0, SpringLayout.VERTICAL_CENTER, this);
-            
-            layout.putConstraint(SpringLayout.HORIZONTAL_CENTER, textLabel, 0, SpringLayout.HORIZONTAL_CENTER, this);
-            layout.putConstraint(SpringLayout.VERTICAL_CENTER, textLabel, 0, SpringLayout.VERTICAL_CENTER, this);
-        }
-        
-        
         
         if (arrangement == ImageButtonArrangement.ONE_WORD_ICON_BUTTON) {
             layout.putConstraint(SpringLayout.HORIZONTAL_CENTER, imageLabel, 0, SpringLayout.HORIZONTAL_CENTER, this);
@@ -192,15 +178,24 @@ public class ImageButton extends ColorButton {
         
         
         
-        if (arrangement == ImageButtonArrangement.LEFT_TEXT_RIGHT_IMAGE) {
-            layout.putConstraint(SpringLayout.EAST, imageLabel, (int) (-10 * UIProperties.uiScale), SpringLayout.EAST, this);
+        
+        if (arrangement == ImageButtonArrangement.CENTER_TEXT_LEFT_IMAGE || arrangement == ImageButtonArrangement.F_CENTER_TEXT_LEFT_IMAGE) {
+            layout.putConstraint(SpringLayout.WEST, imageLabel, (int) (10 * UIProperties.uiScale), SpringLayout.WEST, this);
             layout.putConstraint(SpringLayout.VERTICAL_CENTER, imageLabel, 0, SpringLayout.VERTICAL_CENTER, this);
             
-            layout.putConstraint(SpringLayout.WEST, textLabel, (int) (10 * UIProperties.uiScale), SpringLayout.WEST, this);
+            layout.putConstraint(SpringLayout.HORIZONTAL_CENTER, textLabel, 0, SpringLayout.HORIZONTAL_CENTER, this);
             layout.putConstraint(SpringLayout.VERTICAL_CENTER, textLabel, 0, SpringLayout.VERTICAL_CENTER, this);
         }
         
-        if (arrangement == ImageButtonArrangement.RIGHT_TEXT_LEFT_IMAGE) {
+        if (arrangement == ImageButtonArrangement.CENTER_TEXT_RIGHT_IMAGE || arrangement == ImageButtonArrangement.F_CENTER_TEXT_RIGHT_IMAGE) {
+            layout.putConstraint(SpringLayout.EAST, imageLabel, (int) (-10 * UIProperties.uiScale), SpringLayout.EAST, this);
+            layout.putConstraint(SpringLayout.VERTICAL_CENTER, imageLabel, 0, SpringLayout.VERTICAL_CENTER, this);
+            
+            layout.putConstraint(SpringLayout.HORIZONTAL_CENTER, textLabel, 0, SpringLayout.HORIZONTAL_CENTER, this);
+            layout.putConstraint(SpringLayout.VERTICAL_CENTER, textLabel, 0, SpringLayout.VERTICAL_CENTER, this);
+        }
+        
+        if (arrangement == ImageButtonArrangement.RIGHT_TEXT_LEFT_IMAGE || arrangement == ImageButtonArrangement.F_RIGHT_TEXT_LEFT_IMAGE) {
             layout.putConstraint(SpringLayout.WEST, imageLabel, (int) (10 * UIProperties.uiScale), SpringLayout.WEST, this);
             layout.putConstraint(SpringLayout.VERTICAL_CENTER, imageLabel, 0, SpringLayout.VERTICAL_CENTER, this);
             
@@ -208,7 +203,23 @@ public class ImageButton extends ColorButton {
             layout.putConstraint(SpringLayout.VERTICAL_CENTER, textLabel, 0, SpringLayout.VERTICAL_CENTER, this);
         }
         
-        if (arrangement == ImageButtonArrangement.LEFT_TEXT_LEFT_IMAGE) {
+        if (arrangement == ImageButtonArrangement.LEFT_TEXT_RIGHT_IMAGE || arrangement == ImageButtonArrangement.F_LEFT_TEXT_RIGHT_IMAGE) {
+            layout.putConstraint(SpringLayout.EAST, imageLabel, (int) (-10 * UIProperties.uiScale), SpringLayout.EAST, this);
+            layout.putConstraint(SpringLayout.VERTICAL_CENTER, imageLabel, 0, SpringLayout.VERTICAL_CENTER, this);
+            
+            layout.putConstraint(SpringLayout.WEST, textLabel, (int) (10 * UIProperties.uiScale), SpringLayout.WEST, this);
+            layout.putConstraint(SpringLayout.VERTICAL_CENTER, textLabel, 0, SpringLayout.VERTICAL_CENTER, this);
+        }
+        
+        if (arrangement == ImageButtonArrangement.RIGHT_TEXT_RIGHT_IMAGE || arrangement == ImageButtonArrangement.F_RIGHT_TEXT_RIGHT_IMAGE) {
+            layout.putConstraint(SpringLayout.EAST, imageLabel, (int) (-10 * UIProperties.uiScale), SpringLayout.EAST, this);
+            layout.putConstraint(SpringLayout.VERTICAL_CENTER, imageLabel, 0, SpringLayout.VERTICAL_CENTER, this);
+            
+            layout.putConstraint(SpringLayout.EAST, textLabel, (int) (-10 * UIProperties.uiScale), SpringLayout.WEST, imageLabel);
+            layout.putConstraint(SpringLayout.VERTICAL_CENTER, textLabel, 0, SpringLayout.VERTICAL_CENTER, this);
+        }
+        
+        if (arrangement == ImageButtonArrangement.LEFT_TEXT_LEFT_IMAGE || arrangement == ImageButtonArrangement.F_LEFT_TEXT_LEFT_IMAGE) {
             layout.putConstraint(SpringLayout.WEST, imageLabel, (int) (10 * UIProperties.uiScale), SpringLayout.WEST, this);
             layout.putConstraint(SpringLayout.VERTICAL_CENTER, imageLabel, 0, SpringLayout.VERTICAL_CENTER, this);
             
@@ -216,13 +227,6 @@ public class ImageButton extends ColorButton {
             layout.putConstraint(SpringLayout.VERTICAL_CENTER, textLabel, 0, SpringLayout.VERTICAL_CENTER, this);
         }
         
-        if (arrangement == ImageButtonArrangement.RIGHT_TEXT_RIGHT_IMAGE) {
-            layout.putConstraint(SpringLayout.EAST, imageLabel, (int) (-10 * UIProperties.uiScale), SpringLayout.EAST, this);
-            layout.putConstraint(SpringLayout.VERTICAL_CENTER, imageLabel, 0, SpringLayout.VERTICAL_CENTER, this);
-            
-            layout.putConstraint(SpringLayout.EAST, textLabel, (int) (-10 * UIProperties.uiScale), SpringLayout.WEST, imageLabel);
-            layout.putConstraint(SpringLayout.VERTICAL_CENTER, textLabel, 0, SpringLayout.VERTICAL_CENTER, this);
-        }
         
         
         
@@ -234,14 +238,6 @@ public class ImageButton extends ColorButton {
             layout.putConstraint(SpringLayout.NORTH, textLabel, 0, SpringLayout.SOUTH, imageLabel);
         }
         
-        if (arrangement == ImageButtonArrangement.UP_XL_IMAGE) {
-            layout.putConstraint(SpringLayout.HORIZONTAL_CENTER, imageLabel, 0, SpringLayout.HORIZONTAL_CENTER, this);
-            layout.putConstraint(SpringLayout.NORTH, imageLabel, (int) (10 * UIProperties.uiScale), SpringLayout.NORTH, this);
-            
-            layout.putConstraint(SpringLayout.HORIZONTAL_CENTER, textLabel, 0, SpringLayout.HORIZONTAL_CENTER, this);
-            layout.putConstraint(SpringLayout.SOUTH, textLabel, (int) (-10 * UIProperties.uiScale), SpringLayout.SOUTH, this);
-        }
-        
         if (arrangement == ImageButtonArrangement.DOWN_IMAGE) {
             layout.putConstraint(SpringLayout.HORIZONTAL_CENTER, imageLabel, 0, SpringLayout.HORIZONTAL_CENTER, this);
             layout.putConstraint(SpringLayout.VERTICAL_CENTER, imageLabel, (int) (10 * UIProperties.uiScale), SpringLayout.VERTICAL_CENTER, this);
@@ -250,17 +246,20 @@ public class ImageButton extends ColorButton {
             layout.putConstraint(SpringLayout.SOUTH, textLabel, 0, SpringLayout.NORTH, imageLabel);
         }
         
+        if (arrangement == ImageButtonArrangement.UP_XL_IMAGE) {
+            layout.putConstraint(SpringLayout.HORIZONTAL_CENTER, imageLabel, 0, SpringLayout.HORIZONTAL_CENTER, this);
+            layout.putConstraint(SpringLayout.NORTH, imageLabel, (int) (10 * UIProperties.uiScale), SpringLayout.NORTH, this);
+            
+            layout.putConstraint(SpringLayout.HORIZONTAL_CENTER, textLabel, 0, SpringLayout.HORIZONTAL_CENTER, this);
+            layout.putConstraint(SpringLayout.SOUTH, textLabel, (int) (-10 * UIProperties.uiScale), SpringLayout.SOUTH, this);
+        }
+        
         if (arrangement == ImageButtonArrangement.DOWN_XL_IMAGE) {
             layout.putConstraint(SpringLayout.HORIZONTAL_CENTER, imageLabel, 0, SpringLayout.HORIZONTAL_CENTER, this);
             layout.putConstraint(SpringLayout.SOUTH, imageLabel, (int) (-10 * UIProperties.uiScale), SpringLayout.SOUTH, this);
             
             layout.putConstraint(SpringLayout.HORIZONTAL_CENTER, textLabel, 0, SpringLayout.HORIZONTAL_CENTER, this);
             layout.putConstraint(SpringLayout.NORTH, textLabel, (int) (10 * UIProperties.uiScale), SpringLayout.NORTH, this);
-        }
-        
-        if (arrangement == ImageButtonArrangement.ONLY_IMAGE || arrangement == ImageButtonArrangement.ONLY_TINY_IMAGE) {
-            layout.putConstraint(SpringLayout.HORIZONTAL_CENTER, imageLabel, 0, SpringLayout.HORIZONTAL_CENTER, this);
-            layout.putConstraint(SpringLayout.VERTICAL_CENTER, imageLabel, 0, SpringLayout.VERTICAL_CENTER, this);
         }
         
         updateButton();
@@ -330,6 +329,23 @@ public class ImageButton extends ColorButton {
         return textLabel.getText();
     }
     
+    /**
+     * Changes the font type of the button text<br>
+     * Recommended for F type arrangements
+     * 
+     * @param fontType the font type
+     * @see ui.enums.ImageButtonArrangement
+     */
+    public void setLabelType(LabelType fontType) {
+        textLabel.setLabelType(fontType);
+    }
+
+    @Override
+    public void setFont(Font font) {
+        if (textLabel != null)
+            textLabel.setFont(font);
+    }
+    
     private void updateButton() {
         if (!paint) {
             if (textLabel != null)
@@ -369,6 +385,9 @@ public class ImageButton extends ColorButton {
             
             return;
         }
+        
+        if (!isEnabled())
+            return;
         
         if (textLabel != null)
             if (getModel().isRollover() || paintAsHovering)
