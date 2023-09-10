@@ -68,7 +68,7 @@ public class LibUtilities {
         
         preferences = DEFAULT_PREFERENCES;
         
-        System.out.println("[INFO] libBasicUI v0.0.5");
+        System.out.println("[INFO] libBasicUI v0.0.6");
         System.out.println("[INFO] LibUtilities initialized!");
     }
     
