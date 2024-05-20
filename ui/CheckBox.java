@@ -38,6 +38,12 @@ public class CheckBox extends ColorButton {
         initUI();
     }
     
+    /**
+     * Paints the check mark in the component
+     * @param g2D the Graphics2D object to paint in
+     * @param mouseIsHovering if true, a gray mark will be painted as long as 
+     * {@link CheckBox#checked} is false
+     */
     protected void paintCheck(Graphics2D g2D, boolean mouseIsHovering) {
         if (mouseIsHovering && !checked)
             g2D.setColor(Color.GRAY);

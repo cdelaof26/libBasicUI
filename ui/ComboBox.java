@@ -68,7 +68,7 @@ public class ComboBox extends ColorButton {
         initComboUI();
     }
     
-    public final void initComboUI() {
+    private void initComboUI() {
         setPreferredSize(new Dimension(180, 22));
         setUseAppTheme(true);
         
@@ -213,7 +213,7 @@ public class ComboBox extends ColorButton {
     /**
      * Adds a new option
      * 
-     * @param text
+     * @param text the option text
      * @param addPadding if true, a padding will be added between the new option 
      * and the last (if any)
      * @param actions actions performed by added option, can be null or empty
@@ -225,7 +225,7 @@ public class ComboBox extends ColorButton {
     /**
      * Adds a new option
      * 
-     * @param text
+     * @param text the option text
      * @param lightImage base64 image settled when light theme is active
      * @param darkImage base64 image settled when dark theme is active, can be null
      * @param hoverImage base64 image settled when mouse is over the option, can be null
@@ -241,7 +241,7 @@ public class ComboBox extends ColorButton {
     /**
      * Adds a new option
      * 
-     * @param text
+     * @param text the option text
      * @param lightImage image settled when light theme is active
      * @param darkImage image settled when dark theme is active, can be null
      * @param hoverImage image settled when mouse is over the option, can be null
@@ -263,7 +263,7 @@ public class ComboBox extends ColorButton {
     /**
      * Removes the a option given a index
      * @param index the index of the element to remove
-     * @throws NoSuchElementException 
+     * @throws NoSuchElementException throw if the index is not valid
      */
     public void removeOption(int index) throws NoSuchElementException {
         optionsSelector.removeOption(index);

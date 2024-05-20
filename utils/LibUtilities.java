@@ -42,13 +42,39 @@ public class LibUtilities {
         FONT_FAMILY, TITLE_FONT_WIDTH, SUBTITLE_FONT_WIDTH, STANDARD_FONT_WIDTH, UI_SCALE
     }
     
+    /**
+     * Host architecture
+     */
     public static final String OS_ARCH = System.getProperty("os.arch");
+    
+    /**
+     * Host SO name
+     */
     public static final String SYSTEM_NAME = System.getProperty("os.name");
+    
+    /**
+     * User home directory
+     */
     public static final String USER_HOME = System.getProperty("user.home");
+    
+    /**
+     * Condition to indicate if the host system is not Microsoft NT
+     */
     public static final boolean IS_UNIX_LIKE = !SYSTEM_NAME.startsWith("Windows");
+    
+    /**
+     * Condition to indicate if the host system is Apple macOS
+     */
     public static final boolean IS_MACOS = SYSTEM_NAME.startsWith("Mac");
     
+    /**
+     * The default preferences
+     */
     public static final HashMap<String, String> DEFAULT_PREFERENCES = new HashMap<>();
+    
+    /**
+     * The default font family
+     */
     protected static String fontName = !IS_UNIX_LIKE ? "Segoe UI" : IS_MACOS ? "Helvetica Neue" : "";
     
     /**
@@ -68,7 +94,9 @@ public class LibUtilities {
         
         preferences = DEFAULT_PREFERENCES;
         
-        System.out.println("[INFO] libBasicUI v0.0.6");
+        loadDefaultPreferences();
+        
+        System.out.println("[INFO] libBasicUI v0.0.7");
         System.out.println("[INFO] LibUtilities initialized!");
     }
     
@@ -79,6 +107,9 @@ public class LibUtilities {
     private static final AffineTransform affinetransform = new AffineTransform();     
     private static final FontRenderContext frc = new FontRenderContext(affinetransform, true, true);
     
+    /**
+     * Modifier key
+     */
     public static final int MOD_KEY = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
     
     private static final File WIN_PATH = FileUtilities.joinPath(USER_HOME, "AppData", "Local", "libBasicUI");
@@ -98,6 +129,9 @@ public class LibUtilities {
      */
     public static final File LIB_PREFERENCES_FILE = !IS_UNIX_LIKE ? WIN_PATH : UNIX_PATH;
     
+    /**
+     * User-defined preferences
+     */
     protected static HashMap<String, String> preferences = new HashMap<>();
     
     
@@ -109,10 +143,10 @@ public class LibUtilities {
     
     
     /**
-     * Sets library's font, you should call {@link Window}.updateUIFont() to apply
+     * Sets library's font, you should call {@link Window#updateUIFont()} to apply
      * changes
      * 
-     * @param fontName
+     * @param fontName the font family name
      */
     public static void setFontName(String fontName) {
         LibUtilities.fontName = fontName;
@@ -132,7 +166,7 @@ public class LibUtilities {
      * 
      * After getting the BufferedImage use scaleImage() to create an icon for Labels
      * 
-     * @param imagePath
+     * @param imagePath the file
      * @return a BufferedImage or null
      */
     public static BufferedImage readImage(File imagePath) {
@@ -159,7 +193,7 @@ public class LibUtilities {
      * 
      * After getting the BufferedImage use scaleImage() to create an icon for Labels
      * 
-     * @param imagePath
+     * @param imagePath the absolute package path to the resource
      * @return a BufferedImage or null
      */
     public static BufferedImage readImage(String imagePath) {
@@ -206,9 +240,9 @@ public class LibUtilities {
     /**
      * Scales a buffered image
      * 
-     * @param image
-     * @param width
-     * @param height
+     * @param image the buffered image
+     * @param width the new width
+     * @param height the new height
      * @return an ImageIcon
      */
     public static ImageIcon scaleImage(BufferedImage image, int width, int height) {
@@ -253,77 +287,77 @@ public class LibUtilities {
     /**
      * Calculates the size of a string given a font
      * 
-     * @param text
-     * @param font
+     * @param text the string
+     * @param font the font
      * @return a new dimension
      * @see FontRenderContext
      */
     public static Dimension getTextDimensions(String text, Font font) {
         Rectangle2D r2D = font.getStringBounds(text, frc);
         
-        return new Dimension((int) r2D.getWidth(), (int) r2D.getHeight());
+        return new Dimension((int) Math.floor(r2D.getWidth()), (int) Math.floor(r2D.getHeight()));
     }
     
     
     /**
      * Adds a keybinding to the c component, by default key bindings added with
      * this method will be invoked WHEN_IN_FOCUSED_WINDOW
-     * @param c
-     * @param name
-     * @param keySequense
-     * @param action 
+     * @param c the component
+     * @param name the name for this keybinding
+     * @param keySequence the key sequence
+     * @param action the action to be performed
      */
-    public static void addKeyBindingTo(JComponent c, String name, String keySequense, AbstractAction action) { 
-        c.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(keySequense), name);
+    public static void addKeyBindingTo(JComponent c, String name, String keySequence, AbstractAction action) { 
+        c.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(keySequence), name);
         c.getActionMap().put(name, action);
     }
     
     /**
      * Adds a keybinding to the c component
-     * @param c
-     * @param name
-     * @param keySequense
+     * @param c the component
+     * @param name the name for this keybinding
+     * @param keySequence the key sequence
      * @param onlyWhenFocused if true, JComponent.WHEN_FOCUSED is settled 
      * otherwise WHEN_IN_FOCUSED_WINDOW
-     * @param action 
+     * @param action the action to be performed
      */
-    public static void addKeyBindingTo(JComponent c, String name, String keySequense, boolean onlyWhenFocused, AbstractAction action) { 
-        c.getInputMap(onlyWhenFocused ? JComponent.WHEN_FOCUSED : JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(keySequense), name);
+    public static void addKeyBindingTo(JComponent c, String name, String keySequence, boolean onlyWhenFocused, AbstractAction action) { 
+        c.getInputMap(onlyWhenFocused ? JComponent.WHEN_FOCUSED : JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(keySequence), name);
         c.getActionMap().put(name, action);
     }
     
     /**
      * Adds a keybinding to the c component, by default key bindings added with
      * this method will be invoked WHEN_IN_FOCUSED_WINDOW
-     * @param c
-     * @param name
-     * @param keySequense
-     * @param action 
+     * @param c the component
+     * @param name the name for this keybinding
+     * @param keySequence the key sequence
+     * @param action the action to be performed
      */
-    public static void addKeyBindingTo(JComponent c, String name, KeyStroke keySequense, AbstractAction action) { 
-        c.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(keySequense, name);
+    public static void addKeyBindingTo(JComponent c, String name, KeyStroke keySequence, AbstractAction action) { 
+        c.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(keySequence, name);
         c.getActionMap().put(name, action);
     }
     
     /**
      * Adds a keybinding to the c component
-     * @param c
-     * @param name
-     * @param keySequense
+     * @param c the component
+     * @param name the name for this keybinding
+     * @param keySequence the key sequence
      * @param onlyWhenFocused if true, JComponent.WHEN_FOCUSED is settled 
      * otherwise WHEN_IN_FOCUSED_WINDOW
-     * @param action 
+     * @param action the action to be performed
      */
-    public static void addKeyBindingTo(JComponent c, String name, KeyStroke keySequense, boolean onlyWhenFocused, AbstractAction action) { 
-        c.getInputMap(onlyWhenFocused ? JComponent.WHEN_FOCUSED : JComponent.WHEN_IN_FOCUSED_WINDOW).put(keySequense, name);
+    public static void addKeyBindingTo(JComponent c, String name, KeyStroke keySequence, boolean onlyWhenFocused, AbstractAction action) { 
+        c.getInputMap(onlyWhenFocused ? JComponent.WHEN_FOCUSED : JComponent.WHEN_IN_FOCUSED_WINDOW).put(keySequence, name);
         c.getActionMap().put(name, action);
     }
     
     /**
      * Sets alpha value to a <code>c</code> color
      * 
-     * @param c
-     * @param alpha 
+     * @param c the color
+     * @param alpha the new alpha value in the range [0 - 255]
      * @return the <code>c</code> with alpha channel or null if c is null
      */
     public static Color setAlphaToColor(Color c, int alpha) {
@@ -366,7 +400,7 @@ public class LibUtilities {
      * 
      * @param path the path where the file dialog will be located, set to null 
      * to use the last location
-     * @param selectDirectory
+     * @param selectDirectory 
      * @see FileDialog
      * @return <code>File</code> or null
      * @deprecated please use <code>FileChooser</code> instead
@@ -440,12 +474,14 @@ public class LibUtilities {
     
     /**
      * Creates a string containing the color components<br>
-     * The format is: red-green-blue
      * 
-     * @param c
-     * @return 
+     * @param c the color
+     * @return a string red-green-blue or an empty string if c is null
      */
     public static String colorToString(Color c) {
+        if (c == null)
+            return "";
+        
         return "" + c.getRed() + "-" + c.getGreen() + "-" + c.getBlue();
     }
     

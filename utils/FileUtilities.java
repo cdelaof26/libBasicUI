@@ -22,13 +22,35 @@ import java.util.zip.ZipFile;
  * @author cristopher
  */
 public class FileUtilities {
+    /**
+     * The file system anchor
+     */
     public static final String SYSTEM_ANCHOR = System.getProperty("file.separator");
+    
+    /**
+     * The user home directory
+     */
     public static final File USER_HOME = new File(LibUtilities.USER_HOME);
     
+    /**
+     * The user Desktop directory
+     */
     public static final File USER_DESKTOP = joinPath(LibUtilities.USER_HOME, "Desktop");
+    
+    /**
+     * The user Documents directory
+     */
     public static final File USER_DOCUMENTS = joinPath(LibUtilities.USER_HOME, "Documents");
+    
+    /**
+     * THe user Downloads directory
+     */
     public static final File USER_DOWNLOADS = joinPath(LibUtilities.USER_HOME, "Downloads");
     
+    /**
+     * The root directory, in Unix like systems it is '/', for Microsoft NT 
+     * systems is the system drive where Windows is installed
+     */
     public static final File ROOT_DIRECTORY = new File(LibUtilities.IS_UNIX_LIKE ? "/" : System.getenv("SystemDrive"));
     
     
@@ -105,11 +127,11 @@ public class FileUtilities {
     }
     
     /**
-     * Writes a binary file
+     * Writes a binary file in chucks of 1024 bytes
      * 
-     * @param inputStream
-     * @param outputFile
-     * @param closeInputStream
+     * @param inputStream the input stream file
+     * @param outputFile the destiny
+     * @param closeInputStream if true, inputStream will be closed
      * @return true if success otherwise false
      */
     public static boolean writeFile(InputStream inputStream, File outputFile, boolean closeInputStream) {
@@ -134,7 +156,7 @@ public class FileUtilities {
     /**
      * Downloads a file from a URL, **this will overwrite any file**
      * 
-     * @param url
+     * @param url the URL to retrieve the content
      * @param outputFile where the file should be saved
      * @return true if success otherwise false
      */
@@ -151,9 +173,11 @@ public class FileUtilities {
     /**
      * Creates an array containing all files and directories inside a zip file
      * 
-     * @param inputFile
-     * @param includeDirectories
-     * @return an array
+     * @param inputFile the zip archive to check
+     * @param includeDirectories condition to indicate if the directories inside 
+     * the zip archive should be included in the result
+     * @return an String array containing relative paths of all files inside 
+     * the zip file
      */
     public static String [] listFilesInZip(File inputFile, boolean includeDirectories) {
         try {
@@ -184,9 +208,9 @@ public class FileUtilities {
     /**
      * Extracts a single file from a zip archive
      * 
-     * @param inputFile
+     * @param inputFile the zip archive to extract from
      * @param relativePath the path of the archive to extract
-     * @param outputFile
+     * @param outputFile where the file should be saved
      * @return true if success otherwise false
      * @throws FileNotFoundException throw if relativePath doesn't exist in the
      * zip file
@@ -216,8 +240,8 @@ public class FileUtilities {
     /**
      * Extracts all files from a zip archive
      * 
-     * @param inputFile
-     * @param outputPath
+     * @param inputFile the zip archive to extract from
+     * @param outputPath the directory where all files will be extracted
      * @return true if success otherwise false
      */
     public static boolean extractAllZippedFiles(File inputFile, File outputPath) {
@@ -225,7 +249,8 @@ public class FileUtilities {
             if (inputFile.isDirectory())
                 return false;
             
-            File parentPath = inputFile.getParentFile();
+            if (outputPath.isFile())
+                return false;
             
             ZipFile zip = new ZipFile(inputFile);
             
@@ -233,7 +258,7 @@ public class FileUtilities {
             while (entries.hasMoreElements()) {
                 ZipEntry e = entries.nextElement();
                 
-                File file = joinPath(parentPath, e.getName());
+                File file = joinPath(outputPath, e.getName());
                 
                 if (e.isDirectory()) {
                     file.mkdir();
@@ -257,7 +282,7 @@ public class FileUtilities {
      * Lists files given a directory, this method will check if <code>path</code>
      * is a directory and it's readable
      * 
-     * @param path
+     * @param path the directory
      * @return an File array or null if <code>path</code> not a directory or is 
      * not readable
      */
@@ -274,7 +299,7 @@ public class FileUtilities {
      * Lists files given a directory, this method will check if <code>path</code>
      * is a directory and it's readable
      * 
-     * @param path
+     * @param path the directory
      * @param filter the filename filter, it can be null
      * @return an File array or null if <code>path</code> not a directory or is 
      * not readable
@@ -291,6 +316,11 @@ public class FileUtilities {
         return path.listFiles(filter);
     }
     
+    /**
+     * Retrieves an array with all parents given a path
+     * @param path the path
+     * @return a File array containing all parents
+     */
     public static File [] getFileParents(File path) {
         ArrayList<File> ancestors = new ArrayList<>();
         
@@ -302,6 +332,47 @@ public class FileUtilities {
             
             parent = f;
         }
+        
+        return ancestors.toArray(new File[ancestors.size()]);
+    }
+    
+    private static String trim(String str, String c) {
+        String strCopy = str;
+        
+        while (!("" + strCopy.charAt(strCopy.length() - 1)).equals(c)) {
+            strCopy = strCopy.substring(0, strCopy.length() - 1);
+            
+            if (strCopy.isEmpty())
+                break;
+        }
+        
+        if (strCopy.isEmpty())
+            return "";
+        
+        return strCopy.substring(0, strCopy.length() - 1);
+    }
+    
+    /**
+     * Retrieves an array with all parents given a path
+     * @param path the path
+     * @param anchor the file system anchor used to represent the path
+     * @return a File array containing all parents
+     */
+    public static File [] getFileParents(String path, String anchor) {
+        ArrayList<File> ancestors = new ArrayList<>();
+        
+        String parent = trim(path, anchor);
+        
+        while (!parent.isEmpty()) {
+            ancestors.add(new File(parent));
+            String f = trim(parent, anchor);
+            parent = f;
+        }
+        
+        if (path.startsWith("/"))
+            ancestors.add(new File("/"));
+        else if (anchor.equals("\\"))
+            ancestors.set(ancestors.size() - 1, new File(ancestors.get(ancestors.size() - 1).getPath() + anchor));
         
         return ancestors.toArray(new File[ancestors.size()]);
     }

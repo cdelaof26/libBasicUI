@@ -1,5 +1,6 @@
 package ui;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -20,10 +21,36 @@ import ui.enums.TextAlignment;
 public class TextField extends JTextField implements ComponentSetup {
     protected int width = 120, height = 22;
     
+    /**
+     * Condition that determines which colors will be used to paint this component
+     * @see TextField#setUseAppTheme(boolean)
+     */
     protected boolean appTheme = false;
+    
+    /**
+     * Condition that determines which colors will be used to paint this component
+     * @see TextField#setUseAppColor(boolean) 
+     */
     protected boolean appColor = true;
+    
+    
+    /**
+     * Condition that determines if the corner of this button should be rounded
+     * @see TextField#setRoundCorners(boolean)
+     * @see UIProperties#buttonRoundRadius
+     */
     protected boolean roundCorners = true;
+    
+    /**
+     * Condition that determines if the border is going to be painted
+     */
     protected boolean paintBorder = false;
+    
+    /**
+     * Condition that determines which colors will be used to paint this component
+     * @see TextField#setUseOnlyAppColor(boolean)
+     */
+    protected boolean onlyAppColor = false;
     
     protected boolean visibleBackground = true;
     
@@ -37,7 +64,7 @@ public class TextField extends JTextField implements ComponentSetup {
     /**
      * Creates a new TextField with a placeholder text
      * 
-     * @param placeholderText 
+     * @param placeholderText the placeholder text
      */
     public TextField(String placeholderText) {
         this.placeholderText = placeholderText;
@@ -56,7 +83,7 @@ public class TextField extends JTextField implements ComponentSetup {
     /**
      * Creates a new TextField with a placeholder text
      * 
-     * @param placeholderText 
+     * @param placeholderText the placeholder text
      * @param editableOnCLick if true, the TextField will be editable/focusable
      * once the user clicks on it
      */
@@ -161,6 +188,23 @@ public class TextField extends JTextField implements ComponentSetup {
 
     @Override
     public void updateUITheme() {
+        if (onlyAppColor) {
+            if (!getText().equals(placeholderText))
+                if (fontType == LabelType.WARNING_LABEL)
+                    setForeground(UIProperties.APP_FGW);
+                else
+                    setForeground(UIProperties.APP_FG_COLOR);
+            
+            if (visibleBackground)
+                setBackground(UIProperties.APP_BGA_COLOR);
+            else
+                setBackground(null);
+            
+            setCaretColor(UIProperties.APP_FG_COLOR);
+            
+            return;
+        }
+        
         if (!getText().equals(placeholderText))
             if (fontType == LabelType.WARNING_LABEL)
                 setForeground(UIProperties.APP_FGW);
@@ -183,9 +227,9 @@ public class TextField extends JTextField implements ComponentSetup {
 
     @Override
     public void updateUIColors() {
-        if (appColor) {
+        if (appColor || onlyAppColor) {
             setSelectedTextColor(UIProperties.APP_FG_COLOR);
-            setSelectionColor(UIProperties.APP_BGA_COLOR);
+            setSelectionColor(!UIProperties.usesAccentColors() ? Color.LIGHT_GRAY : onlyAppColor ? UIProperties.APP_BG_COLOR : UIProperties.APP_BGA_COLOR);
         }
     }
     
@@ -193,6 +237,7 @@ public class TextField extends JTextField implements ComponentSetup {
     public void setUseAppTheme(boolean useAppTheme) {
         this.appTheme = useAppTheme;
         this.appColor = !useAppTheme;
+        this.onlyAppColor = !useAppTheme;
         
         updateUITheme();
         updateUIColors();
@@ -202,6 +247,24 @@ public class TextField extends JTextField implements ComponentSetup {
     public void setUseAppColor(boolean useAppColor) {
         this.appColor = useAppColor;
         this.appTheme = !useAppColor;
+        this.onlyAppColor = !useAppColor;
+        
+        updateUITheme();
+        updateUIColors();
+    }
+    
+    /**
+     * Changes the ColorButton aspect
+     * @param onlyAppColor if true, only accent color will be used to paint 
+     * this component
+     * @see UIProperties#APP_BGA_COLOR
+     * @see UIProperties#APP_BG_COLOR
+     * @see UIProperties#APP_FG_COLOR
+     */
+    public void setUseOnlyAppColor(boolean onlyAppColor) {
+        this.onlyAppColor = onlyAppColor;
+        this.appColor = !onlyAppColor;
+        this.appTheme = !onlyAppColor;
         
         updateUITheme();
         updateUIColors();
@@ -272,7 +335,7 @@ public class TextField extends JTextField implements ComponentSetup {
     /**
      * Changes font type
      * 
-     * @param fontType 
+     * @param fontType the new font type
      */
     public void setFontType(LabelType fontType) {
         this.fontType = fontType;
@@ -288,14 +351,15 @@ public class TextField extends JTextField implements ComponentSetup {
     /**
      * Sets the text for this component
      * 
-     * @param t
-     * @param updateColor 
+     * @param t the text
+     * @param updateColor if true, the text will change from GRAY to 
+     * {@link UIProperties#APP_FG} if it was not already
      */
     public void setText(String t, boolean updateColor) {
+        super.setText(t);
+        
         if (updateColor)
             togglePlaceholderTextVisibility();
-        
-        super.setText(t);
     }
     
     private void togglePlaceholderTextVisibility() {
@@ -311,7 +375,8 @@ public class TextField extends JTextField implements ComponentSetup {
 
     /**
      * Change placeholder text for this TextField
-     * @param placeholderText 
+     * 
+     * @param placeholderText the new placeholder text
      */
     public void setPlaceholderText(String placeholderText) {
         this.placeholderText = placeholderText;

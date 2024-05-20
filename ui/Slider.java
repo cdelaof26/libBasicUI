@@ -65,10 +65,12 @@ public class Slider extends JComponent implements ComponentSetup {
     protected JComponent [] componentsToUpdate;
     
     /**
-     * Creates a horizontal slider
+     * Creates a horizontal slider given a minimum and maximum value<br>
+     * <b>Note</b>: min and max values do not determine the width or height
+     * for this component
      * 
-     * @param minimumValue
-     * @param maximumValue
+     * @param minimumValue the minimum value
+     * @param maximumValue the maximum value
      * @param componentsToUpdate optional components to update when slider moves
      */
     public Slider(int minimumValue, int maximumValue, JComponent ... componentsToUpdate) throws IllegalArgumentException {
@@ -81,11 +83,13 @@ public class Slider extends JComponent implements ComponentSetup {
     }
     
     /**
-     * Creates a new slider
+     * Creates a horizontal slider given an orientation, a minimum and maximum value<br>
+     * <b>Note</b>: min and max values do not determine the width or height
+     * for this component
      * 
      * @param orientation component orientation
-     * @param minimumValue
-     * @param maximumValue
+     * @param minimumValue the minimum value
+     * @param maximumValue the maximum value
      * @param componentsToUpdate optional components to update when slider moves
      */
     public Slider(UIOrientation orientation, int minimumValue, int maximumValue, JComponent ... componentsToUpdate) throws IllegalArgumentException {

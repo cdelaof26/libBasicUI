@@ -21,9 +21,10 @@ public class Window extends JFrame implements ComponentSetup {
     /**
      * Create a new program window (JFrame)
      * 
-     * @param width
-     * @param height
-     * @param exitOnClose if true, app will exit otherwise it will be hidden
+     * @param width the window width
+     * @param height the window height
+     * @param exitOnClose if true, Java will exit otherwise this windows just 
+     * will be hidden
      */
     public Window(int width, int height, boolean exitOnClose) {
         this.width = width;
@@ -143,7 +144,7 @@ public class Window extends JFrame implements ComponentSetup {
      * @param yPad is the space between c and cy 
      */
     public void add(Component c, UIAlignment csx, UIAlignment cxs, int xPad, UIAlignment csy, UIAlignment cys, int yPad) {
-        container.add(c, container, container, csx, cxs, xPad, csy, cys, yPad);
+        container.add(c, csx, cxs, xPad, csy, cys, yPad);
     }
     
     /**
@@ -160,7 +161,7 @@ public class Window extends JFrame implements ComponentSetup {
      * @param yPad is the space between c and cy 
      */
     public void add(Component c, Component c1, UIAlignment csx, UIAlignment cxs, int xPad, UIAlignment csy, UIAlignment cys, int yPad) {
-        container.add(c, c1, c1, csx, cxs, xPad, csy, cys, yPad);
+        container.add(c, c1, csx, cxs, xPad, csy, cys, yPad);
     }
     
     /**

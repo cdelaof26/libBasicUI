@@ -2,8 +2,13 @@ package ui;
 
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.File;
+import javax.swing.AbstractAction;
+import javax.swing.KeyStroke;
 import javax.swing.SpringLayout;
 import ui.enums.LabelType;
 import utils.LibUtilities;
@@ -16,10 +21,14 @@ import utils.LibUtilities;
 public class Menu extends ColorButton {
     private final ContextMenu optionsSelector = new ContextMenu(this, false);
     
-    private final SpringLayout layout = new SpringLayout();
     private final Label shortcutLabel = new Label(LabelType.BODY);
     
     private boolean initializationEnded = false;
+    
+    /**
+     * Condition that indicates if at least one Menu is opened
+     */
+    public static boolean aMenuIsOpened = false;
     
     
     /**
@@ -34,14 +43,36 @@ public class Menu extends ColorButton {
         initMenuUI();
     }
     
-    public final void initMenuUI() {
+    private void initMenuUI() {
         setPreferredSize(new Dimension(LibUtilities.getTextDimensions(getText() + "    ", UIProperties.APP_FONT).width, 22));
         setRoundCorners(false);
         
         optionsSelector.setSlimElements(true);
         
+        LibUtilities.addKeyBindingTo(optionsSelector, "Close menu", KeyStroke.getKeyStroke("ESCAPE"), new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                optionsSelector.hideMenu();
+                aMenuIsOpened = false;
+            }
+        });
+        
         addActionListener((Action) -> {
+            if (aMenuIsOpened) {
+                optionsSelector.hideMenu();
+                aMenuIsOpened = false;
+                return;
+            }
             optionsSelector.show(0, getPreferredSize().height);
+            aMenuIsOpened = optionsSelector.isVisible();
+        });
+        
+        addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                if (aMenuIsOpened)
+                    optionsSelector.show(0, getPreferredSize().height);
+            }
         });
         
         add(shortcutLabel);
@@ -105,6 +136,11 @@ public class Menu extends ColorButton {
         super.paintComponent(g);
     }
 
+    /**
+     * Sets the width for the button and menu
+     * 
+     * @param width the new width
+     */
     public void setMenuWidth(int width) {
         optionsSelector.setWidth(width);
         optionsSelector.updateUISize();
@@ -113,7 +149,7 @@ public class Menu extends ColorButton {
     /**
      * Adds a new option
      * 
-     * @param text
+     * @param text the option text
      * @param addPadding if true, a padding will be added between the new option 
      * and the last (if any)
      * @param actions actions performed by added option, can be null
@@ -125,7 +161,7 @@ public class Menu extends ColorButton {
     /**
      * Adds a new option
      * 
-     * @param text
+     * @param text the option text
      * @param lightImage base64 image settled when light theme is active
      * @param darkImage base64 image settled when dark theme is active, can be null
      * @param hoverImage base64 image settled when mouse is over the option, can be null
@@ -141,7 +177,7 @@ public class Menu extends ColorButton {
     /**
      * Adds a new option
      * 
-     * @param text
+     * @param text the option text
      * @param lightImage image settled when light theme is active
      * @param darkImage image settled when dark theme is active, can be null
      * @param hoverImage image settled when mouse is over the option, can be null

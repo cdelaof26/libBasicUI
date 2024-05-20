@@ -9,17 +9,30 @@ import ui.enums.UIAlignment;
  * @author cristopher
  */
 public class FloatingMessage extends Dialog {
-    // Message mode UI elements
     private Label titleLabel;
     private ColorButton agreeButton;
     private TextArea messageBody;
-    // End message mode UI elements
     
+    /**
+     * Creates a new FloatingMessage object given a width and height
+     * 
+     * @param width the width
+     * @param height the height
+     * @see FloatingMessage#showMessage(java.lang.String, java.lang.String, boolean) 
+     */
     public FloatingMessage(int width, int height) {
         super(width, height);
         setResizable(false);
     }
     
+    /**
+     * Creates a title label, a text area and a button to display a message<br>
+     * 
+     * @param msgTitle the message title, this will be displayed at top using a 
+     * label configured as {@link LabelType#BOLD_TITLE}
+     * @param msgBody the text to be displayed in the TextArea
+     * @param useMonospaceFont {@link TextArea#setUseMonospacedFont(boolean)}
+     */
     public void showMessage(String msgTitle, String msgBody, boolean useMonospaceFont) {
         removePreviousElements();
         
@@ -47,7 +60,7 @@ public class FloatingMessage extends Dialog {
         showWindow();
     }
     
-    public void removePreviousElements() {
+    private void removePreviousElements() {
         if (titleLabel != null) {
             container.remove(titleLabel);
             container.remove(agreeButton);

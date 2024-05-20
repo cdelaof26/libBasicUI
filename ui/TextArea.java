@@ -10,7 +10,7 @@ import javax.swing.JTextArea;
  * @author cristopher
  */
 public class TextArea extends JScrollPane implements ComponentSetup {
-    private final JTextArea textArea = new JTextArea();
+    protected final JTextArea textArea = new JTextArea();
     
     protected int width = -1, height = -1;
     
@@ -22,8 +22,8 @@ public class TextArea extends JScrollPane implements ComponentSetup {
     /**
      * Creates a new TextArea given a width and height
      * 
-     * @param width
-     * @param height 
+     * @param width the width
+     * @param height the height
      */
     public TextArea(int width, int height) {
         this.width = width;
@@ -139,5 +139,9 @@ public class TextArea extends JScrollPane implements ComponentSetup {
     
     public void setText(String t) {
         textArea.setText(t);
+    }
+    
+    public String getText() {
+        return textArea.getText();
     }
 }

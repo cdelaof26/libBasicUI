@@ -4,12 +4,12 @@
 
 ### What is this?
 
-This is a tiny library built on top of Java Swing library, it mainly uses _custom-painting_
-technics to have a customized look and feel cross-platform. 
+This is a tiny library built on top of Java Swing, it mainly uses _custom-painting_
+technics to deliver a modern look and feel while being desktop cross-platform. 
 
 ### Dependencies 
 
-1. Oracle Java 8 or newer, alternatively OpenJDK 8 or newer
+- Java 8 or newer
 
 ### Disclaimer
 
@@ -85,6 +85,22 @@ $ java -Dfile.encoding=UTF-8 -jar libBasicUI.jar
 
 
 ### Changelog
+
+### v0.0.7
+- Added missing Java Docs
+- `ColorButton` changes
+  - Added `onlyAppColor` property which will only apply accent colors to the button
+  - Every button now contains a `Label`, this means text won't overflow
+- Added `getSelectedColorHex()` method to `ColorPicker`
+- Now all `Menu` share `aMenuIsOpened` property that will
+  allow all `ContextMenu`es to be opened when hovering in a `MenuBar`
+- Added `FileBrowser` as minimal interface to implement a `FileChooser`,
+  this might be used to add a `FileViewer` to another `JComponent`
+- Added `getLabelType()` method to `Label`
+- Added various `add` methods to `Panel` class to simplify adding components directly
+- Fixed colors for `TextField` when `appColor = true` and `UIProperties.accentColors = false`
+- Added `Table` component
+  - This `JComponent` might contain bugs
 
 ### v0.0.6
 - `ColorButton` won't highlight if disabled

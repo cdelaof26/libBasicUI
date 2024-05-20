@@ -48,7 +48,7 @@ public class LibBasicUI {
         private final ColorButton preferencesButton = new ColorButton("UI Preferences");
         public final UIPreferences uiPreferences = new UIPreferences(this);
         
-        
+
         public Demo() {
             super(430, 390, true);
             

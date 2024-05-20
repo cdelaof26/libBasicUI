@@ -17,6 +17,18 @@ public class Label extends JLabel implements ComponentSetup {
     private LabelType fontType;
     
     /**
+     * Condition that determines which colors will be used to paint this component
+     * @see Label#setUseAppTheme(boolean)
+     */
+    protected boolean appTheme = true;
+    
+    /**
+     * Condition that determines which colors will be used to paint this component
+     * @see Label#setUseAppColor(boolean) 
+     */
+    protected boolean appColor = false;
+    
+    /**
      * Creates a new Label without text
      * 
      * @param fontType the font to be used
@@ -27,12 +39,12 @@ public class Label extends JLabel implements ComponentSetup {
         
         initUI();
     }
-
+    
     /**
      * Creates a new Label with text
      * 
      * @param fontType the font to be used
-     * @param text 
+     * @param text the text
      * @see ui.enums.LabelType
      */
     public Label(LabelType fontType, String text) {
@@ -82,23 +94,38 @@ public class Label extends JLabel implements ComponentSetup {
 
     @Override
     public void updateUITheme() {
-        if (fontType == LabelType.WARNING_LABEL)
-            setForeground(UIProperties.APP_FGW);
-        else
-            setForeground(UIProperties.APP_FG);
+        if (appTheme)
+            if (fontType == LabelType.WARNING_LABEL)
+                setForeground(UIProperties.APP_FGW);
+            else
+                setForeground(UIProperties.APP_FG);
     }
 
     @Override
-    public void updateUIColors() { }
+    public void updateUIColors() {
+        if (appColor)
+            if (fontType == LabelType.WARNING_LABEL)
+                setForeground(UIProperties.APP_FGW);
+            else
+                setForeground(UIProperties.APP_FG_COLOR);
+    }
     
     @Override
     public void setUseAppTheme(boolean useAppTheme) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        this.appTheme = useAppTheme;
+        this.appColor = !useAppTheme;
+        
+        updateUITheme();
+        updateUIColors();
     }
 
     @Override
     public void setUseAppColor(boolean useAppColor) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        this.appColor = useAppColor;
+        this.appTheme = !useAppColor;
+        
+        updateUITheme();
+        updateUIColors();
     }
 
     @Override
@@ -120,6 +147,13 @@ public class Label extends JLabel implements ComponentSetup {
     public void setLabelType(LabelType fontType) {
         this.fontType = fontType;
         updateUIFont();
+    }
+
+    /**
+     * @return the font type this Label uses
+     */
+    public LabelType getLabelType() {
+        return fontType;
     }
 
     /**

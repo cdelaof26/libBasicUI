@@ -22,13 +22,41 @@ import ui.enums.UIAlignment;
  * @author cristopher
  */
 public class ContextMenu extends JPopupMenu implements ComponentSetup {
+    /**
+     * Internal container for this ContextMenu
+     */
     protected final Panel viewContainer = new Panel();
+    
+    /**
+     * Internal JScrollPane
+     */
     protected final JScrollPane viewPanel = new JScrollPane();
     
-    protected int width = 120, height = 66;
+    /**
+     * ContextMenu's width
+     */
+    protected int width = 120;
+    
+    /**
+     * ContextMenu's height
+     */
+    protected int height = 66;
+    
+    /**
+     * Total padding in the container
+     */
     protected int padding = 0;
     
+    /**
+     * Condition that determines which colors will be used to paint this component
+     * @see ColorButton#setUseAppTheme(boolean)
+     */
     protected boolean appTheme = true;
+    
+    /**
+     * Condition that determines which colors will be used to paint this component
+     * @see ColorButton#setUseAppColor(boolean) 
+     */
     protected boolean appColor = false;
     
     private final boolean useScrollPane;
@@ -156,6 +184,10 @@ public class ContextMenu extends JPopupMenu implements ComponentSetup {
         super.setPreferredSize(preferredSize);
     }
 
+    /**
+     * Sets the width for this component
+     * @param width the width
+     */
     public void setWidth(int width) {
         this.width = width;
     }
@@ -191,6 +223,9 @@ public class ContextMenu extends JPopupMenu implements ComponentSetup {
         super.setVisible(false);
     }
 
+    /**
+     * @return the text of last clicked option
+     */
     public String getSelection() {
         return selection;
     }
@@ -241,9 +276,14 @@ public class ContextMenu extends JPopupMenu implements ComponentSetup {
     }
     
     private void addOptionToViewContainer(ImageButton c, boolean addPadding, ActionListener ... actions) {
-        if (actions != null)
+        if (actions != null) {
             for (ActionListener l : actions)
                 c.addActionListener(l);
+            if (container instanceof Menu)
+                c.addActionListener((Action) -> {
+                    Menu.aMenuIsOpened = false;
+                });
+        }
         
         if (elements.isEmpty())
             viewContainer.add(c, viewContainer, viewContainer, UIAlignment.WEST, UIAlignment.WEST, 0, UIAlignment.NORTH, UIAlignment.NORTH, addPadding ? 10 : 0);
@@ -258,7 +298,7 @@ public class ContextMenu extends JPopupMenu implements ComponentSetup {
     /**
      * Adds a new option
      * 
-     * @param text
+     * @param text the option text
      * @param addPadding if true, a padding will be added between the new option 
      * and the last (if any)
      * @param actions actions performed by added option, can be null
@@ -280,7 +320,7 @@ public class ContextMenu extends JPopupMenu implements ComponentSetup {
     /**
      * Adds a new option with bundled in icons or base64 images
      * 
-     * @param text
+     * @param text the option text
      * @param lightImage image path or base64 string settled when light theme is active
      * @param darkImage image path or base64 string settled when dark theme is active, can be null
      * @param hoverImage image path or base64 string settled when mouse is over the option, can be null
@@ -311,7 +351,7 @@ public class ContextMenu extends JPopupMenu implements ComponentSetup {
     /**
      * Adds a new option with BufferedImages
      * 
-     * @param text
+     * @param text the option text
      * @param lightImage image path or base64 string settled when light theme is active
      * @param darkImage image path or base64 string settled when dark theme is active, can be null
      * @param hoverImage image path or base64 string settled when mouse is over the option, can be null
@@ -341,7 +381,7 @@ public class ContextMenu extends JPopupMenu implements ComponentSetup {
     /**
      * Adds a new option
      * 
-     * @param text
+     * @param text the option text
      * @param lightImage image settled when light theme is active
      * @param darkImage image settled when dark theme is active, can be null
      * @param hoverImage image settled when mouse is over the option, can be null
@@ -384,7 +424,7 @@ public class ContextMenu extends JPopupMenu implements ComponentSetup {
     /**
      * Removes the a option given a index
      * @param index the index of the element to remove
-     * @throws NoSuchElementException 
+     * @throws NoSuchElementException throw if the given index is not valid
      */
     public void removeOption(int index) throws NoSuchElementException {
         ImageButton option = elements.remove(index);

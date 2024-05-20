@@ -14,6 +14,12 @@ import ui.enums.UIAlignment;
 public class MenuBar extends Panel {
     private final ArrayList<Menu> menus = new ArrayList<>();
     
+    /**
+     * Creates a new MenuBar given a width and height
+     * 
+     * @param width the width
+     * @param height the height
+     */
     public MenuBar(int width, int height) {
         super(width, height);
     }
@@ -31,7 +37,7 @@ public class MenuBar extends Panel {
     /**
      * Creates a new input for this menu bar
      * 
-     * @param text
+     * @param text the text for the new menu
      * @return the index of the new menu
      */
     public int addMenu(String text) {
@@ -50,8 +56,8 @@ public class MenuBar extends Panel {
     /**
      * Sets the width for a menu
      * 
-     * @param menuIndex
-     * @param width 
+     * @param menuIndex the menu index
+     * @param width the new width
      */
     public void setMenuWidth(int menuIndex, int width) {
         menus.get(menuIndex).setMenuWidth(width);
@@ -60,8 +66,8 @@ public class MenuBar extends Panel {
     /**
      * Adds a new option
      * 
-     * @param menuIndex
-     * @param text
+     * @param menuIndex the menu index
+     * @param text the text for the new menu
      * @param addPadding if true, a padding will be added between the new option 
      * and the last (if any)
      * @param actions actions performed by added option, can be null
@@ -73,8 +79,8 @@ public class MenuBar extends Panel {
     /**
      * Adds a new option
      * 
-     * @param menuIndex
-     * @param text
+     * @param menuIndex the menu index
+     * @param text the text for the new option
      * @param lightImage base64 image settled when light theme is active
      * @param darkImage base64 image settled when dark theme is active, can be null
      * @param hoverImage base64 image settled when mouse is over the option, can be null
@@ -90,8 +96,8 @@ public class MenuBar extends Panel {
     /**
      * Adds a new option
      * 
-     * @param menuIndex
-     * @param text
+     * @param menuIndex the menu index
+     * @param text the text for the new option
      * @param lightImage image settled when light theme is active
      * @param darkImage image settled when dark theme is active, can be null
      * @param hoverImage image settled when mouse is over the option, can be null

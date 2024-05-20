@@ -188,6 +188,9 @@ public class UIProperties {
     public static Font APP_BOLD_TITLE_FONT;
     
     
+    /**
+     * Static attribute that determines the round radius for many components
+     */
     protected static int buttonRoundRadius = 10;
     
     protected static int checkboxSideLength = 22;
@@ -278,6 +281,7 @@ public class UIProperties {
     public static void setUseAccentColors(boolean accentColors) {
         UIProperties.accentColors = accentColors;
         initUIAccentColors();
+        setLightThemeActive(isLightThemeActive());
     }
     
     public static boolean usesAccentColors() {

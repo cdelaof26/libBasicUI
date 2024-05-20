@@ -70,8 +70,8 @@ public class SelectionPanel extends JScrollPane implements ComponentSetup {
      * Creates a new selection panel, 
      * the mode for this is {@link SelectionPanelModes}.ARRANGE
      * 
-     * @param width
-     * @param height 
+     * @param width the width
+     * @param height the height
      */
     public SelectionPanel(int width, int height) {
         throw new UnsupportedOperationException("Not supported yet.");
@@ -88,10 +88,10 @@ public class SelectionPanel extends JScrollPane implements ComponentSetup {
      * Creates a new selection panel with image<br>
      * To add the image use <code>panel.setImage();</code>
      * 
-     * @param width
-     * @param height
-     * @param buttonArragement
-     * @param mode
+     * @param width the width
+     * @param height the height
+     * @param buttonArragement the arrangement for buttons
+     * @param mode the selection mode
      * @see SelectionPanelModes
      * @throws IllegalArgumentException if buttonArragement isn't *_RIGHT_IMAGE or
      * *_LEFT_IMAGE and if mode is ARRANGE
@@ -115,9 +115,9 @@ public class SelectionPanel extends JScrollPane implements ComponentSetup {
     /**
      * Creates a new selection panel without image<br>
      * 
-     * @param width
-     * @param height
-     * @param mode
+     * @param width the width
+     * @param height the height
+     * @param mode the selection mode
      * @see SelectionPanelModes
      */
     public SelectionPanel(int width, int height, SelectionPanelModes mode) {
@@ -210,7 +210,7 @@ public class SelectionPanel extends JScrollPane implements ComponentSetup {
      * 
      * Note that this method only supports .png, .jpeg and .jpg file types
      * 
-     * @param imageFile
+     * @param imageFile the file
      * @param width use -1 to render the image with its original width
      * @param height use -1 to render the image with its original height
      */
@@ -255,7 +255,7 @@ public class SelectionPanel extends JScrollPane implements ComponentSetup {
      * 
      * Note that this method only supports .png, .jpeg and .jpg file types
      * 
-     * @param imageFile
+     * @param imageFile the file
      * @param width use -1 to render the image with its original width
      * @param height use -1 to render the image with its original height
      */
@@ -299,7 +299,7 @@ public class SelectionPanel extends JScrollPane implements ComponentSetup {
      * Set an image from a file<br>
      * Note that this method only supports .png, .jpeg and .jpg file types
      * 
-     * @param imageHoverFile
+     * @param imageHoverFile the file
      */
     public void setHoverImage(File imageHoverFile) {
         this.hoverImageFile = imageHoverFile;

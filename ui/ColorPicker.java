@@ -21,6 +21,7 @@ import ui.enums.UIAlignment;
  */
 public class ColorPicker extends Panel {
     private Color selectedColor = new Color(0, 0, 0);
+    private String selectedColorHex = "#000000";
     
     private final JComponent colorPreview = new JComponent() {
         int rwidth = 180, rheight = 30;
@@ -71,7 +72,8 @@ public class ColorPicker extends Panel {
     private final TextField hexColor = new TextField("Hex #");
     
     /**
-     * Components to update if color changes
+     * Components to update if color changes<br>
+     * <b>Note:</b> any child of {@link JComponent} is supported
      */
     protected JComponent [] componentsToUpdate;
     
@@ -290,6 +292,15 @@ public class ColorPicker extends Panel {
     }
 
     /**
+     * Get selected color
+     * 
+     * @return a hex color string: #RRGGBB
+     */
+    public String getSelectedColorHex() {
+        return selectedColorHex;
+    }
+
+    /**
      * Set selected color
      * 
      * @param selectedColor color to set
@@ -313,6 +324,7 @@ public class ColorPicker extends Panel {
     private void RGBToHex(int [] components) {
         String hex = Integer.toHexString(new Color(components[0], components[1], components[2]).getRGB()).toUpperCase().substring(2);
         
+        selectedColorHex = "#" + hex;
         hexColor.setText(hex, true);
     }
     
@@ -409,6 +421,11 @@ public class ColorPicker extends Panel {
         return selectedColor;
     }
 
+    /**
+     * Sets the JComponents to update when a field is changed
+     * 
+     * @param componentsToUpdate the update is applied to {@link JComponent#setBackground(java.awt.Color)}
+     */
     public void setComponentsToUpdate(JComponent ... componentsToUpdate) {
         this.componentsToUpdate = componentsToUpdate;
     }

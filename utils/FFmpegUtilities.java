@@ -13,18 +13,25 @@ import java.util.Arrays;
  * Utilities for FFmpeg.<br><br>
  * 
  * NOTE THAT FFmpeg integrity is NOT checked whatsoever by the utilities in this class, 
- * so it is possible run malicious software using this library.<br><br>
+ * so it is possible run malicious software by using this library.<br><br>
  * 
  * I'm NOT responsible of any DAMAGE, you have been warned.
  * 
  * @author cristopher
  */
 public class FFmpegUtilities {
+    /**
+     * Directory where all FFmpeg and processed files will be saved in Microsoft NT systems
+     */
     public static final File WIN_PATH = FileUtilities.joinPath(LibUtilities.USER_HOME, "AppData", "Local", "libBasicUIFFmpeg");
+    
+    /**
+     * Directory where all FFmpeg and processed files will be saved in UNIX like systems
+     */
     public static final File UNIX_PATH = FileUtilities.joinPath(LibUtilities.USER_HOME, ".libBasicUIFFmpeg");
     
     /**
-     * The path where FFmpeg and files processed with it will be saved
+     * The path where FFmpeg and processed files will be saved
      */
     public static final File LIB_FFMPEG_DIRECTORY = !LibUtilities.IS_UNIX_LIKE ? WIN_PATH : UNIX_PATH;
     

@@ -12,8 +12,22 @@ import utils.LibUtilities;
  * @author cristopher
  */
 public class Dialog extends JDialog implements ComponentSetup {
-    protected int width, height;
+    /**
+     * Dialog width
+     */
+    protected int width;
     
+    /**
+     * Dialog height
+     */
+    protected int height;
+    
+    /**
+     * Internal Panel where all components are added when using implemented <code>add</code> methods
+     * @see Dialog#add(java.awt.Component, ui.enums.UIAlignment, ui.enums.UIAlignment, int, ui.enums.UIAlignment, ui.enums.UIAlignment, int) 
+     * @see Dialog#add(java.awt.Component, java.awt.Component, ui.enums.UIAlignment, ui.enums.UIAlignment, int, ui.enums.UIAlignment, ui.enums.UIAlignment, int) 
+     * @see Dialog#add(java.awt.Component, java.awt.Component, java.awt.Component, ui.enums.UIAlignment, ui.enums.UIAlignment, int, ui.enums.UIAlignment, ui.enums.UIAlignment, int) 
+     */
     protected final Panel container = new Panel();
     
     
@@ -21,8 +35,8 @@ public class Dialog extends JDialog implements ComponentSetup {
      * Create a new program window (JDialog)<br>
      * The default behavior for this window is {@link javax.swing.WindowConstants#HIDE_ON_CLOSE}
      * 
-     * @param width
-     * @param height
+     * @param width the width
+     * @param height the height
      */
     public Dialog(int width, int height) {
         this.width = width;
@@ -113,7 +127,7 @@ public class Dialog extends JDialog implements ComponentSetup {
     /**
      * Set a new window width
      * 
-     * @param width 
+     * @param width the width
      */
     public void setWidth(int width) {
         this.width = width;
@@ -123,7 +137,7 @@ public class Dialog extends JDialog implements ComponentSetup {
     /**
      * Set a new window height
      * 
-     * @param height 
+     * @param height the height
      */
     public void setHeight(int height) {
         this.height = height;

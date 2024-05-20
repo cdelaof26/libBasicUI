@@ -16,7 +16,7 @@ public class CheckField extends Panel {
     /**
      * Creates a new CheckField
      * 
-     * @param text
+     * @param text the text of this field
      * @param useBoldFont if true, the text will be {@link ui.enums.LabelType#BOLD_BODY}, 
      * otherwise {@link ui.enums.LabelType#BODY}
      * @param checked if it should be checked when created
@@ -37,6 +37,11 @@ public class CheckField extends Panel {
         add(textLabel, checkBox, checkBox, UIAlignment.WEST, UIAlignment.EAST, 5, UIAlignment.VERTICAL_CENTER, UIAlignment.VERTICAL_CENTER, 0);
     }
     
+    /**
+     * Adds an ActionListener to the checkbox
+     * 
+     * @param l the action
+     */
     public void addActionListener(ActionListener l) {
         checkBox.addActionListener(l);
     }
@@ -50,7 +55,7 @@ public class CheckField extends Panel {
 
     /**
      * Changes visual appearance of the checkbox
-     * @param checked 
+     * @param checked the checkbox status
      */
     public void setChecked(boolean checked) {
         checkBox.checked = checked;

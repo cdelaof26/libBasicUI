@@ -1,20 +1,19 @@
 package ui;
 
-import java.awt.Dimension;
 import java.awt.event.ActionEvent;
-import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.FilenameFilter;
+import java.util.Arrays;
 import javax.swing.AbstractAction;
 import javax.swing.KeyStroke;
 import ui.enums.FileChooserModal;
-import ui.enums.ImageButtonArrangement;
-import ui.enums.LabelType;
 import ui.enums.UIAlignment;
 import ui.enums.UIFileDisposition;
+import ui.filebrowser.FileBrowser;
 import ui.filebrowser.FileViewer;
-import ui.filebrowser.UIFile;
+import ui.filebrowser.FileViewerControls;
+import ui.filebrowser.FileViewerSidebar;
 import utils.FileUtilities;
 import utils.LibUtilities;
 
@@ -23,34 +22,23 @@ import utils.LibUtilities;
  * 
  * @author cristopher
  */
-public class FileChooser extends Dialog {
-    private final Label title = new Label(LabelType.BOLD_TITLE, "Files");
-    private final ImageButton homeButton = new ImageButton("Home", false, ImageButtonArrangement.LEFT_TEXT_LEFT_IMAGE);
-    private final ImageButton desktopButton = new ImageButton("Desktop", false, ImageButtonArrangement.LEFT_TEXT_LEFT_IMAGE);
-    private final ImageButton documentsButton = new ImageButton("Documents", false, ImageButtonArrangement.LEFT_TEXT_LEFT_IMAGE);
-    private final ImageButton downloadsButton = new ImageButton("Downloads", false, ImageButtonArrangement.LEFT_TEXT_LEFT_IMAGE);
+public class FileChooser extends Dialog implements FileBrowser {
+    private final FileViewerSidebar fileViewerSidebar = new FileViewerSidebar(this);
     
-    private final ImageButton rootButton = new ImageButton("System", false, ImageButtonArrangement.LEFT_TEXT_LEFT_IMAGE);
-    
-    private final ImageButton previewModeButton = new ImageButton(ImageButtonArrangement.ONLY_TINY_IMAGE);
-    private final ContextMenu previewModesMenu = new ContextMenu(previewModeButton, false);
-    
-    private final ImageButton hideFilesToggleButton = new ImageButton(ImageButtonArrangement.ONLY_TINY_IMAGE);
-    private final ImageButton sortButton = new ImageButton(ImageButtonArrangement.ONLY_TINY_IMAGE);
-    private final ImageButton backButton = new ImageButton(ImageButtonArrangement.ONLY_TINY_IMAGE);
-    private final ImageButton nextButton = new ImageButton(ImageButtonArrangement.ONLY_TINY_IMAGE);
-    
-    private final ImageButton parentButton = new ImageButton(ImageButtonArrangement.ONLY_TINY_IMAGE);
-    private final ContextMenu parentMenu = new ContextMenu(parentButton, false);
-    
-    public final TextField directoryField = new TextField();
+    private final FileViewerControls fileViewerControls = new FileViewerControls(this);
     
     private final FileViewer fileSelector = new FileViewer(this);
     
     private final ColorButton chooseButton = new ColorButton("Choose");
     private final ColorButton cancelButton = new ColorButton("Cancel");
-    
-    
+
+    /**
+     * Creates a new FileChooser window
+     * @see FileChooser#getFile() 
+     * @see FileChooser#getFile(java.io.File) 
+     * @see FileChooser#getDirectory() 
+     * @see FileChooser#getDirectory(java.io.File) 
+     */
     public FileChooser() {
         super(800, 440);
         
@@ -65,95 +53,6 @@ public class FileChooser extends Dialog {
         });
         
         
-        homeButton.setPaint(false);
-        homeButton.addActionListener((Action) -> {
-            setDirectory(FileUtilities.USER_HOME);
-        });
-        desktopButton.setPaint(false);
-        desktopButton.addActionListener((Action) -> {
-            setDirectory(FileUtilities.USER_DESKTOP);
-        });
-        documentsButton.setPaint(false);
-        documentsButton.addActionListener((Action) -> {
-            setDirectory(FileUtilities.USER_DOCUMENTS);
-        });
-        downloadsButton.setPaint(false);
-        downloadsButton.addActionListener((Action) -> {
-            setDirectory(FileUtilities.USER_DOWNLOADS);
-        });
-        rootButton.setPaint(false);
-        rootButton.addActionListener((Action) -> {
-            setDirectory(FileUtilities.ROOT_DIRECTORY);
-        });
-        
-        
-        previewModesMenu.addOption("Icons", "ui/filebrowser/assets/lIcons.png", "ui/filebrowser/assets/dIcons.png", "ui/filebrowser/assets/dIcons.png", true, false, (Action) -> {
-            fileSelector.setDisposition(UIFileDisposition.ICON_MODE);
-            
-            setButtonImage(previewModeButton, "Icons");
-            previewModeButton.updateUITheme();
-            previewModeButton.updateUIColors();
-        });
-        previewModesMenu.addOption("List", "ui/filebrowser/assets/lList.png", "ui/filebrowser/assets/dList.png", "ui/filebrowser/assets/dList.png", true, false, (Action) -> {
-            fileSelector.setDisposition(UIFileDisposition.LIST_MODE);
-            
-            setButtonImage(previewModeButton, "List");
-            previewModeButton.updateUITheme();
-            previewModeButton.updateUIColors();
-        });
-        previewModeButton.addActionListener((Action) -> {
-            previewModesMenu.show(0, previewModeButton.getPreferredSize().height);
-        });
-        
-        hideFilesToggleButton.addActionListener((Action) -> {
-            fileSelector.setVisibleHiddenFiles(!fileSelector.isVisibleHiddenFiles());
-            
-            if (fileSelector.isVisibleHiddenFiles())
-                setButtonImage(hideFilesToggleButton, "Document1");
-            else
-                setButtonImage(hideFilesToggleButton, "Document");
-        });
-        
-        parentButton.addActionListener((Action) -> {
-            parentMenu.show(0, parentButton.getPreferredSize().height);
-        });
-        
-        parentMenu.setElementsArrange(ImageButtonArrangement.LEFT_TEXT_LEFT_IMAGE);
-        
-        
-        setButtonImage(homeButton, "Home");
-        setButtonImage(desktopButton, "Desktop");
-        setButtonImage(documentsButton, "Document");
-        setButtonImage(downloadsButton, "Download");
-        
-        setButtonImage(rootButton, "Root");
-        
-        setButtonImage(previewModeButton, "List");
-        setButtonImage(hideFilesToggleButton, "Document");
-        setButtonImage(sortButton, "Sort");
-        
-        setButtonImage(backButton, "Back");
-        setButtonImage(nextButton, "Next");
-        setButtonImage(parentButton, "Up");
-        
-        
-        directoryField.setText(LibUtilities.USER_HOME, true);
-        directoryField.setPreferredSize(new Dimension(360, 22));
-        directoryField.addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyPressed(KeyEvent e) {
-                directoryField.setFontType(LabelType.BODY);
-                
-                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-                    File f = new File(directoryField.getText());
-                    if (f.isDirectory())
-                        setDirectory(f);
-                    else
-                        directoryField.setFontType(LabelType.WARNING_LABEL);
-                }
-            }
-        });
-        
         fileSelector.listFiles();
         
         chooseButton.addActionListener((Action) -> {
@@ -165,24 +64,9 @@ public class FileChooser extends Dialog {
         });
         
         
+        add(fileViewerSidebar, container, fileSelector, UIAlignment.WEST, UIAlignment.WEST, 0, UIAlignment.SOUTH, UIAlignment.SOUTH, 0);
         
-        add(title, UIAlignment.WEST, UIAlignment.WEST, 20, UIAlignment.NORTH, UIAlignment.NORTH, 20);
-        add(homeButton, title, UIAlignment.WEST, UIAlignment.WEST, 0, UIAlignment.NORTH, UIAlignment.SOUTH, 10);
-        add(desktopButton, homeButton, UIAlignment.WEST, UIAlignment.WEST, 0, UIAlignment.NORTH, UIAlignment.SOUTH, 10);
-        add(documentsButton, desktopButton, UIAlignment.WEST, UIAlignment.WEST, 0, UIAlignment.NORTH, UIAlignment.SOUTH, 10);
-        add(downloadsButton, documentsButton, UIAlignment.WEST, UIAlignment.WEST, 0, UIAlignment.NORTH, UIAlignment.SOUTH, 10);
-        
-        add(rootButton, downloadsButton, fileSelector, UIAlignment.WEST, UIAlignment.WEST, 0, UIAlignment.SOUTH, UIAlignment.SOUTH, 0);
-        
-        add(previewModeButton, fileSelector, directoryField, UIAlignment.WEST, UIAlignment.WEST, 0, UIAlignment.VERTICAL_CENTER, UIAlignment.VERTICAL_CENTER, 0);
-        add(hideFilesToggleButton, previewModeButton, UIAlignment.WEST, UIAlignment.EAST, 5, UIAlignment.VERTICAL_CENTER, UIAlignment.VERTICAL_CENTER, 0);
-        add(sortButton, hideFilesToggleButton, UIAlignment.WEST, UIAlignment.EAST, 5, UIAlignment.VERTICAL_CENTER, UIAlignment.VERTICAL_CENTER, 0);
-        
-        add(backButton, nextButton, UIAlignment.EAST, UIAlignment.WEST, -5, UIAlignment.VERTICAL_CENTER, UIAlignment.VERTICAL_CENTER, 0);
-        add(nextButton, parentButton, UIAlignment.EAST, UIAlignment.WEST, -10, UIAlignment.VERTICAL_CENTER, UIAlignment.VERTICAL_CENTER, 0);
-        add(parentButton, directoryField, UIAlignment.EAST, UIAlignment.WEST, -10, UIAlignment.VERTICAL_CENTER, UIAlignment.VERTICAL_CENTER, 0);
-        add(directoryField, fileSelector, UIAlignment.EAST, UIAlignment.EAST, 0, UIAlignment.SOUTH, UIAlignment.NORTH, -10);
-        
+        add(fileViewerControls, fileSelector, UIAlignment.WEST, UIAlignment.WEST, 0, UIAlignment.SOUTH, UIAlignment.NORTH, 0);
         add(fileSelector, chooseButton, UIAlignment.EAST, UIAlignment.EAST, 0, UIAlignment.SOUTH, UIAlignment.NORTH, -10);
         
         add(chooseButton, UIAlignment.EAST, UIAlignment.EAST, -10, UIAlignment.SOUTH, UIAlignment.SOUTH, -10);
@@ -190,82 +74,54 @@ public class FileChooser extends Dialog {
         
         setDirectory(FileUtilities.USER_HOME);
     }
-
-    @Override
-    public void updateUISize() {
-        if (previewModesMenu != null) {
-            previewModesMenu.updateUISize();
-            parentMenu.updateUISize();
-        }
-        
-        super.updateUISize();
-    }
-
-    @Override
-    public void updateUIFont() {
-        if (previewModesMenu != null) {
-            previewModesMenu.updateUIFont();
-            parentMenu.updateUIFont();
-        }
-        
-        super.updateUIFont();
-    }
-
-    @Override
-    public void updateUITheme() {
-        if (previewModesMenu != null) {
-            previewModesMenu.updateUITheme();
-            parentMenu.updateUITheme();
-        }
-        
-        super.updateUITheme();
-    }
-
-    @Override
-    public void updateUIColors() {
-        if (previewModesMenu != null) {
-            previewModesMenu.updateUIColors();
-            parentMenu.updateUIColors();
-        }
-        
-        super.updateUIColors();
-    }
-    
-    private void setButtonImage(ImageButton ib, String name) {
-        ib.setLightThemedImage("ui/filebrowser/assets/l" + name + ".png", true, 15, 15);
-        ib.setDarkThemedImage("ui/filebrowser/assets/d" + name + ".png", true, 15, 15);
-        ib.setHoverImage("ui/filebrowser/assets/d" + name + ".png", true);
-    }
     
     /**
-     * Moves the current looking location to a given directory
-     * 
-     * @param directory 
+     * Lists the files in a directory
+     * @param directory the directory
      */
+    @Override
     public final void setDirectory(File directory) {
         fileSelector.setDirectory(directory);
-        
-        directoryField.setText(directory.getAbsolutePath());
-        
-        parentMenu.removeAllOptions();
-        
-        for (File f : FileUtilities.getFileParents(directory))
-            parentMenu.addOption(f.getParentFile() == null ? f.getAbsolutePath() : f.getName(), UIFile.L_DIRECTORY, UIFile.D_DIRECTORY, UIFile.D_DIRECTORY, false, (Action) -> {
-                directoryField.setText(f.getAbsolutePath());
-                setDirectory(f.getAbsoluteFile());
-            });
-        
-        parentMenu.updateUITheme();
-        parentMenu.updateUIColors();
+        fileViewerControls.setDirectory(directory.getAbsolutePath());
+        fileViewerControls.refreshParentList(directory);
     }
 
     /**
-     * This method does nothing, please use getFile, getFiles or getDirectory
+     * This method does nothing, please use <code>getFile()</code>, <code>getFiles()</code> or <code>getDirectory()</code>
      * @deprecated
+     * @see FileChooser#getFile() 
+     * @see FileChooser#getFile(java.io.File) 
+     * @see FileChooser#getDirectory() 
+     * @see FileChooser#getDirectory(java.io.File) 
      */
     @Override
     @Deprecated
     public void showWindow() { }
+    
+    @Override
+    public File [] listFiles(File path, FilenameFilter filter) {
+        return FileUtilities.listFiles(path, filter);
+    }
+
+    @Override
+    public void endSelection() {
+        hideWindow();
+    }
+
+    @Override
+    public void setDisposition(UIFileDisposition disposition) {
+        fileSelector.setDisposition(disposition);
+    }
+
+    @Override
+    public boolean isVisibleHiddenFiles() {
+        return fileSelector.isVisibleHiddenFiles();
+    }
+
+    @Override
+    public void setVisibleHiddenFiles(boolean visibleHiddenFiles) {
+        fileSelector.setVisibleHiddenFiles(visibleHiddenFiles);
+    }
     
     /**
      * Creates a new <code>FilenameFilter</code>, this will overwrite any filter settled by 
@@ -274,7 +130,7 @@ public class FileChooser extends Dialog {
      * is part of the strings array<br>
      * Note that this filter will not discriminate directories just files   
      * 
-     * @param ignoreCase
+     * @param ignoreCase condition to indicate if case doesn't matter
      * @param strings the allowed extension
      */
     public void setAllowedFileNames(boolean ignoreCase, String ... strings) {
@@ -283,12 +139,13 @@ public class FileChooser extends Dialog {
                 return true;
             
             for (String str : strings)
-                if (ignoreCase)
+                if (ignoreCase) {
                     if (name.toLowerCase().contains(str.toLowerCase()))
                         return true;
-                else
+                } else {
                     if (name.contains(str))
                         return true;
+                }
             
             return false;
         };

@@ -10,7 +10,8 @@ import javax.swing.Timer;
 import ui.enums.UIOrientation;
 
 /**
- *
+ * Custom painted ProgressBar
+ * 
  * @author cristopher
  */
 public class ProgressBar extends JComponent implements ComponentSetup {
@@ -81,10 +82,12 @@ public class ProgressBar extends JComponent implements ComponentSetup {
     
     
     /**
-     * Creates a new progress bar
+     * Creates a new progress bar given a minimum and maximum value<br>
+     * <b>Note</b>: min and max values do not determine the width or height
+     * for this component
      * 
-     * @param minimumValue
-     * @param maximumValue 
+     * @param minimumValue the minimum value
+     * @param maximumValue the maximum value
      * @param exitIndeterminate if true, when setting a value indeterminate 
      * mode is exited automatically
      */
@@ -98,11 +101,13 @@ public class ProgressBar extends JComponent implements ComponentSetup {
     }
     
     /**
-     * Creates a new progress bar
+     * Creates a new progress bar given an orientation, a minimum and maximum value<br>
+     * <b>Note</b>: min and max values do not determine the width or height
+     * for this component
      * 
      * @param orientation component orientation
-     * @param minimumValue
-     * @param maximumValue 
+     * @param minimumValue the minimum value
+     * @param maximumValue the maximum value
      * @param exitIndeterminate if true, when setting a value indeterminate 
      * mode is exited automatically
      */
@@ -519,7 +524,7 @@ public class ProgressBar extends JComponent implements ComponentSetup {
      */
     public void setValue(int value) {
         if (value < minimumValue || value > maximumValue)
-            throw new IllegalArgumentException("Value is outside the range [" + minimumValue + ", " + maximumValue + "]");
+            throw new IllegalArgumentException("Value " + value + " is outside the range [" + minimumValue + ", " + maximumValue + "]");
         
         // TODO: Fix bug with UIProperties.uiScale = 1.9f; when setting a new value
         
@@ -559,7 +564,7 @@ public class ProgressBar extends JComponent implements ComponentSetup {
     /**
      * Sets the minimum value for the progress bar
      * 
-     * @param minimumValue
+     * @param minimumValue the new minimum value
      * @throws IllegalArgumentException if minimum value is greater than maximum value 
      */
     public void setMinimumValue(int minimumValue) throws IllegalArgumentException {
@@ -576,7 +581,7 @@ public class ProgressBar extends JComponent implements ComponentSetup {
     /**
      * Sets the maximum value for the progress bar
      * 
-     * @param maximumValue
+     * @param maximumValue the new maximum value
      * @throws IllegalArgumentException if minimum value is greater than maximum 
      * value or maximum value is negative or zero [ TODO: allow zero and negative ]
      */

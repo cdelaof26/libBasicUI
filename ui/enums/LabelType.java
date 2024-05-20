@@ -15,7 +15,7 @@ public enum LabelType {
      */
     BOLD_TITLE, 
     /**
-     * Plain text, size = 18
+     * Bold text, size = 18
      */
     SUBTITLE, 
     /**

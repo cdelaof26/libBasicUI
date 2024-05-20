@@ -285,42 +285,18 @@ public class UIPreferences extends Dialog {
         add(uiScale, uiSubtitle, UIAlignment.WEST, UIAlignment.WEST, 0, UIAlignment.NORTH, UIAlignment.SOUTH, 10);
         
         add(resetButton, UIAlignment.EAST, UIAlignment.EAST, -10, UIAlignment.NORTH, UIAlignment.NORTH, 10);
+        
+        container.externalComponents.add(colorPicker);
     }
 
-    @Override
-    public void updateUISize() {
-        if (colorPicker != null)
-            colorPicker.updateUISize();
-        
-        super.updateUISize();
-    }
-
-    @Override
-    public void updateUIFont() {
-        if (colorPicker != null)
-            colorPicker.updateUIFont();
-        
-        super.updateUIFont();
-    }
-    
     @Override
     public void updateUITheme() {
-        if (colorPicker != null) {
-            colorPicker.updateUITheme();
-            
+        if (resetButton != null) {
             resetButton.setForeground(UIProperties.APP_FG);
             resetButton.setBackground(UIProperties.APP_BG);
         }
         
         super.updateUITheme();
-    }
-
-    @Override
-    public void updateUIColors() {
-        if (colorPicker != null)
-            colorPicker.updateUIColors();
-        
-        super.updateUIColors();
     }
     
     public void updatePreferences() {

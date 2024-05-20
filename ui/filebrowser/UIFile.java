@@ -10,7 +10,7 @@ import utils.FileUtilities;
 import utils.LibUtilities;
 
 /**
- *
+ * Creates a representation of a file in a button
  * @author cristopher
  */
 public class UIFile extends ImageButton {
@@ -26,6 +26,14 @@ public class UIFile extends ImageButton {
     private final File file;
     private int clicks = 0;
     
+    /**
+     * Creates a new UIFile
+     * 
+     * @param id the index of the element
+     * @param f the file which points at
+     * @param disposition the UIFileDisposition
+     * @param container the container
+     */
     public UIFile(int id, File f, UIFileDisposition disposition, FileViewer container) {
         super(f.getName(), false, 
                 disposition == UIFileDisposition.COLUMNS_MODE || disposition == UIFileDisposition.LIST_MODE ? 
@@ -34,13 +42,44 @@ public class UIFile extends ImageButton {
         
         this.file = f;
         
+        int imageType = this.file.isFile() && !this.file.isHidden() ? 0 : this.file.isFile() ? 1 : 2;
+        
+        initUIFile(id, imageType, disposition, container);
+    }
+    
+    /**
+     * Creates a new UIFile given a image id<br>
+     * 0: File not hidden<br>
+     * 1: Hidden file<br>
+     * 2: Directory
+     * 
+     * @param id the index of the element
+     * @param f the file which points at
+     * @param imageType the image to use
+     * @param disposition the UIFileDisposition
+     * @param container the container
+     * @throws IllegalArgumentException if imageType is not in the range [0, 2]
+     */
+    public UIFile(int id, File f, int imageType, UIFileDisposition disposition, FileViewer container) {
+        super(f.getName(), false, 
+                disposition == UIFileDisposition.COLUMNS_MODE || disposition == UIFileDisposition.LIST_MODE ? 
+                        ImageButtonArrangement.LEFT_TEXT_LEFT_IMAGE : ImageButtonArrangement.UP_IMAGE
+        );
+        
+        if (imageType < 0 || imageType > 2)
+            throw new IllegalArgumentException("Invalid imageType = " + imageType);
+        
+        this.file = f;
+        
+        initUIFile(id, imageType, disposition, container);
+    }
+    
+    private void initUIFile(int id, int imageType, UIFileDisposition disposition, FileViewer container) {
         boolean bigImage = disposition == UIFileDisposition.ICON_MODE;
         if (!bigImage)
             setRoundCorners(false);
         
         int size = bigImage ? 25 : 15;
-        
-        int imageType = this.file.isFile() && !this.file.isHidden() ? 0 : this.file.isFile() ? 1 : 2;
         
         BufferedImage lightThemedImage = imageType == 0 ? L_DOCUMENT : imageType == 1 ? L_DOCUMENT_1 : L_DIRECTORY;
         BufferedImage darkThemedImage = imageType == 0 ? D_DOCUMENT : imageType == 1 ? D_DOCUMENT_1 : D_DIRECTORY;

@@ -82,6 +82,15 @@ public class NumberSelector extends Panel {
         }
     };
     
+    /**
+     * The components to update when the value changes<br>
+     * Supported JComponents:<br>
+     * - {@link JLabel#setText(java.lang.String)}<br>
+     * - {@link TextField#setText(java.lang.String)}<br>
+     * - {@link JTextComponent#setText(java.lang.String)}<br>
+     * - {@link ProgressBar#setValue(int)}<br>
+     * - {@link Slider#setValue(int, boolean)}<br>
+     */
     protected JComponent [] componentsToUpdate;
     
     private final int defaultValue;
@@ -111,13 +120,14 @@ public class NumberSelector extends Panel {
     /**
      * Creates a new NumberSelector with a placeholder value
      * 
-     * @param text
-     * @param placeholderText
-     * @param defaultValue
-     * @param minimumValue
-     * @param maximumValue
-     * @param increaseStep
+     * @param text the field text
+     * @param placeholderText the placeholder text
+     * @param defaultValue the default value
+     * @param minimumValue the minimum value
+     * @param maximumValue the maximum value
+     * @param increaseStep the increase and decrease step
      * @param componentsToUpdate optional components to update when the value changes
+     * @see NumberSelector#componentsToUpdate
      * @throws IllegalArgumentException throw if minimumValue is greater than maximumValue, 
      * defaultValue is less than minimumValue or defaultValue is greater than maximumValue
      */
@@ -142,12 +152,13 @@ public class NumberSelector extends Panel {
     /**
      * Creates a new NumberSelector without a placeholder value
      * 
-     * @param text
-     * @param defaultValue
-     * @param minimumValue
-     * @param maximumValue
-     * @param increaseStep
+     * @param text the field text
+     * @param defaultValue the default value
+     * @param minimumValue the minimum value
+     * @param maximumValue the maximum value
+     * @param increaseStep the increase and decrease step
      * @param componentsToUpdate optional components to update when the value changes
+     * @see NumberSelector#componentsToUpdate
      * @throws IllegalArgumentException throw if minimumValue is greater than maximumValue, 
      * defaultValue is less than minimumValue or defaultValue is greater than maximumValue
      */
@@ -309,7 +320,7 @@ public class NumberSelector extends Panel {
     /**
      * Sets the preferred size of this component.
      * 
-     * @param preferredSize 
+     * @param preferredSize the new preferred size
      */
     public void setPreferredSize_(Dimension preferredSize) {
         super.setPreferredSize(preferredSize);
@@ -372,7 +383,7 @@ public class NumberSelector extends Panel {
     /**
      * Set a value for this NumberSelector
      * 
-     * @param value 
+     * @param value the value for this field
      */
     public void setValue(int value) {
         if (value < minimumValue || value > maximumValue)
@@ -395,7 +406,7 @@ public class NumberSelector extends Panel {
     /**
      * Sets the minimum value for the number selector
      * 
-     * @param minimumValue
+     * @param minimumValue the new minimum value
      * @throws IllegalArgumentException if minimum value is greater than maximum value 
      */
     public void setMinimumValue(int minimumValue) throws IllegalArgumentException {
@@ -412,7 +423,7 @@ public class NumberSelector extends Panel {
     /**
      * Sets the maximum value for the number selector
      * 
-     * @param maximumValue
+     * @param maximumValue the new maximum value
      * @throws IllegalArgumentException if minimum value is greater than maximum value 
      */
     public void setMaximumValue(int maximumValue) {
