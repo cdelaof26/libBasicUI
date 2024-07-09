@@ -196,4 +196,37 @@ public class Label extends JLabel implements ComponentSetup {
             }
         });
     }
+    
+    /**
+     * Adds mouse listener to this label which will do click a given button
+     * 
+     * @param b the JButton
+     * @param highlightButton if true the button will be highlight if it's 
+     * a {@link ColorButton}
+     */
+    public void ifClickedDoClick(JButton b, boolean highlightButton) {
+        addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                ((JButton) b).doClick(1);
+                b.requestFocus();
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                if (b instanceof ColorButton && highlightButton) {
+                    ((ColorButton) b).paintAsHovering = true;
+                    ((ColorButton) b).repaint();
+                }
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                if (b instanceof ColorButton && highlightButton) {
+                    ((ColorButton) b).paintAsHovering = false;
+                    ((ColorButton) b).repaint();
+                }
+            }
+        });
+    }
 }

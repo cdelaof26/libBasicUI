@@ -86,6 +86,22 @@ $ java -Dfile.encoding=UTF-8 -jar libBasicUI.jar
 
 ### Changelog
 
+### v0.0.8
+- Improved `FileChooser`
+  - Added refresh button
+  - Fixed issue with bigger UIScales where this component won't
+    show correctly
+  - Improved drag & drop selection
+- Created `FileSelector`: another way to retrieve files from user.
+  This component allows the user to drag & drop files and directories
+- Improved `ImageButton` response to different situations
+- Created `updateAlignComponent()` method in `Panel`
+- Attempt to improve performance in `ProgressBar` on Windows
+- Created `ScrollPane` component
+- Added `moveObject()` static method to `LibUtilities`. This 
+  function moves a object inside an ArrayList given its index and 
+  the new one
+
 ### v0.0.7
 - Added missing Java Docs
 - `ColorButton` changes

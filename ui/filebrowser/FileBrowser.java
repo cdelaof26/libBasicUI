@@ -19,6 +19,11 @@ public interface FileBrowser {
     public File [] listFiles(File path, FilenameFilter filter);
     
     /**
+     * Updates the UI to display new files
+     */
+    public void refreshListedFiles();
+    
+    /**
      * Sets the directory that is currently seen
      * 
      * @param directory the directory

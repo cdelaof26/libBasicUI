@@ -189,14 +189,23 @@ public class UIProperties {
     
     
     /**
-     * Static attribute that determines the round radius for many components
+     * Static attribute which defines the round radius for various components
      */
     protected static int buttonRoundRadius = 10;
     
+    /**
+     * Static attribute which defines the length for a square checkbox
+     */
     protected static int checkboxSideLength = 22;
     
+    /**
+     * Static attribute which defines the radius for the circle on a slider
+     */
     protected static int sliderCircleRadius = 6;
     
+    /**
+     * Static attribute which defines the width of a scroll bar
+     */
     protected static int scrollbarWidth = 10;
     
     /**
@@ -343,6 +352,10 @@ public class UIProperties {
 
     public static int getTitleFontSize() {
         return titleFontSize;
+    }
+
+    public static int getButtonRoundRadius() {
+        return buttonRoundRadius;
     }
     
     public static String UIAlignmentToString(UIAlignment align) {

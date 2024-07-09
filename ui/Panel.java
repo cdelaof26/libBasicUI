@@ -26,7 +26,7 @@ public class Panel extends JPanel implements ComponentSetup {
     /**
      * If true, calls all methods on {@link ComponentSetup} interface when a 
      * component is added<br>
-     * Keep in mind that this might slower down adding components
+     * Keep in mind that this might slow down adding components
      */
     public boolean updateOnJComponentAdded = true;
     
@@ -42,6 +42,10 @@ public class Panel extends JPanel implements ComponentSetup {
      * having to override any methods in {@link ComponentSetup} interface.
      */
     public final ArrayList<ComponentSetup> externalComponents = new ArrayList<>();
+    
+    
+    private Thread addThread = null;
+    private int addCalls = 0;
     
     
     /**
@@ -175,6 +179,13 @@ public class Panel extends JPanel implements ComponentSetup {
         return -1;
     }
     
+    private void putConstraints(ComponentConstrains cc) {
+        layout.removeLayoutComponent(cc.c);
+        
+        layout.putConstraint(UIProperties.UIAlignmentToString(cc.csx), cc.c, (int) (cc.xPad * UIProperties.uiScale), UIProperties.UIAlignmentToString(cc.cxs), cc.cx);
+        layout.putConstraint(UIProperties.UIAlignmentToString(cc.csy), cc.c, (int) (cc.yPad * UIProperties.uiScale), UIProperties.UIAlignmentToString(cc.cys), cc.cy);
+    }
+    
     /**
      * Returns the layout constrains associated to a {@link Component} c
      * @param c the component
@@ -213,8 +224,7 @@ public class Panel extends JPanel implements ComponentSetup {
         
         componentConstraints.set(index, cc);
         
-        layout.putConstraint(UIProperties.UIAlignmentToString(cc.csx), cc.c, (int) (cc.xPad * UIProperties.uiScale), UIProperties.UIAlignmentToString(cc.cxs), cc.cx);
-        layout.putConstraint(UIProperties.UIAlignmentToString(cc.csy), cc.c, (int) (cc.yPad * UIProperties.uiScale), UIProperties.UIAlignmentToString(cc.cys), cc.cy);
+        putConstraints(cc);
         
         return true;
     }
@@ -246,8 +256,7 @@ public class Panel extends JPanel implements ComponentSetup {
         cc.cx = cx;
         cc.cy = cy;
         
-        layout.putConstraint(UIProperties.UIAlignmentToString(cc.csx), cc.c, (int) (cc.xPad * UIProperties.uiScale), UIProperties.UIAlignmentToString(cc.cxs), cc.cx);
-        layout.putConstraint(UIProperties.UIAlignmentToString(cc.csy), cc.c, (int) (cc.yPad * UIProperties.uiScale), UIProperties.UIAlignmentToString(cc.cys), cc.cy);
+        putConstraints(cc);
     }
     
     /**
@@ -266,13 +275,35 @@ public class Panel extends JPanel implements ComponentSetup {
         cc.xPad = xPad;
         cc.yPad = yPad;
         
-        layout.putConstraint(UIProperties.UIAlignmentToString(cc.csx), cc.c, (int) (cc.xPad * UIProperties.uiScale), UIProperties.UIAlignmentToString(cc.cxs), cc.cx);
-        layout.putConstraint(UIProperties.UIAlignmentToString(cc.csy), cc.c, (int) (cc.yPad * UIProperties.uiScale), UIProperties.UIAlignmentToString(cc.cys), cc.cy);
+        putConstraints(cc);
+    }
+    
+    /**
+     * Changes the alignment side associated to the component c
+     * 
+     * @param c the component
+     * @param csxy is the side of c that will aligned with cx or cy
+     * @param cxys is the side of cx or cy that will used to align c
+     * @param xAlignment determines whether the new alignment is with cx (true) 
+     * or cy (false)
+     */
+    public void updateAlignComponent(Component c, UIAlignment csxy, UIAlignment cxys, boolean xAlignment) {
+        int componentIndex = findAddedComponent(c);
+        if (componentIndex == -1)
+            return;
+        
+        ComponentConstrains cc = componentConstraints.get(componentIndex);
+        if (xAlignment) {
+            cc.csx = csxy;
+            cc.cxs = cxys;
+        } else {
+            cc.csy = csxy;
+            cc.cys = cxys;
+        }
+        
+        putConstraints(cc);
     }
 
-    private Thread addThread = null;
-    private int addCalls = 0;
-    
     @Override
     public Component add(Component comp) {
         if (updateOnJComponentAdded && addThread == null) {
@@ -324,10 +355,10 @@ public class Panel extends JPanel implements ComponentSetup {
     public void add(Component c, Component cx, Component cy, UIAlignment csx, UIAlignment cxs, int xPad, UIAlignment csy, UIAlignment cys, int yPad) {
         add(c);
         
-        componentConstraints.add(new ComponentConstrains(c, cx, cy, csx, cxs, xPad, csy, cys, yPad));
+        ComponentConstrains cc = new ComponentConstrains(c, cx, cy, csx, cxs, xPad, csy, cys, yPad);
+        componentConstraints.add(cc);
         
-        layout.putConstraint(UIProperties.UIAlignmentToString(csx), c, (int) (xPad * UIProperties.uiScale), UIProperties.UIAlignmentToString(cxs), cx);
-        layout.putConstraint(UIProperties.UIAlignmentToString(csy), c, (int) (yPad * UIProperties.uiScale), UIProperties.UIAlignmentToString(cys), cy);
+        putConstraints(cc);
     }
     
     /**

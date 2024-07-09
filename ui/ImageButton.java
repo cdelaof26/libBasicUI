@@ -31,9 +31,10 @@ public class ImageButton extends ColorButton {
     private boolean onlyActionIfImageIsClicked = false;
     
     private boolean updatingColors = false;
+    private boolean lockPaintAsHovering = false;
     
     /**
-     * Creates a new ImageButton without image
+     * Creates a new ImageButton without image and no text
      * 
      * @param arrangement the way to arrange the icon and text label
      * @throws IllegalArgumentException if arrangement is not ONLY_IMAGE or ONLY_TINY_IMAGE
@@ -89,10 +90,13 @@ public class ImageButton extends ColorButton {
     private void initImageButton() {
         add(imageLabel);
         
-        imageLabel.ifClickedDoClick(this);
+        imageLabel.ifClickedDoClick(this, false);
         
         addMouseListener(new HoverListener(false));
-        imageLabel.addMouseListener(new HoverListener(true));
+        
+        HoverListener hl = new HoverListener(true);
+        imageLabel.addMouseListener(hl);
+        imageLabel.addMouseMotionListener(hl);
         
         addActionListener((Action) -> {
             updateButton();
@@ -109,9 +113,6 @@ public class ImageButton extends ColorButton {
 
     @Override
     public void updateUISize() {
-        if (arrangement == null)
-            return;
-        
         if (oldArrangement == null || oldArrangement != arrangement) {
             switch (arrangement) {
                 case ONLY_IMAGE:
@@ -149,6 +150,13 @@ public class ImageButton extends ColorButton {
 
             layout.removeLayoutComponent(imageLabel);
             layout.removeLayoutComponent(label);
+            
+            if (arrangement.name().startsWith("LEFT"))
+                label.setTextAlignment(TextAlignment.LEFT);
+            else if (arrangement.name().startsWith("RIGHT"))
+                label.setTextAlignment(TextAlignment.RIGHT);
+            else if (!arrangement.name().startsWith("F"))
+                label.setTextAlignment(TextAlignment.CENTER);
             
             oldArrangement = arrangement;
         }
@@ -284,72 +292,52 @@ public class ImageButton extends ColorButton {
         return super.getText();
     }
     
+    private void setThemedImage() {
+        if (UIProperties.isLightThemeActive())
+            imageLabel.setIcon(LibUtilities.scaleImage(lightThemedImage, (int) (imageWidth * UIProperties.uiScale), (int) (imageHeight * UIProperties.uiScale)));
+        else if (UIProperties.isDarkThemeActive())
+            imageLabel.setIcon(LibUtilities.scaleImage(darkThemedImage, (int) (imageWidth * UIProperties.uiScale), (int) (imageHeight * UIProperties.uiScale)));
+    }
+    
     private void updateButton() {
-        if (!paint) {
-            label.setForeground(FGColor);
-            
-            if (lightThemedImage != null)
-                if (darkThemedImage != null)
-                    if (UIProperties.isLightThemeActive())
-                        imageLabel.setIcon(LibUtilities.scaleImage(lightThemedImage, (int) (imageWidth * UIProperties.uiScale), (int) (imageHeight * UIProperties.uiScale)));
-                    else
-                        imageLabel.setIcon(LibUtilities.scaleImage(darkThemedImage, (int) (imageWidth * UIProperties.uiScale), (int) (imageHeight * UIProperties.uiScale)));
-                else
-                    imageLabel.setIcon(LibUtilities.scaleImage(lightThemedImage, (int) (imageWidth * UIProperties.uiScale), (int) (imageHeight * UIProperties.uiScale)));
-            
-            return;
-        }
-        
-        // TODO
-        // Fix colors when theme is changed if update is through a mouse listener
-        
-        if (updatingColors) {
-            label.setForeground(FGColor);
-            
-            if (lightThemedImage != null)
-                if (darkThemedImage != null)
-                    if (UIProperties.isLightThemeActive())
-                        imageLabel.setIcon(LibUtilities.scaleImage(lightThemedImage, (int) (imageWidth * UIProperties.uiScale), (int) (imageHeight * UIProperties.uiScale)));
-                    else
-                        imageLabel.setIcon(LibUtilities.scaleImage(darkThemedImage, (int) (imageWidth * UIProperties.uiScale), (int) (imageHeight * UIProperties.uiScale)));
-                else
-                    imageLabel.setIcon(LibUtilities.scaleImage(lightThemedImage, (int) (imageWidth * UIProperties.uiScale), (int) (imageHeight * UIProperties.uiScale)));
-                
-            
-            repaint();
+        if (lightThemedImage == null || darkThemedImage == null) {
             updatingColors = false;
-            
             return;
         }
         
-        if (!isEnabled())
+        if (!isEnabled()) {
+            setThemedImage();
+            updatingColors = false;
             return;
+        }
         
+        if ((onlyAppColor || lockPaintAsHovering) && hoverImage != null) {
+            imageLabel.setIcon(LibUtilities.scaleImage(hoverImage, (int) (imageWidth * UIProperties.uiScale), (int) (imageHeight * UIProperties.uiScale)));
+            updatingColors = false;
+            return;
+        }
         
-        if (getModel().isRollover() || paintAsHovering)
-            label.setForeground(HFGColor);
-        else
-            label.setForeground(FGColor);
+        if (!paint || appTheme) {
+            setThemedImage();
+            updatingColors = false;
+            return;
+        }
         
-        if (hoverImage != null) 
-            if (getModel().isRollover() || paintAsHovering) {
-                imageLabel.setIcon(LibUtilities.scaleImage(hoverImage, (int) (imageWidth * UIProperties.uiScale), (int) (imageHeight * UIProperties.uiScale)));
-                return;
-            }
+        boolean _paintAsHovering = getModel().isRollover();
         
-        if (lightThemedImage != null)
-            if (darkThemedImage != null)
-                if (UIProperties.isLightThemeActive())
-                    imageLabel.setIcon(LibUtilities.scaleImage(lightThemedImage, (int) (imageWidth * UIProperties.uiScale), (int) (imageHeight * UIProperties.uiScale)));
-                else
-                    imageLabel.setIcon(LibUtilities.scaleImage(darkThemedImage, (int) (imageWidth * UIProperties.uiScale), (int) (imageHeight * UIProperties.uiScale)));
-            else
-                imageLabel.setIcon(LibUtilities.scaleImage(lightThemedImage, (int) (imageWidth * UIProperties.uiScale), (int) (imageHeight * UIProperties.uiScale)));
+        if (UIProperties.isLightThemeActive() && !_paintAsHovering)
+            imageLabel.setIcon(LibUtilities.scaleImage(lightThemedImage, (int) (imageWidth * UIProperties.uiScale), (int) (imageHeight * UIProperties.uiScale)));
+        else if (UIProperties.isDarkThemeActive())
+            imageLabel.setIcon(LibUtilities.scaleImage(darkThemedImage, (int) (imageWidth * UIProperties.uiScale), (int) (imageHeight * UIProperties.uiScale)));
+        else if (hoverImage != null && _paintAsHovering)
+            imageLabel.setIcon(LibUtilities.scaleImage(hoverImage, (int) (imageWidth * UIProperties.uiScale), (int) (imageHeight * UIProperties.uiScale)));
+        
+        updatingColors = false;
     }
 
     @Override
     public void setPaintAsHovering(boolean paintAsHovering) {
-        this.paintAsHovering = paintAsHovering;
+        this.lockPaintAsHovering = paintAsHovering;
         super.setPaintAsHovering(paintAsHovering);
         updateButton();
     }
@@ -360,6 +348,9 @@ public class ImageButton extends ColorButton {
      * @param arrangement the new arrangement
      */
     public void setArrangement(ImageButtonArrangement arrangement) {
+        if (arrangement == null)
+            throw new IllegalArgumentException("The new arrangement cannot be null");
+        
         this.arrangement = arrangement;
         updateUISize();
     }
@@ -559,7 +550,7 @@ public class ImageButton extends ColorButton {
     /**
      * If set true, this button only will be triggered if user clicks on the image<br>
      * Any ActionListener added before changing this won't be affected, <br>
-     * in order to add actions use <code>addMouseListener</code> method
+     * this only affects added MouseListener actions.
      * 
      * @param onlyActionIfImageIsClicked default is false
      */
@@ -594,25 +585,32 @@ public class ImageButton extends ColorButton {
             this.paintAsHover = paintAsHover;
         }
         
-        @Override
-        public void mouseEntered(MouseEvent e) {
-            if (updatingColors)
+        private void updateState() {
+            if (updatingColors || lockPaintAsHovering)
                 return;
             
             if (paintAsHover)
-                paintAsHovering = true;
+                getModel().setRollover(true);
             
             updateButton();
+        }
+        
+        @Override
+        public void mouseDragged(MouseEvent e) {
+            updateState();
+        }
+        
+        @Override
+        public void mouseEntered(MouseEvent e) {
+            updateState();
         }
 
         @Override
         public void mouseExited(MouseEvent e) {
-            if (updatingColors)
+            if (updatingColors || lockPaintAsHovering)
                 return;
             
-            if (paintAsHover)
-                paintAsHovering = false;
-            
+            getModel().setRollover(false);
             updateButton();
         }
     }

@@ -14,10 +14,9 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import javax.swing.JScrollPane;
-import ui.ColorScrollBarUI;
 import ui.ComponentSetup;
 import ui.Panel;
+import ui.ScrollPane;
 import ui.UIProperties;
 import ui.enums.FileChooserModal;
 import ui.enums.UIAlignment;
@@ -25,10 +24,10 @@ import ui.enums.UIFileDisposition;
 import utils.FileUtilities;
 
 /**
- *
+ * Custom component which displays the files in a directory
  * @author cristopher
  */
-public class FileViewer extends JScrollPane implements ComponentSetup {
+public class FileViewer extends ScrollPane implements ComponentSetup {
     private final Panel panel = new Panel() {
         @Override
         public void updateUITheme() {
@@ -38,11 +37,6 @@ public class FileViewer extends JScrollPane implements ComponentSetup {
             for (Component c : getComponents())
                 if (c instanceof ComponentSetup)
                     ((ComponentSetup) c).updateUITheme();
-        }
-
-        @Override
-        public int getWidth() {
-            return width;
         }
     };
     
@@ -56,16 +50,6 @@ public class FileViewer extends JScrollPane implements ComponentSetup {
     private FilenameFilter filter = null;
     private boolean visibleHiddenFiles = false;
     
-    /**
-     * The width for this viewer
-     */
-    protected int width = 630;
-    
-    /**
-     * The height for this viewer
-     */
-    protected int height = 328;
-    
     
     private final FileBrowser container;
     
@@ -75,17 +59,17 @@ public class FileViewer extends JScrollPane implements ComponentSetup {
      */
     public FileViewer(FileBrowser container) {
         this.container = container;
+        this.width = 630;
+        this.height = 328;
         
-        initUI();
+        initFileViewer();
     }
     
-    @Override
-    public final void initUI() {
-        setBorder(null);
+    public final void initFileViewer() {
         setViewportView(panel);
         
-        panel.setPreferredSize(new Dimension(width, height));
         panel.updateOnJComponentAdded = false;
+        panel.setPreferredSize(new Dimension(width, height));
         panel.setDropTarget(new DropTarget(panel, new DropTargetAdapter() {
             @Override
             public void drop(DropTargetDropEvent event) {
@@ -105,12 +89,14 @@ public class FileViewer extends JScrollPane implements ComponentSetup {
                             return;
                         
                         File f = (File) o;
-                        if (f.getParentFile() != null)
-                            setDirectory(f.getParentFile());
-                        else
-                            setDirectory(FileUtilities.ROOT_DIRECTORY);
-
                         setSelection(f);
+                        
+                        if (f.getParentFile() != null)
+                            setDirectory(f.getParentFile(), false);
+                        else
+                            setDirectory(FileUtilities.ROOT_DIRECTORY, false);
+                        
+                        listFiles();
                     }
                 } catch (UnsupportedFlavorException | IOException ex) {
                     ex.printStackTrace();
@@ -123,77 +109,40 @@ public class FileViewer extends JScrollPane implements ComponentSetup {
 
     @Override
     public void updateUISize() {
-        setPreferredSize(new Dimension(width, height));
-        
-        getVerticalScrollBar().setUI(new ColorScrollBarUI());
-        getHorizontalScrollBar().setUI(new ColorScrollBarUI());
-        
         int increment = disposition == UIFileDisposition.LIST_MODE ? 22 : 60;
+        this.verticalScrollUnitIncrement = increment;
+        this.horizontalScrollUnitIncrement = increment;
         
-        getVerticalScrollBar().setUnitIncrement((int) (increment * UIProperties.getUiScale()));
-        
-        panel.updateUISize();
-    }
-
-    @Override
-    public void updateUIFont() {
-        panel.updateUIFont();
-    }
-
-    @Override
-    public void updateUITheme() {
-        getVerticalScrollBar().setUI(new ColorScrollBarUI());
-        getHorizontalScrollBar().setUI(new ColorScrollBarUI());
-        
-        panel.updateUITheme();
-    }
-
-    @Override
-    public void updateUIColors() {
-        panel.updateUIColors();
-    }
-
-    @Override
-    public void setUseAppTheme(boolean useAppTheme) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public void setUseAppColor(boolean useAppColor) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public void setRoundCorners(boolean roundCorners) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
-    public void setPaintBorder(boolean paintBorder) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        super.updateUISize();
     }
 
     @Override
     public void setPreferredSize(Dimension preferredSize) {
-        width = preferredSize.width;
-        height = preferredSize.height;
-        
-        rearrangeFiles(false);
-        
-        preferredSize.width = (int) (preferredSize.width * UIProperties.getUiScale());
-        preferredSize.height = (int) (preferredSize.height * UIProperties.getUiScale());
-        
         super.setPreferredSize(preferredSize);
     }
 
+    /**
+     * Changes the directory
+     * 
+     * @param directory the path
+     * @param reListFiles if true, the UI will be updated to display the 
+     * contents on directory
+     */
+    public void setDirectory(File directory, boolean reListFiles) {
+        this.directory = directory;
+        
+        if (reListFiles) {
+            this.selection = this.directory;
+            listFiles();
+        }
+    }
+    
     /**
      * Changes the directory and lists all files inside
      * @param directory the path
      */
     public void setDirectory(File directory) {
-        this.directory = directory;
-        this.selection = this.directory;
-        listFiles();
+        setDirectory(directory, true);
     }
 
     /**
@@ -321,9 +270,10 @@ public class FileViewer extends JScrollPane implements ComponentSetup {
         
         panel.updateUITheme();
         panel.updateUIColors();
+        panel.updateUISize();
         
-        revalidate();
-        repaint();
+        panel.revalidate();
+        panel.repaint();
     }
     
     /**
@@ -343,7 +293,10 @@ public class FileViewer extends JScrollPane implements ComponentSetup {
                 if (f.isFile() && mode == FileChooserModal.SINGLE_DIRECTORY)
                     continue;
                 
-                files.add(new UIFile(files.size(), f, disposition, this));
+                UIFile uifile = new UIFile(files.size(), f, disposition, this);
+                files.add(uifile);
+                if (f.equals(selection))
+                    uifile.setPaintAsHovering(true);
             }
         
         rearrangeFiles(false);

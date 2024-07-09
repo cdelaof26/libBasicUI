@@ -1,7 +1,7 @@
 package ui.enums;
 
 /**
- * Ways to set the file browser preview
+ * Ways to display the files on a file browser preview
  * 
  * @author cristopher
  */

@@ -10,7 +10,8 @@ import utils.FileUtilities;
 import utils.LibUtilities;
 
 /**
- * Creates a representation of a file in a button
+ * Creates a button with the name of a file with an icon
+ * 
  * @author cristopher
  */
 public class UIFile extends ImageButton {

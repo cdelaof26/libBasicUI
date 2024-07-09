@@ -242,7 +242,7 @@ public class ColorButton extends JButton implements ComponentSetup {
             g2D.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
 
             Color c;
-
+            
             if ((getModel().isRollover() || paintAsHovering) && isEnabled()) {
                 c = HBGColor;
                 label.setForeground(HFGColor);

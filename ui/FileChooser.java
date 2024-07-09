@@ -1,10 +1,10 @@
 package ui;
 
+import utils.FilePicker;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.FilenameFilter;
-import java.util.Arrays;
 import javax.swing.AbstractAction;
 import javax.swing.KeyStroke;
 import ui.enums.FileChooserModal;
@@ -22,7 +22,7 @@ import utils.LibUtilities;
  * 
  * @author cristopher
  */
-public class FileChooser extends Dialog implements FileBrowser {
+public class FileChooser extends Dialog implements FileBrowser, FilePicker {
     private final FileViewerSidebar fileViewerSidebar = new FileViewerSidebar(this);
     
     private final FileViewerControls fileViewerControls = new FileViewerControls(this);
@@ -102,6 +102,11 @@ public class FileChooser extends Dialog implements FileBrowser {
     public File [] listFiles(File path, FilenameFilter filter) {
         return FileUtilities.listFiles(path, filter);
     }
+    
+    @Override
+    public void refreshListedFiles() {
+        fileSelector.listFiles();
+    }
 
     @Override
     public void endSelection() {
@@ -123,16 +128,7 @@ public class FileChooser extends Dialog implements FileBrowser {
         fileSelector.setVisibleHiddenFiles(visibleHiddenFiles);
     }
     
-    /**
-     * Creates a new <code>FilenameFilter</code>, this will overwrite any filter settled by 
-     * <code>setFilenameFilter()</code><br>
-     * This method uses <code>string.contains()</code> to check if <code>File.getName()</code>
-     * is part of the strings array<br>
-     * Note that this filter will not discriminate directories just files   
-     * 
-     * @param ignoreCase condition to indicate if case doesn't matter
-     * @param strings the allowed extension
-     */
+    @Override
     public void setAllowedFileNames(boolean ignoreCase, String ... strings) {
         FilenameFilter filter = (File dir, String name) -> {
             if (FileUtilities.joinPath(dir, name).isDirectory())
@@ -153,15 +149,7 @@ public class FileChooser extends Dialog implements FileBrowser {
         fileSelector.setFilter(filter);
     }
     
-    /**
-     * Sets a custom made filter, this will overwrite any filter settled by 
-     * <code>setAllowedFileNames()</code>
-     * 
-     * @param alwaysAcceptDirectories if true, it will create a new <code>FilenameFilter</code>,
-     * this new filter will always allow directories to pass and will only 
-     * discriminate files using the given filter
-     * @param filter the filename filter
-     */
+    @Override
     public void setFilenameFilter(boolean alwaysAcceptDirectories, FilenameFilter filter) {
         if (alwaysAcceptDirectories) {
             FilenameFilter dirFilter = (File dir, String name1) -> {
@@ -178,15 +166,7 @@ public class FileChooser extends Dialog implements FileBrowser {
         fileSelector.setFilter(filter);
     }
     
-    /**
-     * Shows the file chooser and returns the selected file, 
-     * use <code>setAllowedFileNames()</code> and <code>setFilenameFilter()</code> to add filters
-     * 
-     * @param directory the location to show, set to null to start where it was left
-     * @return a file or null if user canceled
-     * @see ui.FileChooser#setAllowedFileNames(boolean, java.lang.String...) 
-     * @see ui.FileChooser#setFilenameFilter(boolean, java.io.FilenameFilter) 
-     */
+    @Override
     public File getFile(File directory) {
         if (directory != null)
             setDirectory(directory);
@@ -202,27 +182,12 @@ public class FileChooser extends Dialog implements FileBrowser {
         return fileSelector.getSelection();
     }
     
-    /**
-     * Shows the file chooser and returns the selected file, 
-     * use <code>setAllowedFileNames()</code> and <code>setFilenameFilter()</code> to add filters
-     * 
-     * @return a file or null if user canceled
-     * @see ui.FileChooser#setAllowedFileNames(boolean, java.lang.String...) 
-     * @see ui.FileChooser#setFilenameFilter(boolean, java.io.FilenameFilter) 
-     */
+    @Override
     public File getFile() {
         return getFile(null);
     }
     
-    /**
-     * Shows the file chooser and returns the selected directory, 
-     * use <code>setAllowedFileNames()</code> and <code>setFilenameFilter()</code> to add filters
-     * 
-     * @param directory the location to show, set to null to start where it was left
-     * @return a directory or null if user canceled
-     * @see ui.FileChooser#setAllowedFileNames(boolean, java.lang.String...) 
-     * @see ui.FileChooser#setFilenameFilter(boolean, java.io.FilenameFilter) 
-     */
+    @Override
     public File getDirectory(File directory) {
         if (directory != null)
             setDirectory(directory);
@@ -238,15 +203,28 @@ public class FileChooser extends Dialog implements FileBrowser {
         return fileSelector.getSelection();
     }
     
-    /**
-     * Shows the file chooser and returns the selected directory, 
-     * use <code>setAllowedFileNames()</code> and <code>setFilenameFilter()</code> to add filters
-     * 
-     * @return a directory or null if user canceled
-     * @see ui.FileChooser#setAllowedFileNames(boolean, java.lang.String...) 
-     * @see ui.FileChooser#setFilenameFilter(boolean, java.io.FilenameFilter) 
-     */
+    @Override
     public File getDirectory() {
         return getDirectory(null);
+    }
+
+    @Override
+    public File[] getFiles() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public File[] getDirectories() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public File[] getFiles(File directory) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public File[] getDirectories(File directory) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }

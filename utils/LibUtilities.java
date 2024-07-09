@@ -15,6 +15,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Base64.Decoder;
 import java.util.HashMap;
@@ -96,7 +97,7 @@ public class LibUtilities {
         
         loadDefaultPreferences();
         
-        System.out.println("[INFO] libBasicUI v0.0.7");
+        System.out.println("[INFO] libBasicUI v0.0.8");
         System.out.println("[INFO] LibUtilities initialized!");
     }
     
@@ -470,6 +471,38 @@ public class LibUtilities {
     @Deprecated
     public static boolean writeFile(File file, String data) {
         return FileUtilities.writeFile(file, data);
+    }
+    
+    /**
+     * Moves an object inside an ArrayList to a new index.<br>
+     * Note this won't do anything if <br>
+     * - <code>index == newIndex</code><br>
+     * - index is less than 0<br>
+     * - newIndex is less than 0<br>
+     * - index is greater than array.size()<br>
+     * - newIndex is greater than array.size()<br>
+     * 
+     * @param array the {@link ArrayList}
+     * @param object the object to move
+     * @param index the old index
+     * @param newIndex the new index
+     */
+    public static void moveObject(ArrayList array, Object object, int index, int newIndex) {
+        if (index == newIndex)
+            return;
+        
+        if (index < 0 || newIndex < 0)
+            return;
+        if (index >= array.size() || newIndex >= array.size())
+            return;
+        
+        if (index > newIndex) {
+            array.remove(index);
+            array.add(newIndex, object);
+        } else {
+            array.add(newIndex + 1, object);
+            array.remove(index);
+        }
     }
     
     /**

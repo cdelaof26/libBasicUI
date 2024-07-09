@@ -25,6 +25,7 @@ public class FileViewerControls extends Panel {
     
     private final ImageButton hideFilesToggleButton = new ImageButton(ImageButtonArrangement.ONLY_TINY_IMAGE);
     private final ImageButton sortButton = new ImageButton(ImageButtonArrangement.ONLY_TINY_IMAGE);
+    private final ImageButton refreshButton = new ImageButton(ImageButtonArrangement.ONLY_TINY_IMAGE);
     private final ImageButton backButton = new ImageButton(ImageButtonArrangement.ONLY_TINY_IMAGE);
     private final ImageButton nextButton = new ImageButton(ImageButtonArrangement.ONLY_TINY_IMAGE);
     
@@ -66,6 +67,10 @@ public class FileViewerControls extends Panel {
                 setButtonImage(hideFilesToggleButton, "Document");
         });
         
+        refreshButton.addActionListener((Action) -> {
+            container.refreshListedFiles();
+        });
+        
         parentButton.addActionListener((Action) -> {
             parentMenu.show(0, parentButton.getPreferredSize().height);
         });
@@ -75,6 +80,7 @@ public class FileViewerControls extends Panel {
         setButtonImage(previewModeButton, "List");
         setButtonImage(hideFilesToggleButton, "Document");
         setButtonImage(sortButton, "Sort");
+        setButtonImage(refreshButton, "Refresh");
         
         setButtonImage(backButton, "Back");
         setButtonImage(nextButton, "Next");
@@ -108,6 +114,7 @@ public class FileViewerControls extends Panel {
         add(previewModeButton, this, directoryField, UIAlignment.WEST, UIAlignment.WEST, 0, UIAlignment.VERTICAL_CENTER, UIAlignment.VERTICAL_CENTER, 0);
         add(hideFilesToggleButton, previewModeButton, UIAlignment.WEST, UIAlignment.EAST, 5, UIAlignment.VERTICAL_CENTER, UIAlignment.VERTICAL_CENTER, 0);
         add(sortButton, hideFilesToggleButton, UIAlignment.WEST, UIAlignment.EAST, 5, UIAlignment.VERTICAL_CENTER, UIAlignment.VERTICAL_CENTER, 0);
+        add(refreshButton, sortButton, UIAlignment.WEST, UIAlignment.EAST, 5, UIAlignment.VERTICAL_CENTER, UIAlignment.VERTICAL_CENTER, 0);
         
         add(backButton, nextButton, UIAlignment.EAST, UIAlignment.WEST, -5, UIAlignment.VERTICAL_CENTER, UIAlignment.VERTICAL_CENTER, 0);
         add(nextButton, parentButton, UIAlignment.EAST, UIAlignment.WEST, -10, UIAlignment.VERTICAL_CENTER, UIAlignment.VERTICAL_CENTER, 0);

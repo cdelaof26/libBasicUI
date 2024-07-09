@@ -8,6 +8,7 @@ import java.awt.RenderingHints;
 import javax.swing.JComponent;
 import javax.swing.Timer;
 import ui.enums.UIOrientation;
+import utils.LibUtilities;
 
 /**
  * Custom painted ProgressBar
@@ -81,6 +82,9 @@ public class ProgressBar extends JComponent implements ComponentSetup {
     });
     
     
+    private static boolean winPerformanceThreadsRunning = false;
+    
+    
     /**
      * Creates a new progress bar given a minimum and maximum value<br>
      * <b>Note</b>: min and max values do not determine the width or height
@@ -144,6 +148,20 @@ public class ProgressBar extends JComponent implements ComponentSetup {
         updateUISize();
         updateUITheme();
         updateUIColors();
+        
+        // This code below starts a few threads for windows platforms, 
+        // this hopefully fixes poor performance with windows on Java 8 when 
+        // using multithreading. This might be more power consuming though...
+        //
+        if (!LibUtilities.IS_UNIX_LIKE && !winPerformanceThreadsRunning) {
+            winPerformanceThreadsRunning = true;
+            for (int i = 0; i < 5; i++) {
+                new Thread(() -> {
+                    while (true)
+                        try { Thread.sleep(2); } catch (InterruptedException ex) { }
+                }).start();
+            }
+        }
     }
 
     @Override
