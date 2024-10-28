@@ -31,7 +31,12 @@ public enum LabelType {
      */
     WARNING_LABEL, 
     /**
-     * No font will be set automatically
+     * Font, size, family and style can be customized
+     * @see ui.UIFont
+     */
+    CUSTOM,
+    /**
+     * No font will be set automatically allowing for a better manual handling
      */
     NONE
 }

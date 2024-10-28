@@ -16,7 +16,7 @@ import utils.LibUtilities;
  *
  * @author cristopher
  */
-public class ColorButton extends JButton implements ComponentSetup {
+public class ColorButton extends JButton implements ComponentSetup, UIFont {
     /**
      * Button's width
      */
@@ -354,5 +354,40 @@ public class ColorButton extends JButton implements ComponentSetup {
         this.text = text;
         label.setText(this.text);
         updateLabelSize();
+    }
+    
+    @Override
+    public void setFontPointSize(int fontSize) {
+        label.setFontPointSize(fontSize);
+    }
+
+    @Override
+    public void setFontFamily(String fontFamily) {
+        label.setFontFamily(fontFamily);
+    }
+
+    @Override
+    public void setFontBold(boolean boldFont) {
+        label.setFontBold(boldFont);
+    }
+
+    @Override
+    public void setFontItalic(boolean italicFont) {
+        label.setFontItalic(italicFont);
+    }
+
+    @Override
+    public void setFontMonospaced(boolean monospacedFont) {
+        label.setFontMonospaced(monospacedFont);
+    }
+
+    @Override
+    public void useCustomFontColor(boolean customColor) {
+        label.useCustomFontColor(customColor);
+    }
+
+    @Override
+    public void setFontColor(Color fontColor) {
+        label.setFontColor(fontColor);
     }
 }

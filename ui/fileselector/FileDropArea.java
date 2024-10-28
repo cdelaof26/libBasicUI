@@ -47,6 +47,7 @@ public class FileDropArea extends ScrollPane {
     private boolean moveToBottom = false;
     
     private FileChooserModal mode = FileChooserModal.SINGLE_FILE;
+    protected boolean fileReplaceableOnSingle = false;
     
     protected ActionListener dropperCallback = null;
     
@@ -152,12 +153,20 @@ public class FileDropArea extends ScrollPane {
     private boolean canAcceptFile(File f) {
         switch (mode) {
             case SINGLE_FILE:
+                if (fileReplaceableOnSingle && !droppedFiles.isEmpty()) {
+                    droppedFileNames.remove(0);
+                    container.remove(droppedFiles.remove(0));
+                }
             return f.isFile() && droppedFiles.isEmpty();
             
             case MULTIPLE_FILES:
             return f.isFile();
             
             case SINGLE_DIRECTORY:
+                if (fileReplaceableOnSingle && !droppedFiles.isEmpty()) {
+                    droppedFileNames.remove(0);
+                    container.remove(droppedFiles.remove(0));
+                }
             return f.isDirectory() && droppedFiles.isEmpty();
             
             case MULTIPLE_DIRECTORIES:
@@ -221,6 +230,26 @@ public class FileDropArea extends ScrollPane {
     }
 
     /**
+     * Sets fileReplaceableOnSingle, this attribute indicates if the user can 
+     * drop another file as a replacement when mode is <code>SINGLE_FILE</code> or 
+     * <code>SINGLE_DIRECTORY</code><br><br>
+     * If set to false, the user needs to remove the file manually and drop the 
+     * new file.
+     * @param fileReplaceableOnSingle the behavior (default false)
+     */
+    public void setFileReplaceableOnSingle(boolean fileReplaceableOnSingle) {
+        this.fileReplaceableOnSingle = fileReplaceableOnSingle;
+    }
+
+    /**
+     * @return if the user can drop another file as a replacement
+     * @see FileDropArea#setFileReplaceableOnSingle(boolean)
+     */
+    public boolean isFileReplaceableOnSingle() {
+        return fileReplaceableOnSingle;
+    }
+    
+    /**
      * Changes the selection mode
      * @param mode the new selection mode
      */
@@ -241,9 +270,6 @@ public class FileDropArea extends ScrollPane {
         
         for (int i = 0; i < droppedFiles.size(); i++)
             selection[i] = droppedFiles.get(i).f;
-        
-        droppedFileNames = new ArrayList<>();
-        droppedFiles = new ArrayList<>();
         
         return selection;
     }

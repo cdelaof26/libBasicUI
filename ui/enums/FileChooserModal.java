@@ -15,11 +15,11 @@ public enum FileChooserModal {
      */
     SINGLE_DIRECTORY,
     /**
-     * Picks a various files
+     * Picks various files
      */
     MULTIPLE_FILES, 
     /**
-     * Picks a various directories
+     * Picks various directories
      */
     MULTIPLE_DIRECTORIES
 }

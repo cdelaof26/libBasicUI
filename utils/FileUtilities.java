@@ -108,6 +108,21 @@ public class FileUtilities {
     }
     
     /**
+     * Loads a file bundled in a JAR as an <code>InputStream</code>.<br>
+     * For a file <code>data.zip</code> in the package <code>myapp.ui.assets</code>,
+     * you can access to it by changing the '.' (period) for '/' (forward slash).<br>
+     * The value for <code>fileLocation</code> should be <code>myapp/ui/assets/data.zip</code>
+     * 
+     * @param fileLocation the relative path starting from the default package
+     * @return the InputStream to read the file
+     * @see ClassLoader#getResourceAsStream(java.lang.String)
+     * @see utils.FileUtilities#writeFile(java.io.InputStream, java.io.File, boolean)
+     */
+    public static InputStream loadFile(String fileLocation) {
+        return ClassLoader.getSystemClassLoader().getResourceAsStream(fileLocation);
+    }
+    
+    /**
      * Writes a plain text file
      * 
      * @param file file path
@@ -154,7 +169,7 @@ public class FileUtilities {
     }
     
     /**
-     * Downloads a file from a URL, **this will overwrite any file**
+     * Downloads a file from a URL, <b>**this will overwrite the output file if exist**</b>
      * 
      * @param url the URL to retrieve the content
      * @param outputFile where the file should be saved

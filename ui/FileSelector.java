@@ -79,6 +79,9 @@ public class FileSelector extends Panel implements FilePicker {
             fileDropArea.removeAllItems();
         });
         
+        removeAllButton.setVisible(false);
+        submitButton.setPreferredSize(new Dimension(width -20, 30));
+        
         if (showAsDialog) {
             dialog.container.add(title, UIAlignment.WEST, UIAlignment.WEST, 10, UIAlignment.NORTH, UIAlignment.NORTH, 10);
             dialog.container.add(fileDropArea, UIAlignment.HORIZONTAL_CENTER, UIAlignment.HORIZONTAL_CENTER, 0, UIAlignment.VERTICAL_CENTER, UIAlignment.VERTICAL_CENTER, 0);
@@ -95,12 +98,9 @@ public class FileSelector extends Panel implements FilePicker {
     }
     
     private Object getSelection(String titleText, FileChooserModal mode) {
-        boolean multipleSelectionAllowed = mode.toString().contains("MULTIPLE");
+        boolean multipleSelectionAllowed = setChooseMode(titleText, mode);
         
-        title.setText(titleText);
         fileDropArea.setMode(mode);
-        removeAllButton.setVisible(multipleSelectionAllowed);
-        submitButton.setPreferredSize(new Dimension(width + (multipleSelectionAllowed ? -60 : -20), 30));
         
         if (showAsDialog)
             dialog.showWindow();
@@ -110,6 +110,29 @@ public class FileSelector extends Panel implements FilePicker {
             return selection == null ? null : selection[0];
         
         return selection;
+    }
+    
+    /**
+     * This method has only the function to update the UI depending on the amount 
+     * of files/directories can be dropped.<br>
+     * <b>Note:</b> setting this while <code>showAsDialog = true</code> doesn't
+     * have any effect. Calling any <code>get</code> method on {@link utils.FilePicker} will 
+     * update the UI layout if applies.
+     * @param titleText the title that will be settled to this element
+     * @param mode if modal is <code>MULTIPLE_FILES</code> or <code>MULTIPLE_DIRECTORIES</code>,
+     * the "remove all" button will be visible otherwise hidden
+     * @return whether the mode is a multiple selection (true) or not
+     */
+    public boolean setChooseMode(String titleText, FileChooserModal mode) {
+        title.setText(titleText);
+        boolean multipleSelectionAllowed = mode.toString().contains("MULTIPLE");
+        if (showAsDialog)
+            return multipleSelectionAllowed;
+        
+        removeAllButton.setVisible(multipleSelectionAllowed);
+        submitButton.setPreferredSize(new Dimension(width + (multipleSelectionAllowed ? -60 : -20), 30));
+        
+        return multipleSelectionAllowed;
     }
     
     @Override

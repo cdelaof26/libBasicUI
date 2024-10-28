@@ -1,6 +1,5 @@
 package ui;
 
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import javax.swing.JScrollBar;
@@ -25,7 +24,7 @@ public class ScrollPane extends JScrollPane implements ComponentSetup {
     /**
      * Creates a new ScrollPane without specifying a viewport view component
      * 
-     * @see ScrollPanel#setViewportView(java.awt.Component) 
+     * @see ScrollPane#setViewportView(java.awt.Component) 
      */
     public ScrollPane() {
         initUI();
@@ -37,7 +36,7 @@ public class ScrollPane extends JScrollPane implements ComponentSetup {
      * 
      * @param width the width
      * @param height the height
-     * @see ScrollPanel#setViewportView(java.awt.Component) 
+     * @see ScrollPane#setViewportView(java.awt.Component) 
      */
     public ScrollPane(int width, int height) {
         this.width = width;
@@ -67,6 +66,7 @@ public class ScrollPane extends JScrollPane implements ComponentSetup {
         this.width = width;
         this.height = height;
         this.viewportViewComponent = initialViewportViewComponent;
+        super.setViewportView(initialViewportViewComponent);
         initUI();
     }
     

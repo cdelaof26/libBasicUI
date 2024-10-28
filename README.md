@@ -5,7 +5,7 @@
 ### What is this?
 
 This is a tiny library built on top of Java Swing, it mainly uses _custom-painting_
-technics to deliver a modern look and feel while being desktop cross-platform. 
+technics to deliver a modern look and feel while being desktop cross-platform.
 
 ### Dependencies 
 
@@ -85,6 +85,24 @@ $ java -Dfile.encoding=UTF-8 -jar libBasicUI.jar
 
 
 ### Changelog
+
+### v0.0.9
+- Added `UIFont` interface
+  - Allows font changes in UI elements such as font family, 
+    whether is bold, italic or plain and font point size
+  - Created `CUSTOM` entry in `LabelType`
+  - Initial support for `Label`, `ColorButton` and `CheckField`
+- Created `setFileReplaceableOnSingle()` and `isFileReplaceableOnSingle()`
+  in `FileDropArea` class
+- Reviewed FFMpeg installation progress
+  - Fixed broken installation process
+  - Added support for FFplay and FFprobe
+  - Improved installation status feedback
+- Created `loadFile()` method in `FileUtilities` to easily access
+  bundled files in a JAR
+- Added `callProcess()` method in `LibUtilities` to call external
+  programs
+- Fixed some java doc documentation
 
 ### v0.0.8
 - Improved `FileChooser`

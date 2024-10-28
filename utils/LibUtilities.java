@@ -10,12 +10,15 @@ import java.awt.font.FontRenderContext;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.Base64.Decoder;
 import java.util.HashMap;
@@ -97,7 +100,7 @@ public class LibUtilities {
         
         loadDefaultPreferences();
         
-        System.out.println("[INFO] libBasicUI v0.0.8");
+        System.out.println("[INFO] libBasicUI v0.0.9");
         System.out.println("[INFO] LibUtilities initialized!");
     }
     
@@ -142,6 +145,12 @@ public class LibUtilities {
      */
     public static final String REPLACEMENT_STR = "DATA_RPL";
     
+    /**
+     * Setting this to true will call {@link Process#destroy()} in all running 
+     * instances of {@link utils.LibUtilities#callProcess(utils.ProcessOutput, java.lang.String...)}
+     */
+    public static boolean destroyProcessCalls = false;
+    
     
     /**
      * Sets library's font, you should call {@link Window#updateUIFont()} to apply
@@ -155,7 +164,7 @@ public class LibUtilities {
     }
 
     /**
-     * @return string containing the current font name
+     * @return the current font name
      */
     public static String getFontName() {
         return fontName;
@@ -891,5 +900,70 @@ public class LibUtilities {
             preferencesWindow.updatePreferences();
         
         return true;
+    }
+    
+    /**
+     * This method creates a ProcessBuilder to run a program.<br>
+     * Some examples for this:
+     * <pre>
+     * $ foo bar bar1                 # For Unix-like OSes (program is on PATH)
+     * $ /path/to/foo bar bar1        # Unix-like (local program, requires absolute path)
+     * $ C:\path\to\foo.exe bar bar1  # Windows (only absolute path)
+     * </pre>
+     * <b>Note: this method will block the thread that called it.</b>
+     * 
+     * @param objectData the object in which the output and some other 
+     * parameters are managed
+     * @param args the full command to execute (all arguments must be separated)
+     * @throws IOException
+     * @throws InterruptedException 
+     * @see utils.ProcessOutput#cwd
+     * @see utils.LibUtilities#destroyProcessCalls
+     * @see utils.ProcessOutput#haltProcess
+     */
+    public static void callProcess(ProcessOutput objectData, String ... args) throws IOException, InterruptedException {
+        objectData.commandData = Arrays.toString(args);
+        ProcessBuilder processBuilder = new ProcessBuilder(args);
+        
+        processBuilder.redirectErrorStream(objectData.includeStderrData);
+        if (objectData.cwd != null)
+            processBuilder.directory(objectData.cwd);
+        
+        objectData.running = true;
+        Process process = processBuilder.start();
+        
+        BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+        
+        objectData.data = "";
+        String line;
+        while (process.isAlive() && !(destroyProcessCalls || objectData.haltProcess))
+            while (reader.ready() && !(destroyProcessCalls || objectData.haltProcess)) {
+                line = reader.readLine();
+                if (line == null)
+                    break;
+
+                objectData.data += line + "\n";
+            }
+        
+        if (reader.ready() && !(destroyProcessCalls || objectData.haltProcess)) {
+            line = reader.readLine();
+            if (line != null)
+                objectData.data += line + "\n";
+        }
+        
+        if (destroyProcessCalls || objectData.haltProcess)
+            process.destroy();
+        
+        objectData.exitCode = process.waitFor();
+        objectData.running = false;
+        if (objectData.exitCode != 0) {
+            objectData.commandData = "Error while running '" + objectData.commandData + "'";
+            
+            if (objectData.printDataOnNonZeroExitCode)
+                System.out.println("  Output:\n" + objectData.data);
+            
+            if (objectData.throwExceptionOnNonZeroExitCode)
+                throw new InterruptedException(objectData.commandData);
+        }
     }
 }

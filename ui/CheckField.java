@@ -1,5 +1,6 @@
 package ui;
 
+import java.awt.Color;
 import java.awt.event.ActionListener;
 import ui.enums.LabelType;
 import ui.enums.UIAlignment;
@@ -9,7 +10,7 @@ import ui.enums.UIAlignment;
  * 
  * @author cristopher
  */
-public class CheckField extends Panel {
+public class CheckField extends Panel implements UIFont {
     private final CheckBox checkBox;
     private final Label textLabel;
     
@@ -60,5 +61,40 @@ public class CheckField extends Panel {
     public void setChecked(boolean checked) {
         checkBox.checked = checked;
         repaint();
+    }
+
+    @Override
+    public void setFontPointSize(int fontSize) {
+        textLabel.setFontPointSize(fontSize);
+    }
+
+    @Override
+    public void setFontFamily(String fontFamily) {
+        textLabel.setFontFamily(fontFamily);
+    }
+
+    @Override
+    public void setFontBold(boolean boldFont) {
+        textLabel.setFontBold(boldFont);
+    }
+
+    @Override
+    public void setFontItalic(boolean italicFont) {
+        textLabel.setFontItalic(italicFont);
+    }
+
+    @Override
+    public void setFontMonospaced(boolean monospacedFont) {
+        textLabel.setFontMonospaced(monospacedFont);
+    }
+
+    @Override
+    public void useCustomFontColor(boolean customColor) {
+        textLabel.useCustomFontColor(customColor);
+    }
+
+    @Override
+    public void setFontColor(Color fontColor) {
+        textLabel.setFontColor(fontColor);
     }
 }

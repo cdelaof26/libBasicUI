@@ -1,5 +1,7 @@
 package ui;
 
+import java.awt.Color;
+import java.awt.Font;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.JButton;
@@ -7,14 +9,23 @@ import javax.swing.JComponent;
 import ui.enums.LabelType;
 import ui.enums.TextAlignment;
 import javax.swing.JLabel;
+import utils.LibUtilities;
 
 /**
  * Custom painted JLabel
  *
  * @author cristopher
  */
-public class Label extends JLabel implements ComponentSetup {
+public class Label extends JLabel implements ComponentSetup, UIFont {
     private LabelType fontType;
+    
+    private int fontSize = UIProperties.standardFontSize;
+    private String fontFamily = LibUtilities.getFontName();
+    private boolean boldFont = false;
+    private boolean italicFont = false;
+    private boolean monospacedFont = false;
+    private boolean customColor = false;
+    private Color fontColor = null;
     
     /**
      * Condition that determines which colors will be used to paint this component
@@ -89,6 +100,18 @@ public class Label extends JLabel implements ComponentSetup {
             case WARNING_LABEL:
                 setFont(UIProperties.APP_BOLD_FONT);
             break;
+            case CUSTOM:
+                int fontStyle;
+                if (!boldFont && !italicFont)
+                    fontStyle = Font.PLAIN;
+                else if (boldFont && italicFont)
+                    fontStyle = Font.BOLD | Font.ITALIC;
+                else
+                    fontStyle = boldFont ? Font.BOLD : Font.ITALIC;
+                
+                Font f = new Font(monospacedFont ? Font.MONOSPACED : fontFamily, fontStyle, (int) (fontSize * UIProperties.uiScale));
+                setFont(f);
+            break;
         }
     }
 
@@ -136,6 +159,82 @@ public class Label extends JLabel implements ComponentSetup {
     @Override
     public void setPaintBorder(boolean paintBorder) {
         throw new UnsupportedOperationException("Not supported yet.");
+    }
+    
+    private void validateFontType() {
+        assert fontType == LabelType.CUSTOM;
+    }
+    
+    @Override
+    public void setFontPointSize(int fontSize) {
+        if (fontSize < 0)
+            throw new IllegalArgumentException("Size cannot be negative");
+        
+        validateFontType();
+        
+        this.fontSize = fontSize;
+        updateUIFont();
+    }
+
+    @Override
+    public void setFontFamily(String fontFamily) {
+        validateFontType();
+        
+        this.fontFamily = fontFamily;
+        updateUIFont();
+    }
+
+    @Override
+    public void setFontBold(boolean boldFont) {
+        validateFontType();
+        
+        this.boldFont = boldFont;
+        updateUIFont();
+    }
+
+    @Override
+    public void setFontItalic(boolean italicFont) {
+        validateFontType();
+        
+        this.italicFont = italicFont;
+        updateUIFont();
+    }
+
+    @Override
+    public void setFontMonospaced(boolean monospacedFont) {
+        validateFontType();
+        
+        this.monospacedFont = monospacedFont;
+        updateUIFont();
+    }
+    
+    @Override
+    public void useCustomFontColor(boolean customColor) {
+        validateFontType();
+        
+        this.customColor = customColor;
+        updateUIFont();
+        updateUITheme();
+        updateUIColors();
+    }
+
+    @Override
+    public void setFontColor(Color fontColor) {
+        validateFontType();
+        
+        this.customColor = true;
+        this.fontColor = fontColor;
+        updateUIFont();
+        updateUITheme();
+        updateUIColors();
+    }
+
+    @Override
+    public void setForeground(Color fg) {
+        if (customColor)
+            fg = fontColor;
+        
+        super.setForeground(fg);
     }
     
     /**

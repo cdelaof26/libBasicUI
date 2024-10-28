@@ -16,8 +16,8 @@ public interface FilePicker {
      * use <code>setAllowedFileNames()</code> and <code>setFilenameFilter()</code> to add filters.
      * 
      * @return a <code>File</code> object or null if user canceled
-     * @see ui.FilePicker#setAllowedFileNames(boolean, java.lang.String...) 
-     * @see ui.FilePicker#setFilenameFilter(boolean, java.io.FilenameFilter) 
+     * @see utils.FilePicker#setAllowedFileNames(boolean, java.lang.String...) 
+     * @see utils.FilePicker#setFilenameFilter(boolean, java.io.FilenameFilter) 
      */
     public File getFile();
     
@@ -26,8 +26,8 @@ public interface FilePicker {
      * use <code>setAllowedFileNames()</code> and <code>setFilenameFilter()</code> to add filters.
      * 
      * @return a <code>File []</code> array object or null if user canceled
-     * @see ui.FilePicker#setAllowedFileNames(boolean, java.lang.String...) 
-     * @see ui.FilePicker#setFilenameFilter(boolean, java.io.FilenameFilter) 
+     * @see utils.FilePicker#setAllowedFileNames(boolean, java.lang.String...) 
+     * @see utils.FilePicker#setFilenameFilter(boolean, java.io.FilenameFilter) 
      */
     public File [] getFiles();
     
@@ -36,8 +36,8 @@ public interface FilePicker {
      * use <code>setAllowedFileNames()</code> and <code>setFilenameFilter()</code> to add filters.
      * 
      * @return a <code>File</code> object or null if user canceled
-     * @see ui.FilePicker#setAllowedFileNames(boolean, java.lang.String...) 
-     * @see ui.FilePicker#setFilenameFilter(boolean, java.io.FilenameFilter) 
+     * @see utils.FilePicker#setAllowedFileNames(boolean, java.lang.String...) 
+     * @see utils.FilePicker#setFilenameFilter(boolean, java.io.FilenameFilter) 
      */
     public File getDirectory();
     
@@ -46,8 +46,8 @@ public interface FilePicker {
      * use <code>setAllowedFileNames()</code> and <code>setFilenameFilter()</code> to add filters.
      * 
      * @return a <code>File []</code> array object or null if user canceled
-     * @see ui.FilePicker#setAllowedFileNames(boolean, java.lang.String...) 
-     * @see ui.FilePicker#setFilenameFilter(boolean, java.io.FilenameFilter) 
+     * @see utils.FilePicker#setAllowedFileNames(boolean, java.lang.String...) 
+     * @see utils.FilePicker#setFilenameFilter(boolean, java.io.FilenameFilter) 
      */
     public File [] getDirectories();
     
@@ -57,8 +57,8 @@ public interface FilePicker {
      * 
      * @param directory the location to show, set to null to start where it was left
      * @return a file or null if user canceled
-     * @see ui.FilePicker#setAllowedFileNames(boolean, java.lang.String...) 
-     * @see ui.FilePicker#setFilenameFilter(boolean, java.io.FilenameFilter) 
+     * @see utils.FilePicker#setAllowedFileNames(boolean, java.lang.String...) 
+     * @see utils.FilePicker#setFilenameFilter(boolean, java.io.FilenameFilter) 
      */
     public File getFile(File directory);
     
@@ -68,8 +68,8 @@ public interface FilePicker {
      * 
      * @param directory the location to show, set to null to start where it was left
      * @return a <code>File []</code> array object or null if user canceled
-     * @see ui.FilePicker#setAllowedFileNames(boolean, java.lang.String...) 
-     * @see ui.FilePicker#setFilenameFilter(boolean, java.io.FilenameFilter) 
+     * @see utils.FilePicker#setAllowedFileNames(boolean, java.lang.String...) 
+     * @see utils.FilePicker#setFilenameFilter(boolean, java.io.FilenameFilter) 
      */
     public File [] getFiles(File directory);
     
@@ -79,8 +79,8 @@ public interface FilePicker {
      * 
      * @param directory the location to show, set to null to start where it was left
      * @return a directory or null if user canceled
-     * @see ui.FilePicker#setAllowedFileNames(boolean, java.lang.String...) 
-     * @see ui.FilePicker#setFilenameFilter(boolean, java.io.FilenameFilter) 
+     * @see utils.FilePicker#setAllowedFileNames(boolean, java.lang.String...) 
+     * @see utils.FilePicker#setFilenameFilter(boolean, java.io.FilenameFilter) 
      */
     public File getDirectory(File directory);
     
@@ -90,8 +90,8 @@ public interface FilePicker {
      * 
      * @param directory the location to show, set to null to start where it was left
      * @return a <code>File []</code> array object or null if user canceled
-     * @see ui.FilePicker#setAllowedFileNames(boolean, java.lang.String...) 
-     * @see ui.FilePicker#setFilenameFilter(boolean, java.io.FilenameFilter) 
+     * @see utils.FilePicker#setAllowedFileNames(boolean, java.lang.String...) 
+     * @see utils.FilePicker#setFilenameFilter(boolean, java.io.FilenameFilter) 
      */
     public File [] getDirectories(File directory);
     
